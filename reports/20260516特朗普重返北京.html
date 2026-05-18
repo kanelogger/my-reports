@@ -1,0 +1,1561 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="特朗普2026年访华战略分析报告：筹码消解与中美战略易位">
+<title>特朗普重返北京：被提前消解的筹码与中美战略易位 | 战略分析报告</title>
+<style>
+/* ============================================================
+   RESET & BASE
+   ============================================================ */
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; font-size: 16px; }
+body {
+  font-family: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Noto Sans SC", "WenQuanYi Micro Hei", sans-serif;
+  background-color: #08080c;
+  color: #c8c8d0;
+  line-height: 1.75;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+::selection { background: rgba(199,62,58,0.3); color: #e8e8ed; }
+
+/* ============================================================
+   DESIGN TOKENS
+   ============================================================ */
+:root {
+  --bg-primary: #08080c;
+  --bg-secondary: #0e0e14;
+  --bg-tertiary: #14141c;
+  --bg-card: #111118;
+  --border: #1e1e28;
+  --border-hover: #2a2a38;
+  --text-primary: #e8e8ed;
+  --text-secondary: #a0a0b0;
+  --text-muted: #606070;
+  --text-dim: #404050;
+  --accent-red: #c73e3a;
+  --accent-red-dim: #8b2020;
+  --accent-gold: #c9963a;
+  --accent-gold-dim: #7a5e1e;
+  --accent-teal: #2a9d8f;
+  --accent-teal-dim: #1a6b5e;
+  --accent-blue: #4a7cb8;
+  --tag-confirmed: #c73e3a;
+  --tag-inferred: #c9963a;
+  --tag-creative: #4a7cb8;
+  --tag-unknown: #606070;
+}
+
+/* ============================================================
+   TYPOGRAPHY
+   ============================================================ */
+h1, h2, h3, h4, h5, h6 { color: var(--text-primary); font-weight: 600; letter-spacing: 0.02em; }
+h1 { font-size: 2.5rem; line-height: 1.2; }
+h2 { font-size: 1.75rem; line-height: 1.3; margin-bottom: 1rem; }
+h3 { font-size: 1.25rem; line-height: 1.4; margin-bottom: 0.75rem; }
+h4 { font-size: 1.05rem; line-height: 1.5; margin-bottom: 0.5rem; }
+p { margin-bottom: 1rem; color: var(--text-secondary); }
+a { color: var(--accent-teal); text-decoration: none; }
+a:hover { color: var(--text-primary); }
+
+/* ============================================================
+   LAYOUT
+   ============================================================ */
+.container { max-width: 1200px; margin: 0 auto; padding: 0 1.5rem; }
+.section { padding: 4rem 0; border-bottom: 1px solid var(--border); }
+.section:last-of-type { border-bottom: none; }
+.section-header { margin-bottom: 2.5rem; }
+.section-label {
+  display: inline-block;
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--accent-gold);
+  margin-bottom: 0.5rem;
+  padding: 0.25rem 0.5rem;
+  background: rgba(201,150,58,0.08);
+  border: 1px solid rgba(201,150,58,0.2);
+  border-radius: 2px;
+}
+.section-title { font-size: 1.75rem; color: var(--text-primary); margin-bottom: 0.5rem; }
+.section-desc { color: var(--text-muted); font-size: 0.95rem; }
+
+/* ============================================================
+   TOP NAVIGATION
+   ============================================================ */
+.top-nav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 1000;
+  background: rgba(8,8,12,0.92);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+  transition: all 0.3s ease;
+}
+.nav-inner { display: flex; align-items: center; justify-content: space-between; height: 52px; max-width: 1200px; margin: 0 auto; padding: 0 1.5rem; }
+.nav-brand { font-size: 0.85rem; font-weight: 700; color: var(--text-primary); letter-spacing: 0.05em; white-space: nowrap; }
+.nav-brand span { color: var(--accent-gold); }
+.nav-links { display: flex; gap: 0.25rem; list-style: none; }
+.nav-links a {
+  display: block;
+  padding: 0.35rem 0.6rem;
+  font-size: 0.72rem;
+  font-weight: 500;
+  color: var(--text-muted);
+  border-radius: 3px;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+.nav-links a:hover, .nav-links a.active { color: var(--text-primary); background: rgba(255,255,255,0.04); }
+.nav-toggle { display: none; background: none; border: 1px solid var(--border); color: var(--text-secondary); padding: 0.4rem 0.6rem; border-radius: 3px; cursor: pointer; font-size: 0.8rem; }
+
+/* ============================================================
+   HERO SECTION
+   ============================================================ */
+.hero {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  position: relative;
+  padding: 6rem 0 4rem;
+  background: var(--bg-primary);
+  overflow: hidden;
+}
+.hero::before {
+  content: '';
+  position: absolute;
+  top: -20%; right: -10%;
+  width: 600px; height: 600px;
+  background: radial-gradient(circle, rgba(199,62,58,0.04) 0%, transparent 70%);
+  pointer-events: none;
+}
+.hero::after {
+  content: '';
+  position: absolute;
+  bottom: -10%; left: -5%;
+  width: 500px; height: 500px;
+  background: radial-gradient(circle, rgba(42,157,143,0.03) 0%, transparent 70%);
+  pointer-events: none;
+}
+.hero-grid {
+  display: grid;
+  grid-template-columns: 1fr 320px;
+  gap: 4rem;
+  align-items: start;
+}
+.hero-meta { margin-bottom: 1.5rem; }
+.hero-date { font-size: 0.75rem; color: var(--accent-gold); letter-spacing: 0.1em; font-weight: 600; }
+.hero h1 { font-size: 2.75rem; font-weight: 700; margin-bottom: 1.5rem; line-height: 1.15; letter-spacing: 0.01em; }
+.hero h1 .highlight-red { color: var(--accent-red); }
+.hero h1 .highlight-gold { color: var(--accent-gold); }
+.hero-lead {
+  font-size: 1.15rem;
+  line-height: 1.8;
+  color: var(--text-secondary);
+  margin-bottom: 2rem;
+  border-left: 3px solid var(--accent-red);
+  padding-left: 1.25rem;
+}
+.hero-judgment {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+.judgment-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  padding: 1rem 1.25rem;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  transition: border-color 0.2s;
+}
+.judgment-item:hover { border-color: var(--border-hover); }
+.judgment-num {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--accent-gold);
+  line-height: 1;
+  flex-shrink: 0;
+  min-width: 28px;
+}
+.judgment-text { font-size: 0.92rem; color: var(--text-secondary); line-height: 1.7; }
+.judgment-text strong { color: var(--text-primary); font-weight: 600; }
+
+.hero-sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding-top: 3rem;
+}
+.metric-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 1.25rem;
+  text-align: center;
+  transition: all 0.2s;
+}
+.metric-card:hover { border-color: var(--border-hover); background: var(--bg-secondary); }
+.metric-value { font-size: 2rem; font-weight: 700; color: var(--accent-red); line-height: 1; margin-bottom: 0.35rem; }
+.metric-value.gold { color: var(--accent-gold); }
+.metric-value.teal { color: var(--accent-teal); }
+.metric-label { font-size: 0.75rem; color: var(--text-muted); letter-spacing: 0.05em; }
+
+/* ============================================================
+   TAB SYSTEM (Bargaining / Counter / Conclusion)
+   ============================================================ */
+.tab-bar { display: flex; gap: 0; border-bottom: 1px solid var(--border); margin-bottom: 2rem; }
+.tab-btn {
+  padding: 0.75rem 1.5rem;
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: inherit;
+}
+.tab-btn:hover { color: var(--text-secondary); }
+.tab-btn.active { color: var(--accent-gold); border-bottom-color: var(--accent-gold); background: rgba(201,150,58,0.04); }
+.tab-panel { display: none; }
+.tab-panel.active { display: block; animation: fadeIn 0.3s ease; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+
+/* ============================================================
+   CARDS & GRIDS
+   ============================================================ */
+.card-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1rem; }
+.card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 1.5rem;
+  transition: all 0.2s;
+}
+.card:hover { border-color: var(--border-hover); background: var(--bg-secondary); }
+.card-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.75rem; }
+.card-title { font-size: 1rem; font-weight: 600; color: var(--text-primary); }
+.card-tag {
+  font-size: 0.65rem;
+  padding: 0.15rem 0.4rem;
+  border-radius: 2px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  flex-shrink: 0;
+}
+.tag-red { background: rgba(199,62,58,0.12); color: var(--accent-red); border: 1px solid rgba(199,62,58,0.25); }
+.tag-gold { background: rgba(201,150,58,0.12); color: var(--accent-gold); border: 1px solid rgba(201,150,58,0.25); }
+.tag-teal { background: rgba(42,157,143,0.12); color: var(--accent-teal); border: 1px solid rgba(42,157,143,0.25); }
+.tag-blue { background: rgba(74,124,184,0.12); color: var(--accent-blue); border: 1px solid rgba(74,124,184,0.25); }
+.tag-gray { background: rgba(96,96,112,0.12); color: var(--text-muted); border: 1px solid rgba(96,96,112,0.25); }
+.card-body { font-size: 0.88rem; color: var(--text-secondary); line-height: 1.75; }
+.card-footer { margin-top: 0.75rem; padding-top: 0.75rem; border-top: 1px solid var(--border); font-size: 0.78rem; color: var(--text-muted); }
+
+/* ============================================================
+   TIMELINE
+   ============================================================ */
+.timeline { position: relative; padding-left: 2rem; }
+.timeline::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 0; bottom: 0;
+  width: 1px;
+  background: linear-gradient(to bottom, var(--accent-gold), var(--accent-red) 60%, var(--border));
+}
+.timeline-item { position: relative; padding-bottom: 2rem; }
+.timeline-item:last-child { padding-bottom: 0; }
+.timeline-dot {
+  position: absolute;
+  left: -2rem;
+  top: 0.35rem;
+  width: 9px; height: 9px;
+  border-radius: 50%;
+  background: var(--bg-primary);
+  border: 2px solid var(--accent-gold);
+  margin-left: -4px;
+}
+.timeline-dot.red { border-color: var(--accent-red); }
+.timeline-dot.teal { border-color: var(--accent-teal); }
+.timeline-date {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--accent-gold);
+  letter-spacing: 0.08em;
+  margin-bottom: 0.35rem;
+}
+.timeline-title { font-size: 0.95rem; font-weight: 600; color: var(--text-primary); margin-bottom: 0.35rem; }
+.timeline-body { font-size: 0.85rem; color: var(--text-secondary); line-height: 1.75; }
+.timeline-tag {
+  display: inline-block;
+  font-size: 0.65rem;
+  padding: 0.1rem 0.4rem;
+  border-radius: 2px;
+  margin-top: 0.5rem;
+  font-weight: 500;
+}
+
+/* ============================================================
+   STAKEHOLDER MAP
+   ============================================================ */
+.stakeholder-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; }
+.stakeholder-cat { background: var(--bg-card); border: 1px solid var(--border); border-radius: 4px; overflow: hidden; }
+.stakeholder-cat-header {
+  padding: 0.85rem 1.25rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.stakeholder-cat-header .dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+.stakeholder-list { list-style: none; padding: 0.5rem 0; }
+.stakeholder-list li {
+  padding: 0.6rem 1.25rem;
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid rgba(30,30,40,0.5);
+}
+.stakeholder-list li:last-child { border-bottom: none; }
+.stakeholder-name { color: var(--text-primary); font-weight: 500; }
+.stakeholder-role { font-size: 0.75rem; color: var(--text-muted); font-style: italic; }
+.stakeholder-note {
+  margin-top: 1.5rem;
+  padding: 1rem 1.25rem;
+  background: rgba(201,150,58,0.04);
+  border: 1px solid rgba(201,150,58,0.12);
+  border-radius: 4px;
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  line-height: 1.75;
+}
+
+/* ============================================================
+   CHIPS MATRIX
+   ============================================================ */
+.chip-row {
+  display: grid;
+  grid-template-columns: 180px 1fr 200px;
+  gap: 0;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  overflow: hidden;
+  margin-bottom: 1rem;
+  background: var(--bg-card);
+}
+.chip-name {
+  padding: 1.25rem;
+  background: rgba(199,62,58,0.04);
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.chip-name-title { font-size: 0.95rem; font-weight: 600; color: var(--accent-red); margin-bottom: 0.25rem; }
+.chip-name-sub { font-size: 0.75rem; color: var(--text-muted); }
+.chip-logic {
+  padding: 1.25rem;
+  border-right: 1px solid var(--border);
+  font-size: 0.88rem;
+  color: var(--text-secondary);
+  line-height: 1.75;
+}
+.chip-status {
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.status-label { font-size: 0.7rem; color: var(--text-muted); letter-spacing: 0.08em; margin-bottom: 0.35rem; text-transform: uppercase; }
+.status-value { font-size: 0.9rem; font-weight: 600; color: var(--accent-gold); }
+.status-value.collapsed { color: var(--accent-red); }
+.status-value.neutral { color: var(--text-muted); }
+
+/* ============================================================
+   COUNTERMOVES
+   ============================================================ */
+.counter-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1rem; }
+.counter-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--accent-teal);
+  border-radius: 0 4px 4px 0;
+  padding: 1.5rem;
+  transition: all 0.2s;
+}
+.counter-card:hover { border-color: var(--border-hover); background: var(--bg-secondary); }
+.counter-title { font-size: 1rem; font-weight: 600; color: var(--text-primary); margin-bottom: 0.5rem; }
+.counter-body { font-size: 0.88rem; color: var(--text-secondary); line-height: 1.75; margin-bottom: 0.75rem; }
+.counter-target { font-size: 0.78rem; color: var(--accent-teal); font-weight: 500; }
+
+/* ============================================================
+   STRATEGIC SHIFT — COMPARISON
+   ============================================================ */
+.shift-comparison {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  gap: 1.5rem;
+  align-items: center;
+}
+.shift-box {
+  padding: 1.5rem;
+  border-radius: 4px;
+  text-align: center;
+}
+.shift-box.past { background: rgba(199,62,58,0.06); border: 1px solid rgba(199,62,58,0.15); }
+.shift-box.present { background: rgba(42,157,143,0.06); border: 1px solid rgba(42,157,143,0.15); }
+.shift-era { font-size: 0.7rem; letter-spacing: 0.12em; font-weight: 600; margin-bottom: 0.5rem; }
+.shift-era.red { color: var(--accent-red); }
+.shift-era.teal { color: var(--accent-teal); }
+.shift-desc { font-size: 0.95rem; font-weight: 600; color: var(--text-primary); margin-bottom: 0.75rem; }
+.shift-detail { font-size: 0.82rem; color: var(--text-secondary); line-height: 1.75; }
+.shift-arrow {
+  font-size: 1.5rem;
+  color: var(--accent-gold);
+  font-weight: 700;
+  text-align: center;
+}
+
+/* ============================================================
+   COGNITIVE UPGRADE — FORMULA
+   ============================================================ */
+.formula-box {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 2rem;
+  text-align: center;
+  margin-bottom: 2rem;
+}
+.formula-display {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 1rem;
+  font-family: "Courier New", monospace;
+  letter-spacing: 0.02em;
+}
+.formula-display .var-a { color: var(--accent-red); }
+.formula-display .var-b { color: var(--accent-gold); }
+.formula-display .var-c { color: var(--accent-teal); }
+.formula-note { font-size: 0.85rem; color: var(--text-muted); line-height: 1.7; max-width: 600px; margin: 0 auto; }
+
+.model-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1rem; }
+.model-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 1.5rem;
+}
+.model-card-header {
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-bottom: 0.75rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid var(--border);
+}
+.model-card-header.red { color: var(--accent-red); }
+.model-card-header.teal { color: var(--accent-teal); }
+.model-card-header.gold { color: var(--accent-gold); }
+.model-list { list-style: none; }
+.model-list li {
+  padding: 0.5rem 0;
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  border-bottom: 1px solid rgba(30,30,40,0.4);
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+}
+.model-list li:last-child { border-bottom: none; }
+.model-list li::before { content: '\25B8'; color: var(--text-dim); flex-shrink: 0; font-size: 0.75rem; margin-top: 0.1rem; }
+
+/* ============================================================
+   EVIDENCE BOUNDARY TABLE
+   ============================================================ */
+.evidence-table { width: 100%; border-collapse: collapse; font-size: 0.88rem; }
+.evidence-table th {
+  text-align: left;
+  padding: 0.75rem 1rem;
+  background: var(--bg-secondary);
+  color: var(--text-muted);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  border-bottom: 1px solid var(--border);
+}
+.evidence-table td {
+  padding: 0.85rem 1rem;
+  border-bottom: 1px solid var(--border);
+  color: var(--text-secondary);
+  vertical-align: top;
+}
+.evidence-table tr:hover td { background: rgba(255,255,255,0.015); }
+.evidence-badge {
+  display: inline-block;
+  font-size: 0.68rem;
+  padding: 0.2rem 0.5rem;
+  border-radius: 2px;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  white-space: nowrap;
+}
+.badge-confirmed { background: rgba(199,62,58,0.12); color: var(--accent-red); border: 1px solid rgba(199,62,58,0.2); }
+.badge-inferred { background: rgba(201,150,58,0.12); color: var(--accent-gold); border: 1px solid rgba(201,150,58,0.2); }
+.badge-creative { background: rgba(74,124,184,0.12); color: var(--accent-blue); border: 1px solid rgba(74,124,184,0.2); }
+.badge-unknown { background: rgba(96,96,112,0.12); color: var(--text-muted); border: 1px solid rgba(96,96,112,0.2); }
+
+/* ============================================================
+   OPEN QUESTIONS
+   ============================================================ */
+.question-list { list-style: none; }
+.question-item {
+  display: flex;
+  gap: 1rem;
+  padding: 1.25rem;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  margin-bottom: 0.75rem;
+  transition: all 0.2s;
+}
+.question-item:hover { border-color: var(--border-hover); }
+.question-num {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--accent-gold);
+  flex-shrink: 0;
+  min-width: 24px;
+  padding-top: 0.1rem;
+}
+.question-text { font-size: 0.9rem; color: var(--text-secondary); line-height: 1.7; }
+.question-meta { font-size: 0.75rem; color: var(--text-dim); margin-top: 0.35rem; font-style: italic; }
+
+/* ============================================================
+   QUOTE BLOCK
+   ============================================================ */
+.quote-block {
+  margin: 2rem 0;
+  padding: 1.5rem 1.75rem;
+  background: var(--bg-card);
+  border-left: 3px solid var(--accent-gold);
+  font-size: 0.95rem;
+  color: var(--text-secondary);
+  line-height: 1.8;
+  font-style: italic;
+  border-radius: 0 4px 4px 0;
+}
+.quote-block cite {
+  display: block;
+  margin-top: 0.75rem;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  font-style: normal;
+  font-weight: 500;
+}
+
+/* ============================================================
+   FOOTER
+   ============================================================ */
+.report-footer {
+  padding: 3rem 0;
+  border-top: 1px solid var(--border);
+  text-align: center;
+  color: var(--text-dim);
+  font-size: 0.8rem;
+}
+
+/* ============================================================
+   UTILITY
+   ============================================================ */
+.text-red { color: var(--accent-red) !important; }
+.text-gold { color: var(--accent-gold) !important; }
+.text-teal { color: var(--accent-teal) !important; }
+.text-muted { color: var(--text-muted) !important; }
+.mb-1 { margin-bottom: 1rem; }
+.mb-2 { margin-bottom: 2rem; }
+.mt-1 { margin-top: 1rem; }
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+@media (max-width: 768px) {
+  html { font-size: 15px; }
+  .hero-grid { grid-template-columns: 1fr; gap: 2rem; }
+  .hero-sidebar { padding-top: 0; }
+  .hero h1 { font-size: 1.9rem; }
+  .hero-lead { font-size: 1rem; }
+  .chip-row { grid-template-columns: 1fr; }
+  .chip-name { border-right: none; border-bottom: 1px solid var(--border); }
+  .chip-logic { border-right: none; border-bottom: 1px solid var(--border); }
+  .shift-comparison { grid-template-columns: 1fr; }
+  .shift-arrow { transform: rotate(90deg); }
+  .stakeholder-grid { grid-template-columns: 1fr; }
+  .nav-links { display: none; position: absolute; top: 52px; left: 0; right: 0; background: rgba(8,8,12,0.98); flex-direction: column; padding: 0.5rem; gap: 0; border-bottom: 1px solid var(--border); }
+  .nav-links.open { display: flex; }
+  .nav-links a { padding: 0.6rem 1rem; border-radius: 3px; }
+  .nav-toggle { display: block; }
+  .formula-display { font-size: 1.15rem; }
+  .section { padding: 2.5rem 0; }
+  .evidence-table { font-size: 0.8rem; }
+  .evidence-table th, .evidence-table td { padding: 0.6rem 0.5rem; }
+}
+
+@media (max-width: 480px) {
+  .container { padding: 0 1rem; }
+  .hero h1 { font-size: 1.6rem; }
+  .card-grid, .counter-grid, .model-grid { grid-template-columns: 1fr; }
+  .judgment-item { flex-direction: column; gap: 0.5rem; }
+  .question-item { flex-direction: column; gap: 0.5rem; }
+}
+
+/* ============================================================
+   REDUCED MOTION
+   ============================================================ */
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .tab-panel.active { animation: none; }
+}
+</style>
+</head>
+<body>
+
+<!-- ============================================================ -->
+<!-- TOP NAVIGATION                                                -->
+<!-- ============================================================ -->
+<nav class="top-nav" id="topNav">
+  <div class="nav-inner">
+    <div class="nav-brand">战略简报 <span>/</span> 中美博弈分析</div>
+    <button class="nav-toggle" id="navToggle" aria-label="切换导航" onclick="document.getElementById('navLinks').classList.toggle('open')">
+      &#9776;
+    </button>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="#executive-brief" class="nav-link">核心判断</a></li>
+      <li><a href="#timeline" class="nav-link">时间线</a></li>
+      <li><a href="#stakeholders" class="nav-link">代表团</a></li>
+      <li><a href="#chips" class="nav-link">筹码矩阵</a></li>
+      <li><a href="#countermoves" class="nav-link">中方反制</a></li>
+      <li><a href="#strategic-shift" class="nav-link">战略易位</a></li>
+      <li><a href="#cognitive-upgrade" class="nav-link">认知模型</a></li>
+      <li><a href="#evidence" class="nav-link">证据边界</a></li>
+    </ul>
+  </div>
+</nav>
+
+<!-- ============================================================ -->
+<!-- HERO                                                          -->
+<!-- ============================================================ -->
+<section class="hero" id="hero">
+  <div class="container hero-grid">
+    <div class="hero-main">
+      <div class="hero-meta">
+        <span class="hero-date">事件锚点 &mdash; 2026年5月 | 分析日期 &mdash; 2026-05-14</span>
+      </div>
+      <h1>
+        特朗普重返北京：<br>
+        <span class="highlight-red">被提前消解的筹码</span><br>
+        与<span class="highlight-gold">中美战略易位</span>
+      </h1>
+      <div class="hero-lead">
+        时隔3107天，特朗普于2026年5月再次访问中国，创下自尼克松以来美国总统访华间隔最长的纪录。这不是一场新谈判的起点，而是一场筹码已被提前消解的仪式化终局确认。
+      </div>
+      <div class="hero-judgment">
+        <div class="judgment-item">
+          <span class="judgment-num">01</span>
+          <div class="judgment-text">
+            <strong>美方筹码结构性坍缩：</strong>制裁依赖第三方执行链条、关税权限被最高法院封顶、支持阿联酋退出欧佩克动摇长期油价影响力、中东战略受挫使最大底牌作废
+          </div>
+        </div>
+        <div class="judgment-item">
+          <span class="judgment-num">02</span>
+          <div class="judgment-text">
+            <strong>中方反击系统性前置：</strong>阻断禁令首次落地攻击制裁执行链、稀土管制直击产业链痛点、伊朗外长先期访华传递地缘信号、53国非洲零关税构建替代经济圈
+          </div>
+        </div>
+        <div class="judgment-item">
+          <span class="judgment-num">03</span>
+          <div class="judgment-text">
+            <strong>元首会晤功能降级：</strong>从"创造突破"变为"确认结果"，从"超规格热情换承诺"变为"标准流程收尾声"——真正的较量早已在谈判桌之外完成
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="hero-sidebar">
+      <div class="metric-card">
+        <div class="metric-value">3,107</div>
+        <div class="metric-label">间隔天数</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-value gold">$0.7-0.9<span style="font-size:1rem">亿</span></div>
+        <div class="metric-label">安保成本</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-value teal">10-15<span style="font-size:1rem">架次</span></div>
+        <div class="metric-label">C-17运输机</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-value">16</div>
+        <div class="metric-label">随行CEO</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-value gold">5<span style="font-size:1rem">轮</span></div>
+        <div class="metric-label">前置磋商</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- EXECUTIVE BRIEF                                               -->
+<!-- ============================================================ -->
+<section class="section" id="executive-brief">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-label">Executive Brief</span>
+      <h2 class="section-title">执行摘要</h2>
+    </div>
+
+    <div class="quote-block">
+      六年筹码战的结果是一次"去仪式感"的元首会晤。特朗普带着7000万美元的安保预算和16位CEO来北京，但他真正想谈的事——关税加码、芯片解禁、中东布局——要么已经被法院封死，要么被中国提前化解。
+      <cite>&mdash; 核心结论，基于原文分析综合</cite>
+    </div>
+
+    <div class="card-grid" style="margin-top:2rem">
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">一句话结论</span>
+          <span class="card-tag tag-red">核心判断</span>
+        </div>
+        <div class="card-body">
+          特朗普2026年访华的本质是一场"仪式化的终局确认"——所有真正的博弈已在访问前的六年间完成。美方从出题者沦为解题者，中方从应对者转为设局者。
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">博弈阶段判定</span>
+          <span class="card-tag tag-gold">合理推断</span>
+        </div>
+        <div class="card-body">
+          中美交流已从"超规格热情"转向"务实对等"，博弈重心从单纯的贸易订单延伸至资本准入、产业链痛点及全球结算体系的重构。双方进入基于实力对等的硬核博弈新阶段。
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">战略范式转移</span>
+          <span class="card-tag tag-teal">创造性延展</span>
+        </div>
+        <div class="card-body">
+          "对等硬核博弈"可能不是终局，而是一个过渡期。真正的战略分野取决于各自内部结构调整的相对速度，而非外部交锋的即时胜负。博弈优势 = 外部筹码 &times; 内部韧性系数。
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- EVENT TIMELINE                                                -->
+<!-- ============================================================ -->
+<section class="section" id="timeline">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-label">Event Timeline</span>
+      <h2 class="section-title">事件时间线：三条线并行机制</h2>
+      <p class="section-desc">军机前站线（安全保障）、企业订单线（商业诉求）、财长磋商线（条款打磨），三线并行后由元首会面做最终验证</p>
+    </div>
+
+    <div class="timeline">
+      <div class="timeline-item">
+        <div class="timeline-dot"></div>
+        <div class="timeline-date">2026年3月起</div>
+        <div class="timeline-title">五轮前置经贸磋商</div>
+        <div class="timeline-body">
+          中美经贸团队先后在日内瓦、伦敦、斯德哥尔摩、马德里、吉隆坡进行五轮磋商。财长贝森特3月起即开始条款打磨，为元首会晤铺平数字与条款层面的道路。
+        </div>
+        <span class="timeline-tag tag-gold" style="background:rgba(201,150,58,0.08);color:var(--accent-gold);border:1px solid rgba(201,150,58,0.15)">财长磋商线</span>
+      </div>
+
+      <div class="timeline-item">
+        <div class="timeline-dot"></div>
+        <div class="timeline-date">2026年5月6日起</div>
+        <div class="timeline-title">C-17运输机陆续降落北京</div>
+        <div class="timeline-body">
+          美国空军10至15架次C-17运输机陆续降落首都国际机场，运载总统防弹车队、高强度通讯设备系统、移动式外科手术室，相当于将白宫安保系统整体搬至北京。估算成本7000万至9000万美元。
+        </div>
+        <span class="timeline-tag tag-red" style="background:rgba(199,62,58,0.08);color:var(--accent-red);border:1px solid rgba(199,62,58,0.15)">军机前站线</span>
+      </div>
+
+      <div class="timeline-item">
+        <div class="timeline-dot teal"></div>
+        <div class="timeline-date">2026年5月11-12日</div>
+        <div class="timeline-title">贝森特东京站：美日经济协调</div>
+        <div class="timeline-body">
+          财长贝森特5月11日出发，12日在东京会见日本首相与财务大臣，讨论美日经济关系，为后续与中方谈判建立盟友侧翼协调。
+        </div>
+        <span class="timeline-tag tag-gold">财长磋商线</span>
+      </div>
+
+      <div class="timeline-item">
+        <div class="timeline-dot teal"></div>
+        <div class="timeline-date">2026年5月13日</div>
+        <div class="timeline-title">首尔经贸磋商：商务议题前置</div>
+        <div class="timeline-body">
+          贝森特在首尔与中方代表团进行经贸磋商，结束后直飞北京。中方将商务议题置于首尔处理，传递清晰信号：不要试图以元首仪式感为经贸议题加码，有话按规矩提前谈，到北京只谈结果。
+        </div>
+        <span class="timeline-tag tag-teal" style="background:rgba(42,157,143,0.08);color:var(--accent-teal);border:1px solid rgba(42,157,143,0.15)">中方规则设定</span>
+      </div>
+
+      <div class="timeline-item">
+        <div class="timeline-dot red"></div>
+        <div class="timeline-date">2026年5月（访华前）</div>
+        <div class="timeline-title">美方打出四张牌</div>
+        <div class="timeline-body">
+          制裁五家中国石化企业（协助伊朗石油交易）、支持阿联酋退出欧佩克、维持对等关税压力、以中东战略积累筹码。四张牌旨在谈判前制造压力，但实际效果有限。
+        </div>
+        <span class="timeline-tag tag-red">美方施压</span>
+      </div>
+
+      <div class="timeline-item">
+        <div class="timeline-dot teal"></div>
+        <div class="timeline-date">2026年5月（特朗普抵京前）</div>
+        <div class="timeline-title">中方组合拳落地</div>
+        <div class="timeline-body">
+          阻断禁令首次正式启用 &mdash; 稀土出口管制收紧 &mdash; 伊朗外长先期访华 &mdash; 宣布对53个非洲建交国全面实施零关税。系统性反制逐一就位。
+        </div>
+        <span class="timeline-tag tag-teal">中方反制</span>
+      </div>
+
+      <div class="timeline-item">
+        <div class="timeline-dot"></div>
+        <div class="timeline-date">2026年5月</div>
+        <div class="timeline-title">特朗普抵达北京：标准框架接待</div>
+        <div class="timeline-body">
+          特朗普抵达北京。中方给予标准框架内接待，与2017年"国事访问+"超规格礼遇形成鲜明对比。随行16位商界CEO带着明确订单与准入诉求入场。
+        </div>
+        <span class="timeline-tag tag-gold" style="background:rgba(201,150,58,0.08)">企业订单线</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- STAKEHOLDER MAP                                               -->
+<!-- ============================================================ -->
+<section class="section" id="stakeholders">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-label">Stakeholder Map</span>
+      <h2 class="section-title">美方代表团利益版图</h2>
+      <p class="section-desc">16位企业高管构成四大板块，精准勾勒出美方在此次谈判中的利益诉求图谱</p>
+    </div>
+
+    <div class="stakeholder-grid">
+      <div class="stakeholder-cat">
+        <div class="stakeholder-cat-header">
+          <span class="dot" style="background:var(--accent-blue)"></span>
+          科技与半导体（4人）
+        </div>
+        <ul class="stakeholder-list">
+          <li><span class="stakeholder-name">蒂姆·库克</span><span class="stakeholder-role">苹果CEO</span></li>
+          <li><span class="stakeholder-name">克里斯蒂亚诺·阿蒙</span><span class="stakeholder-role">高通CEO</span></li>
+          <li><span class="stakeholder-name">桑杰·梅赫罗特拉</span><span class="stakeholder-role">美光科技CEO</span></li>
+          <li><span class="stakeholder-name">安德森</span><span class="stakeholder-role">Coherent CEO</span></li>
+        </ul>
+      </div>
+
+      <div class="stakeholder-cat">
+        <div class="stakeholder-cat-header">
+          <span class="dot" style="background:var(--accent-gold)"></span>
+          金融（6人 &mdash; 近半席位）
+        </div>
+        <ul class="stakeholder-list">
+          <li><span class="stakeholder-name">拉里·芬克</span><span class="stakeholder-role">贝莱德CEO</span></li>
+          <li><span class="stakeholder-name">史蒂夫·施瓦茨曼</span><span class="stakeholder-role">黑石创始人</span></li>
+          <li><span class="stakeholder-name">大卫·所罗门</span><span class="stakeholder-role">高盛CEO</span></li>
+          <li><span class="stakeholder-name">简·弗雷泽</span><span class="stakeholder-role">花旗CEO</span></li>
+          <li><span class="stakeholder-name">瑞安·麦金纳尼</span><span class="stakeholder-role">Visa CEO</span></li>
+          <li><span class="stakeholder-name">米巴赫</span><span class="stakeholder-role">万事达卡CEO</span></li>
+        </ul>
+      </div>
+
+      <div class="stakeholder-cat">
+        <div class="stakeholder-cat-header">
+          <span class="dot" style="background:var(--accent-teal)"></span>
+          制造与能源（4人）
+        </div>
+        <ul class="stakeholder-list">
+          <li><span class="stakeholder-name">凯利·奥特伯格</span><span class="stakeholder-role">波音CEO</span></li>
+          <li><span class="stakeholder-name">拉里·卡尔普</span><span class="stakeholder-role">通用航空航天CEO</span></li>
+          <li><span class="stakeholder-name">布莱恩·赛克斯</span><span class="stakeholder-role">嘉吉CEO</span></li>
+          <li><span class="stakeholder-name">埃克森美孚</span><span class="stakeholder-role">CEO原文未具名</span></li>
+        </ul>
+      </div>
+
+      <div class="stakeholder-cat">
+        <div class="stakeholder-cat-header">
+          <span class="dot" style="background:var(--accent-red)"></span>
+          社交媒体与其他（2人）
+        </div>
+        <ul class="stakeholder-list">
+          <li><span class="stakeholder-name">鲍威·麦考密克</span><span class="stakeholder-role">Meta高管</span></li>
+          <li><span class="stakeholder-name">埃隆·马斯克</span><span class="stakeholder-role">特斯拉/SpaceX</span></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="stakeholder-note">
+      <strong style="color:var(--text-primary)">关键观察：</strong>金融机构占据近半席位，说明此次访问议题不止于货物贸易，中国资本市场的开放程度、外资金融机构准入政策及双边投资规则框架同样是核心议题。博弈的重心已深入到资本准入与全球结算体系层面。高通约六成营收来自中国市场；波音2017年大单因737 MAX停飞一笔未执行，急需新大单稳住局面。马斯克以双重身份出席，是双方关系修复的明确信号。
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- BARGAINING CHIPS (TABS)                                       -->
+<!-- ============================================================ -->
+<section class="section" id="chips">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-label">Bargaining Chips &amp; Countermoves</span>
+      <h2 class="section-title">筹码矩阵：美方出牌与中方应对</h2>
+      <p class="section-desc">点击下方标签切换视角，查看美方四张牌的失效逻辑、中方五招组合拳及战略结论</p>
+    </div>
+
+    <div class="tab-bar">
+      <button class="tab-btn active" data-tab="tab-us">美方筹码</button>
+      <button class="tab-btn" data-tab="tab-china">中方反制</button>
+      <button class="tab-btn" data-tab="tab-conclusion">战略结论</button>
+    </div>
+
+    <!-- TAB: US CHIPS -->
+    <div class="tab-panel active" id="tab-us">
+      <p style="margin-bottom:1.5rem;color:var(--text-muted);font-size:0.88rem">
+        《财富》杂志总结：特朗普以为自己带着筹码飞向北京，但中国用了六年时间确保他手里没有筹码。
+      </p>
+
+      <div class="chip-row">
+        <div class="chip-name">
+          <div class="chip-name-title">牌一：石化制裁</div>
+          <div class="chip-name-sub">制裁五家中国石化企业</div>
+        </div>
+        <div class="chip-logic">
+          以"协助伊朗石油交易"为由制裁山东寿光鲁清石化、金城石化、河北新海化工、山东盛兴化工等五家企业。此举意在谈判前制造压力。但美国长臂管辖的效力依赖于第三方机构的自动服从（银行、航运、保险），一旦这套机制失效，制裁便只剩空名。
+        </div>
+        <div class="chip-status">
+          <div class="status-label">失效模式</div>
+          <div class="status-value collapsed">执行链条被对冲</div>
+          <div style="margin-top:0.5rem;font-size:0.78rem;color:var(--text-muted)">阻断禁令使第三方机构面临两难</div>
+        </div>
+      </div>
+
+      <div class="chip-row">
+        <div class="chip-name">
+          <div class="chip-name-title">牌二：欧佩克干预</div>
+          <div class="chip-name-sub">支持阿联酋退出欧佩克</div>
+        </div>
+        <div class="chip-logic">
+          从美国角度看，增产可短期压低油价缓解通胀。但欧佩克框架恰是美国间接影响全球石油定价的核心工具之一；产油国各自为战后协调机制被削弱，美国对油价走向的长期影响力反而下降。短期得利，却动摇自家根基。
+        </div>
+        <div class="chip-status">
+          <div class="status-label">失效模式</div>
+          <div class="status-value">长期影响力受损</div>
+          <div style="margin-top:0.5rem;font-size:0.78rem;color:var(--text-muted)">短期压油价 &rarr; 丧失协调杠杆</div>
+        </div>
+      </div>
+
+      <div class="chip-row">
+        <div class="chip-name">
+          <div class="chip-name-title">牌三：对等关税</div>
+          <div class="chip-name-sub">最高法院裁定越权</div>
+        </div>
+        <div class="chip-logic">
+          2026年2月，美国最高法院裁定特朗普依据《国际紧急经济权力法》加征关税的做法越权。特朗普随后改用1974年贸易法第122条款，但该条款有<strong style="color:var(--text-primary)">15%的上限与150天时限</strong>，无法复制此前随时加码、随时威胁的打法。彼得森国际经济研究所指出，这将影响特朗普在中国谈判中的最终结果。
+        </div>
+        <div class="chip-status">
+          <div class="status-label">失效模式</div>
+          <div class="status-value collapsed">权限被封顶</div>
+          <div style="margin-top:0.5rem;font-size:0.78rem;color:var(--text-muted)">15%上限 / 150天时限</div>
+        </div>
+      </div>
+
+      <div class="chip-row">
+        <div class="chip-name">
+          <div class="chip-name-title">牌四：中东战略</div>
+          <div class="chip-name-sub">推翻伊朗失败</div>
+        </div>
+        <div class="chip-logic">
+          特朗普最初计划拿下委内瑞拉后推翻伊朗，彻底控制中东石油，但推翻伊朗这一步失败。这原本是此次访问最大的筹码，如今反而成为拖累。四张牌中影响最大的一张，从根本上削弱了美方的战略议价能力。
+        </div>
+        <div class="chip-status">
+          <div class="status-label">失效模式</div>
+          <div class="status-value collapsed">最大底牌作废</div>
+          <div style="margin-top:0.5rem;font-size:0.78rem;color:var(--text-muted)">战略受挫 &rarr; 反向拖累</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB: CHINA COUNTERMOVES -->
+    <div class="tab-panel" id="tab-china">
+      <p style="margin-bottom:1.5rem;color:var(--text-muted);font-size:0.88rem">
+        这不是临时应对，而是有系统的布局。每一招都有明确的作用对象与战略意图。
+      </p>
+
+      <div class="counter-grid">
+        <div class="counter-card">
+          <div class="counter-title">阻断禁令首次落地</div>
+          <div class="counter-body">
+            2021年颁布的《阻断外国法律与措施不当域外适用办法》在法律层面存在五年后，此次首次正式启用。要求全球任何组织不得承认、执行或遵守美国对五家石化企业的制裁措施。
+          </div>
+          <div class="counter-target">作用对象：制裁体系的执行链条（银行、航运、保险）</div>
+        </div>
+
+        <div class="counter-card">
+          <div class="counter-title">稀土出口管制</div>
+          <div class="counter-body">
+            收紧稀土出口管制，涵盖芯片制造、新能源汽车电池、军工精密器件、风力发电机永磁体等广泛应用场景。管制收紧后，美国部分工厂出现停产风险。
+          </div>
+          <div class="counter-target">作用对象：美国产业链痛点（半导体、军工、新能源）</div>
+        </div>
+
+        <div class="counter-card">
+          <div class="counter-title">伊朗外长先期访华</div>
+          <div class="counter-body">
+            特朗普抵京前，伊朗外长先期访华。具体成果暂且不论，但传递出明确信号：霍尔木兹海峡的问题，中国手里有钥匙。美国若想解决海峡问题，必须将中国的角色纳入考量。
+          </div>
+          <div class="counter-target">作用对象：中东地缘议价权</div>
+        </div>
+
+        <div class="counter-card">
+          <div class="counter-title">53国非洲零关税</div>
+          <div class="counter-body">
+            宣布对53个非洲建交国全面实施零关税。意义远超贸易政策本身——扩大人民币贸易圈、建立不依赖美元结算的供应网络、降低原材料进口成本、将更多国家引入新世界体系。
+          </div>
+          <div class="counter-target">作用对象：全球结算体系与替代经济圈</div>
+        </div>
+
+        <div class="counter-card">
+          <div class="counter-title">首尔提前磋商</div>
+          <div class="counter-body">
+            将经贸磋商提前安排在首尔进行，把商务议题置于另一场合处理。传递出清晰信号：不要试图以元首级别的仪式感为经贸议题加码，有话按规矩提前谈，到北京只谈结果。
+          </div>
+          <div class="counter-target">作用对象：谈判规则与议程设定权</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB: STRATEGIC CONCLUSION -->
+    <div class="tab-panel" id="tab-conclusion">
+      <div class="quote-block">
+        贸易战、科技战、制裁战，美方每一轮出牌都被中方有效回击，最终不得不坐下来谈。布鲁金斯学会的判断是：特朗普在这几年里吸取了一个重要教训——他能伤害中国，但每次都会招来强烈反击，最终绕不过谈判桌。
+        <cite>&mdash; 布鲁金斯学会，原文引用</cite>
+      </div>
+
+      <div class="card-grid" style="margin-top:1.5rem">
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">从"0到1"到"1到10"</span>
+            <span class="card-tag tag-gold">合理推断</span>
+          </div>
+          <div class="card-body">
+            八年前的格局是"美国出招、中国应对"；如今中方不再被动，而是慢慢开始掌握局部主动权。这不是从0到1的试探，而是中美博弈从1到10的深化。
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">表面与实质的分离</span>
+            <span class="card-tag tag-red">原文明确</span>
+          </div>
+          <div class="card-body">
+            表面上大概率只局限在贸易订单层面——关税休战、农产品采购、波音订单、稀土问题等，属于元首为团队补充业绩的收尾确认。而访问之外的部分才是核心。
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">持久共处新阶段</span>
+            <span class="card-tag tag-teal">合理推断</span>
+          </div>
+          <div class="card-body">
+            双方正正式进入一个基于实力的持久共处新阶段。这不是终局，而是一个过渡期——双方都在利用这个窗口加速内部结构调整。
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- CHINA COUNTERMOVES (standalone section)                       -->
+<!-- ============================================================ -->
+<section class="section" id="countermoves">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-label">China Countermoves</span>
+      <h2 class="section-title">中方组合拳：从被动应对到主动设局</h2>
+      <p class="section-desc">五招组合拳的系统逻辑：攻击执行链条、锁定产业痛点、传递地缘信号、构建替代体系、设定谈判规则</p>
+    </div>
+
+    <div class="counter-grid">
+      <div class="counter-card" style="border-left-color:var(--accent-red)">
+        <div class="counter-title" style="color:var(--accent-red)">第一招：阻断禁令</div>
+        <div class="counter-body">
+          首次启用《阻断外国法律与措施不当域外适用办法》。第三方机构从"自动配合美国"变为"两边计算代价"——配合美国则受中国处罚，不配合美国则受美国处罚。在美国面临伊朗战事受挫、最高法院推翻关税权限、中期选举压力的多重困境下，此时出手效果最佳。
+        </div>
+        <div class="counter-target" style="color:var(--accent-red)">打击目标：制裁执行链条的激励结构</div>
+      </div>
+
+      <div class="counter-card" style="border-left-color:var(--accent-gold)">
+        <div class="counter-title" style="color:var(--accent-gold)">第二招：稀土管制</div>
+        <div class="counter-body">
+          收紧稀土出口管制，覆盖芯片制造、新能源汽车电池、军工精密器件、风力发电永磁体等领域。美国部分工厂出现停产风险。稀土作为最有力的经济杠杆，只要存在便具威慑力。
+        </div>
+        <div class="counter-target" style="color:var(--accent-gold)">打击目标：美国产业链痛点</div>
+      </div>
+
+      <div class="counter-card" style="border-left-color:var(--accent-blue)">
+        <div class="counter-title" style="color:var(--accent-blue)">第三招：伊朗合作</div>
+        <div class="counter-body">
+          伊朗外长先期访华。双方谈了什么暂且不论，但此举明确传递：霍尔木兹海峡的问题，中国手里有钥匙。美国若想解决海峡问题，必须将中国的角色纳入考量。
+        </div>
+        <div class="counter-target" style="color:var(--accent-blue)">打击目标：中东地缘议价权</div>
+      </div>
+
+      <div class="counter-card" style="border-left-color:var(--accent-teal)">
+        <div class="counter-title" style="color:var(--accent-teal)">第四招：非洲零关税</div>
+        <div class="counter-body">
+          对53个非洲建交国全面实施零关税。扩大人民币贸易圈、建立不依赖美元结算的供应网络、降低进口原材料成本、将更多国家引入新世界体系。意义远超单一贸易政策。
+        </div>
+        <div class="counter-target" style="color:var(--accent-teal)">打击目标：全球结算体系重构</div>
+      </div>
+
+      <div class="counter-card" style="border-left-color:var(--text-muted)">
+        <div class="counter-title" style="color:var(--text-primary)">第五招：首尔磋商</div>
+        <div class="counter-body">
+          将经贸磋商提前安排在首尔，把商务议题与元首仪式感脱钩。传递清晰信号：到北京只谈结果，不要试图用仪式感为经贸议题加码。这本身是谈判规则的重新定义。
+        </div>
+        <div class="counter-target" style="color:var(--text-muted)">打击目标：谈判议程设定权</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- STRATEGIC SHIFT                                               -->
+<!-- ============================================================ -->
+<section class="section" id="strategic-shift">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-label">Strategic Shift</span>
+      <h2 class="section-title">从"美国出题、中国答题"到"实力对等硬核博弈"</h2>
+      <p class="section-desc">八年间的博弈范式转移：接待规格、议题重心、谈判主导权的三重变化</p>
+    </div>
+
+    <div class="shift-comparison">
+      <div class="shift-box past">
+        <div class="shift-era red">2017年</div>
+        <div class="shift-desc">"国事访问+"超规格礼遇</div>
+        <div class="shift-detail">
+          以超规格热情换取对方承诺<br>
+          博弈重心：货物贸易与订单<br>
+          美方主导议题设置<br>
+          中国被动应对美方出牌
+        </div>
+      </div>
+      <div class="shift-arrow">&rarr;</div>
+      <div class="shift-box present">
+        <div class="shift-era teal">2026年</div>
+        <div class="shift-desc">标准框架内的对等接待</div>
+        <div class="shift-detail">
+          不再寄希望于热情换承诺<br>
+          博弈重心：资本准入与结算体系<br>
+          中方主动设置议程规则<br>
+          双方带着计算器对账
+        </div>
+      </div>
+    </div>
+
+    <div class="card-grid" style="margin-top:2rem">
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">接待规格降级</span>
+          <span class="card-tag tag-red">原文明确</span>
+        </div>
+        <div class="card-body">
+          2017年"国事访问+" vs 2026年标准框架。安保规格极高（7000-9000万美元移动白宫）与接待规格克制形成张力。双方外交互动已完全进入基于实际利益与对等实力的硬核博弈阶段。
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">议题重心上移</span>
+          <span class="card-tag tag-gold">合理推断</span>
+        </div>
+        <div class="card-body">
+          从货物贸易延伸至资本准入、产业链痛点及全球结算体系的重构。金融机构占代表团近半席位，说明资本市场开放与双边投资规则框架是核心议题。
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">谈判机制理性化</span>
+          <span class="card-tag tag-teal">合理推断</span>
+        </div>
+        <div class="card-body">
+          三条线并行机制成熟：军机前站保障安全，企业高管带着商业诉求入场，财长提前将数字与条款磨清楚，元首会面仅用于宣布已有大体结果后的最终验证。
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- COGNITIVE UPGRADE                                             -->
+<!-- ============================================================ -->
+<section class="section" id="cognitive-upgrade">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-label">Cognitive Upgrade</span>
+      <h2 class="section-title">认知升级：外部筹码 &times; 内部韧性模型</h2>
+      <p class="section-desc">从"外部博弈单变量思维"升级为"复合函数模型"——大国竞争的本质不是手段多寡的比较，而是系统稳定性的耐力赛</p>
+    </div>
+
+    <div class="formula-box">
+      <div class="formula-display">
+        <span class="var-a">博弈优势</span> = <span class="var-b">外部筹码</span> &times; <span class="var-c">内部韧性系数</span>
+      </div>
+      <div class="formula-note">
+        当一方的内部韧性系数低于临界值时，即使外部筹码存量占优，该方也会被迫收缩或让步——因为持续出牌的成本会加速内部脆弱性的暴露。
+        <br><span style="color:var(--accent-blue)">此模型属于创造性延展，需未来12-24个月实际博弈验证</span>
+      </div>
+    </div>
+
+    <div class="model-grid">
+      <div class="model-card">
+        <div class="model-card-header red">外部筹码构成</div>
+        <ul class="model-list">
+          <li>制裁工具与执行链条控制力</li>
+          <li>关税手段与法律权限空间</li>
+          <li>军事存在与地缘投射能力</li>
+          <li>盟友网络与协调机制</li>
+          <li>技术标准与规则制定权</li>
+          <li>金融结算权与货币网络</li>
+        </ul>
+      </div>
+
+      <div class="model-card">
+        <div class="model-card-header teal">内部韧性系数 = f( )</div>
+        <ul class="model-list">
+          <li>经济增长质量与可持续性</li>
+          <li>技术创新速度与自主进度</li>
+          <li>债务可持续性与金融稳定</li>
+          <li>社会凝聚力与政策弹性</li>
+          <li>资源自给率与供应链安全</li>
+          <li>制度适应性与改革执行力</li>
+        </ul>
+      </div>
+
+      <div class="model-card">
+        <div class="model-card-header gold">模型核心主张</div>
+        <ul class="model-list">
+          <li>当前"对等博弈"更可能是过渡期而非终局</li>
+          <li>双方利用窗口加速内部结构调整</li>
+          <li>美方外部筹码衰减但内部韧性存量仍在</li>
+          <li>中方外部筹码增长但内部挑战同样严峻</li>
+          <li>判定标准："筹码增量/内部成本消耗"比值趋势</li>
+          <li>对"终局"判断保持系统性怀疑</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="quote-block" style="margin-top:2rem">
+      一个杠杆很长但支点不稳的国家，可能在短期交锋中占优，但在长期博弈中先达到崩溃阈值。我们天生更容易相信"谁刚出了一张好牌谁就赢了"，而不是"谁的资产负债表更健康谁就更能熬"。
+      <cite>&mdash; 认知盲区分析，创造性延展</cite>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- EVIDENCE BOUNDARY                                             -->
+<!-- ============================================================ -->
+<section class="section" id="evidence">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-label">Evidence Boundary</span>
+      <h2 class="section-title">证据边界：来源层级标记</h2>
+      <p class="section-desc">所有关键判断均按来源可靠性分层标记，不做推断包装为事实</p>
+    </div>
+
+    <div style="overflow-x:auto">
+      <table class="evidence-table">
+        <thead>
+          <tr>
+            <th style="width:25%">判断/陈述</th>
+            <th style="width:45%">内容</th>
+            <th style="width:15%">来源层级</th>
+            <th style="width:15%">强度</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>安保规格数据</strong></td>
+            <td>C-17运输机10-15架次、安保成本7000-9000万美元、移动手术室</td>
+            <td><span class="evidence-badge badge-confirmed">原文明确</span></td>
+            <td>中</td>
+          </tr>
+          <tr>
+            <td><strong>接待规格变化</strong></td>
+            <td>2017年"国事访问+" vs 2026年标准框架</td>
+            <td><span class="evidence-badge badge-confirmed">原文明确</span></td>
+            <td>中</td>
+          </tr>
+          <tr>
+            <td><strong>代表团构成</strong></td>
+            <td>16位CEO名单、四大板块分类</td>
+            <td><span class="evidence-badge badge-confirmed">原文明确</span></td>
+            <td>中</td>
+          </tr>
+          <tr>
+            <td><strong>议题重心上移</strong></td>
+            <td>从货物贸易延伸至资本准入与全球结算体系</td>
+            <td><span class="evidence-badge badge-inferred">合理推断</span></td>
+            <td>中</td>
+          </tr>
+          <tr>
+            <td><strong>三条线验证模型</strong></td>
+            <td>军机前站、企业订单、财长磋商三线并行，元首仅做最终验证</td>
+            <td><span class="evidence-badge badge-inferred">合理推断</span></td>
+            <td>中上</td>
+          </tr>
+          <tr>
+            <td><strong>美方四张牌内容</strong></td>
+            <td>石化制裁、欧佩克干预、对等关税、中东战略</td>
+            <td><span class="evidence-badge badge-confirmed">原文明确</span></td>
+            <td>中</td>
+          </tr>
+          <tr>
+            <td><strong>四张牌失效逻辑</strong></td>
+            <td>结构性坍缩判断——不可逆衰减</td>
+            <td><span class="evidence-badge badge-inferred">合理推断</span></td>
+            <td>中</td>
+          </tr>
+          <tr>
+            <td><strong>最高法院关税裁定</strong></td>
+            <td>裁定越权；122条款有15%上限与150天时限</td>
+            <td><span class="evidence-badge badge-confirmed">原文明确</span></td>
+            <td>中上</td>
+          </tr>
+          <tr>
+            <td><strong>中方组合拳内容</strong></td>
+            <td>阻断禁令、稀土管制、伊朗外长访华、非洲零关税、首尔磋商</td>
+            <td><span class="evidence-badge badge-confirmed">原文明确</span></td>
+            <td>中</td>
+          </tr>
+          <tr>
+            <td><strong>组合拳为系统性布局</strong></td>
+            <td>预先设计的系统性布局而非临时应对</td>
+            <td><span class="evidence-badge badge-inferred">合理推断</span></td>
+            <td>中</td>
+          </tr>
+          <tr>
+            <td><strong>战略易位判断</strong></td>
+            <td>中美博弈从"美国出题"进入"实力对等硬核博弈"</td>
+            <td><span class="evidence-badge badge-inferred">合理推断</span></td>
+            <td>中</td>
+          </tr>
+          <tr>
+            <td><strong>复合函数模型</strong></td>
+            <td>博弈优势 = 外部筹码 &times; 内部韧性系数</td>
+            <td><span class="evidence-badge badge-creative">创造性延展</span></td>
+            <td>待验证</td>
+          </tr>
+          <tr>
+            <td><strong>过渡期判断</strong></td>
+            <td>"对等硬核博弈"是过渡期而非终局</td>
+            <td><span class="evidence-badge badge-creative">创造性延展</span></td>
+            <td>待验证</td>
+          </tr>
+          <tr>
+            <td><strong>具体谈判成果</strong></td>
+            <td>访问期间达成的实际协议与条款</td>
+            <td><span class="evidence-badge badge-unknown">信息不足</span></td>
+            <td>N/A</td>
+          </tr>
+          <tr>
+            <td><strong>阻断令执行数据</strong></td>
+            <td>第三方机构（银行、航运）的真实响应与合规行为</td>
+            <td><span class="evidence-badge badge-unknown">信息不足</span></td>
+            <td>N/A</td>
+          </tr>
+          <tr>
+            <td><strong>稀土管制量化影响</strong></td>
+            <td>对美国产业链的具体停产规模与损失数据</td>
+            <td><span class="evidence-badge badge-unknown">信息不足</span></td>
+            <td>N/A</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- OPEN QUESTIONS                                                -->
+<!-- ============================================================ -->
+<section class="section" id="open-questions">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-label">Open Questions</span>
+      <h2 class="section-title">开放问题：后续需要验证</h2>
+      <p class="section-desc">以下问题无法从源材料回答，需要额外证据与持续跟踪</p>
+    </div>
+
+    <ul class="question-list">
+      <li class="question-item">
+        <span class="question-num">Q1</span>
+        <div>
+          <div class="question-text">中方接待规格决策的真实考量——是实力信号、外交策略调整，还是针对特朗普个人风格的战术回应？</div>
+          <div class="question-meta">需外交系统内部文件或权威回忆录验证</div>
+        </div>
+      </li>
+      <li class="question-item">
+        <span class="question-num">Q2</span>
+        <div>
+          <div class="question-text">五轮前置磋商（日内瓦、伦敦、斯德哥尔摩、马德里、吉隆坡）的具体内容与分歧点是什么？</div>
+          <div class="question-meta">需双方外交部门官方声明或权威媒体报道</div>
+        </div>
+      </li>
+      <li class="question-item">
+        <span class="question-num">Q3</span>
+        <div>
+          <div class="question-text">阻断禁令首次启用后，第三方机构（欧洲银行、国际航运、保险）的真实合规行为与法律响应如何？</div>
+          <div class="question-meta">需涉及机构的合规行为数据或法律诉讼记录</div>
+        </div>
+      </li>
+      <li class="question-item">
+        <span class="question-num">Q4</span>
+        <div>
+          <div class="question-text">稀土管制对美国产业链的量化影响——具体停产规模、替代供应进展、损失评估数据？</div>
+          <div class="question-meta">需美国商务部、能源部或行业协会产业数据</div>
+        </div>
+      </li>
+      <li class="question-item">
+        <span class="question-num">Q5</span>
+        <div>
+          <div class="question-text">中方组合拳各项措施的时间协调是否确实为预先设计，还是对美方施压的应激反应？</div>
+          <div class="question-meta">需中方决策过程的时间线与内部协调证据</div>
+        </div>
+      </li>
+      <li class="question-item">
+        <span class="question-num">Q6</span>
+        <div>
+          <div class="question-text">特朗普政府内部对华策略的实际分歧——四张牌是否为统一意志，还是不同派系各自出牌？</div>
+          <div class="question-meta">需白宫内部文件、高级官员访谈或深度调查报道</div>
+        </div>
+      </li>
+      <li class="question-item">
+        <span class="question-num">Q7</span>
+        <div>
+          <div class="question-text">伊朗外长访华的具体议题与成果——是否涉及海峡安全承诺、能源协议或军事技术合作？</div>
+          <div class="question-meta">需双方外交通报或权威国际媒体报道</div>
+        </div>
+      </li>
+      <li class="question-item">
+        <span class="question-num">Q8</span>
+        <div>
+          <div class="question-text">"复合函数模型"是否比单变量筹码模型更具解释力？哪一方先因国内压力在关键议题上让步？</div>
+          <div class="question-meta">需未来12-24个月实际博弈结果验证（让步顺序、技术分化、货币网络、盟友可靠性、内部信号）</div>
+        </div>
+      </li>
+    </ul>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- FOOTER                                                        -->
+<!-- ============================================================ -->
+<footer class="report-footer">
+  <div class="container">
+    <p>本报告基于本地材料分析生成，仅供战略研判参考</p>
+    <p style="margin-top:0.5rem">分析路由：深度分析 &rarr; 思想精炼 &rarr; 认知升级 | 分析日期：2026-05-14</p>
+  </div>
+</footer>
+
+<!-- ============================================================ -->
+<!-- JAVASCRIPT                                                    -->
+<!-- ============================================================ -->
+<script>
+// Tab switching
+(function() {
+  var tabBtns = document.querySelectorAll('.tab-btn');
+  var tabPanels = document.querySelectorAll('.tab-panel');
+  tabBtns.forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      var tabId = this.getAttribute('data-tab');
+      tabBtns.forEach(function(b) { b.classList.remove('active'); });
+      tabPanels.forEach(function(p) { p.classList.remove('active'); });
+      this.classList.add('active');
+      var target = document.getElementById(tabId);
+      if (target) target.classList.add('active');
+    });
+  });
+})();
+
+// Active nav link on scroll
+(function() {
+  var sections = document.querySelectorAll('section[id]');
+  var navLinks = document.querySelectorAll('.nav-link');
+  function onScroll() {
+    var scrollPos = window.scrollY + 80;
+    sections.forEach(function(sec) {
+      if (scrollPos >= sec.offsetTop && scrollPos < sec.offsetTop + sec.offsetHeight) {
+        navLinks.forEach(function(link) {
+          link.classList.remove('active');
+          if (link.getAttribute('href') === '#' + sec.id) {
+            link.classList.add('active');
+          }
+        });
+      }
+    });
+  }
+  window.addEventListener('scroll', onScroll);
+  onScroll();
+})();
+
+// Mobile nav auto-close on link click
+(function() {
+  var navLinks = document.querySelectorAll('.nav-link');
+  var navLinksContainer = document.getElementById('navLinks');
+  navLinks.forEach(function(link) {
+    link.addEventListener('click', function() {
+      if (navLinksContainer) navLinksContainer.classList.remove('open');
+    });
+  });
+})();
+
+// Smooth scroll for all anchor links
+document.querySelectorAll('a[href^="#"]').forEach(function(anchor) {
+  anchor.addEventListener('click', function(e) {
+    e.preventDefault();
+    var target = document.querySelector(this.getAttribute('href'));
+    if (target) {
+      var offset = target.getBoundingClientRect().top + window.pageYOffset - 60;
+      window.scrollTo({ top: offset, behavior: 'smooth' });
+    }
+  });
+});
+</script>
+
+</body>
+</html>
