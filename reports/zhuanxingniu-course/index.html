@@ -1,0 +1,768 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>迎转型牛，重在交易 · 互动课堂</title>
+<meta name="description" content="把一篇 2026 年三季度 A 股投资策略演讲，拆成循序渐进的互动课程：定位牛、三因子、仓位结构、反身性、风险偏好。">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<!-- 全局 SVG 图标 -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-person" viewBox="0 0 24 24">
+    <circle cx="12" cy="7.5" r="4" fill="none" stroke="currentColor" stroke-width="2"/>
+    <path d="M4.5 20.5c0-4 3.4-6.5 7.5-6.5s7.5 2.5 7.5 6.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+  </symbol>
+</svg>
+
+<div class="scroll-progress" id="scrollProgress"></div>
+
+<!-- ================= 导航 ================= -->
+<nav class="nav" id="nav">
+  <div class="nav-inner">
+    <a class="nav-brand" href="#hero"><span class="seal-mini">转型<br>牛</span><span class="txt">迎转型牛 · 互动课堂</span></a>
+    <div class="nav-links" id="navLinks">
+      <a href="#ch1" data-spy-link="ch1">一 · 定位</a>
+      <a href="#ch2" data-spy-link="ch2">二 · 三因子</a>
+      <a href="#ch3" data-spy-link="ch3">三 · 仓位</a>
+      <a href="#ch4" data-spy-link="ch4">四 · 箱体</a>
+      <a href="#ch5" data-spy-link="ch5">五 · 流向</a>
+      <a href="#final" data-spy-link="final">总结</a>
+    </div>
+    <span class="nav-pct" id="navPct">0%</span>
+  </div>
+</nav>
+
+<!-- ================= Hero ================= -->
+<header class="hero" id="hero" data-spy="hero">
+  <div class="hero-bg"><div class="hero-grid"></div></div>
+  <div class="container">
+    <span class="hero-kicker"><span class="dot"></span>互动课堂 · 2026 年三季度中国权益资产投资策略</span>
+    <h1 class="hero-title">
+      <span class="line"><span>迎<span class="accent">转型牛</span>，</span></span>
+      <span class="line"><span>重在<span class="accent">交易</span></span></span>
+    </h1>
+    <p class="hero-tagline">
+      牛市还在，但它的性质变了——不再是买入持有就能躺赢的牛市，<strong>节奏的分寸</strong>变得前所未有地重要。
+      这门课把一场策略会演讲拆成 5 章互动小课：不靠听讲，靠<strong>动手</strong>学会。
+    </p>
+    <div class="hero-cta">
+      <a class="btn btn-primary" href="#ch1">开始第一课 ↓</a>
+      <a class="btn" href="#map">先看课程地图</a>
+    </div>
+    <div class="hero-stats">
+      <div class="hero-stat"><span class="num">5</span><div class="lbl">章正课</div></div>
+      <div class="hero-stat"><span class="num">10</span><div class="lbl">个互动实验</div></div>
+      <div class="hero-stat"><span class="num">10</span><div class="lbl">道检查点</div></div>
+      <div class="hero-stat"><span class="num">~25</span><div class="lbl">分钟</div></div>
+    </div>
+
+    <div class="question-cards" id="qCards">
+      <div class="q-card">
+        <span class="q-no">问题 01</span>
+        <h3>牛市到底还有没有？</h3>
+        <p>科技股从 7 月一路跌，牛市是不是已经没了？——第一章回答。</p>
+      </div>
+      <div class="q-card">
+        <span class="q-no">问题 02</span>
+        <h3>一切都好好的，为什么跌这么多？</h3>
+        <p>外部没出大事，也没人打仗，A 股为什么跌？——第二、三章回答。</p>
+      </div>
+      <div class="q-card">
+        <span class="q-no">问题 03</span>
+        <h3>站在当下，该看什么、做什么？</h3>
+        <p>继续拿着原品种，还是转型买点别的？——第四、五章回答。</p>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- ================= 课程地图 ================= -->
+<section id="map" data-spy="map">
+  <div class="container">
+    <span class="eyebrow reveal">课程地图</span>
+    <h2 class="chapter-title blur-reveal">这门课怎么上</h2>
+    <p class="chapter-sub reveal">每章一个核心概念，固定节奏：<strong>先看懂 → 再动手实验 → 最后过检查点</strong>。概念不懂没关系，实验玩着玩着就懂了。</p>
+
+    <div class="grid-3" style="margin-top:36px">
+      <div class="card reveal">
+        <span class="tag tag-up">第一章</span>
+        <h3 style="margin-top:14px">转型牛：转的是市场定位</h3>
+        <p>政策想让股市解决什么问题？从「缺生产」到「缺需求」，资本市场从融资市场变成内需市场。</p>
+        <p style="font-size:.82rem;color:var(--text-tertiary)">实验：时间滑块 · 信贷模拟器 · 政策措辞时间轴</p>
+      </div>
+      <div class="card reveal">
+        <span class="tag tag-up">第二章</span>
+        <h3 style="margin-top:14px">三因子：这次到底什么变了</h3>
+        <p>盈利、利率、风险——判断市场的通用框架。逐项核对后你会发现：三个都没变。</p>
+        <p style="font-size:.82rem;color:var(--text-tertiary)">实验：三因子仪表盘</p>
+      </div>
+      <div class="card reveal">
+        <span class="tag tag-up">第三章</span>
+        <h3 style="margin-top:14px">仓位：极端拥挤与踩踏</h3>
+        <p>满仓的人其实是空头。70% 的人满仓科技时，一个莫须有的利空就够了。</p>
+        <p style="font-size:.82rem;color:var(--text-tertiary)">实验：仓位天平 · 十人会场 · 反身性螺旋</p>
+      </div>
+      <div class="card reveal">
+        <span class="tag tag-up">第四章</span>
+        <h3 style="margin-top:14px">科技股的两条路</h3>
+        <p>放巨量拉升看不见了，市场选择用时间换空间：箱体震荡。那就练一手高抛低吸。</p>
+        <p style="font-size:.82rem;color:var(--text-tertiary)">实验：箱体交易练习</p>
+      </div>
+      <div class="card reveal">
+        <span class="tag tag-up">第五章</span>
+        <h3 style="margin-top:14px">资金往哪流</h3>
+        <p>风险偏好下移，钱从高往低流。三个方向：红利、微盘、业绩线索。</p>
+        <p style="font-size:.82rem;color:var(--text-tertiary)">实验：风险光谱归类 · 半年报筛选器</p>
+      </div>
+      <div class="card reveal">
+        <span class="tag tag-gold">终章</span>
+        <h3 style="margin-top:14px">三个问题的答案</h3>
+        <p>先自己作答，再揭晓作者的答案。集齐 5 个检查点，盖一枚「节奏大师」印章。</p>
+        <p style="font-size:.82rem;color:var(--text-tertiary)">自答卡 × 3 · 结业印章</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= 第一章 ================= -->
+<section id="ch1" class="section-alt" data-spy="ch1">
+  <div class="container">
+    <span class="eyebrow reveal">第一章 · 牛市还在吗</span>
+    <h2 class="chapter-title blur-reveal"><span class="ch-no">01</span>转型牛，转的是市场的定位</h2>
+    <p class="chapter-sub reveal">答案先给你：<strong>牛市还在</strong>。但它从「买入持有躺赢」变成了「重在交易」。要看懂为什么，先看懂一件事——在中国做投资，先看<span class="note-term" data-note="国家的政策想扶持还是打压这件事。扶持，多半没问题；打压，威力非常大——前几年的教培行业，政策一出，整个行业直接没了。">政策的意志</span>。</p>
+
+    <div class="container-narrow" style="padding:0">
+      <p class="reveal">股市的机会，本质上是看：<strong>政策要用股市解决今天中国经济的什么问题</strong>。股市对宏观经济有用，政策就扶持；资本市场起反作用（比如疯牛让大家把钱全搬进股市），就有风险。所以「还有没有牛市」这个问题，要拆成两步：今天的经济缺什么？股市在其中扮演什么角色？</p>
+    </div>
+
+    <!-- W1 时间滑块 -->
+    <div class="widget reveal" data-badge="实验 1 · 拖一拖" id="w1">
+      <div class="widget-head">
+        <h3>核心矛盾之变：从「缺生产」到「缺需求」</h3>
+        <p>拖动时间轴，看中国宏观经济的核心矛盾、以及资本市场的任务如何跟着变。</p>
+      </div>
+      <input type="range" id="eraRange" min="0" max="2" step="1" value="2" aria-label="时间轴：2001 到 2026">
+      <div class="era-labels"><span data-era="0">2001 入世</span><span data-era="1">2018 贸易战</span><span data-era="2" class="on">2026 当下</span></div>
+      <div class="era-panels" id="eraPanels">
+        <div class="era-cell"><div class="k">核心矛盾</div><div class="v" id="eraV1"></div><p class="d" id="eraD1"></p></div>
+        <div class="era-cell"><div class="k">资本市场的任务</div><div class="v" id="eraV2"></div><p class="d" id="eraD2"></p></div>
+        <div class="era-cell"><div class="k">你能看到的现象</div><div class="v" id="eraV3"></div><p class="d" id="eraD3"></p></div>
+      </div>
+      <div class="era-balance">
+        <span class="pole left">生产端</span>
+        <div class="era-track"><div class="era-knob" id="eraKnob"></div></div>
+        <span class="pole right">需求端</span>
+      </div>
+      <div class="widget-foot">一句话：<span class="hl">矛盾从生产端滑向需求端，资本市场的定位就从「服务融资」转向「服务内需」。</span></div>
+    </div>
+
+    <!-- 上中下游政策图谱 -->
+    <div class="h3-block reveal"><span class="no">1.2</span><h3>上中下游政策图谱</h3><span class="rule"></span></div>
+    <p class="reveal">理解政策，按上游（原材料）、中游（制造设备）、下游（消费）三层看。点开每一层：</p>
+    <div class="grid-3">
+      <details class="card reveal" style="padding:0">
+        <summary style="padding:24px;cursor:pointer;font:700 1.05rem var(--font-heading);list-style:none">上游 · 煤炭的转身 <span class="tag" style="float:right">点开</span></summary>
+        <div style="padding:0 24px 24px">
+          <p style="font-size:.9rem">供给侧改革压产能，再叠加「碳达峰、碳中和」——两条政策延续多年，煤炭产能大降。</p>
+          <p style="font-size:.9rem">后果：新能源供电不稳——夏天江浙沪空调只能开 26 度，东北有人坐电梯突然断电。于是国家表态：发展新能源，也要<strong>重视传统能源</strong>（煤电随开随停，而煤不是想挖就能挖）。</p>
+          <p style="font-size:.9rem;margin:0"><strong>结果：煤炭从强周期股，变成了今天的红利资产。</strong></p>
+        </div>
+      </details>
+      <details class="card reveal" style="padding:0">
+        <summary style="padding:24px;cursor:pointer;font:700 1.05rem var(--font-heading);list-style:none">中游 · 高质量=出清 <span class="tag" style="float:right">点开</span></summary>
+        <div style="padding:0 24px 24px">
+          <p style="font-size:.9rem">「高质量发展」做个反义词就懂了：低质量的要出清。所以行业越干越卷——国家本就在淘汰末端产能。</p>
+          <p style="font-size:.9rem">配套动作：并购重组（大吃小）、反内卷（清只靠价格战的小企业）、统一大市场（针对的是<strong>地方政府的税收补贴和地方保护</strong>，不是回到计划经济）。</p>
+          <p style="font-size:.9rem;margin:0">被扶持的只有两类：<strong>高质量发展</strong>的，和<strong>高水平科技自立自强</strong>的。</p>
+        </div>
+      </details>
+      <details class="card reveal" style="padding:0">
+        <summary style="padding:24px;cursor:pointer;font:700 1.05rem var(--font-heading);list-style:none">下游 · 反复提内需 <span class="tag" style="float:right">点开</span></summary>
+        <div style="padding:0 24px 24px">
+          <p style="font-size:.9rem">与生产有关的政策全是「优中选优、压产能」；反复提的只有<strong>内需，就是消费</strong>。</p>
+          <p style="font-size:.9rem">配套到资本市场：IPO 收紧（能上的基本是硬科技）、<strong>上市公司必须分红</strong>（以前没有过）——要给老百姓增收。</p>
+          <p style="font-size:.9rem;margin:0">内需起来了吗？上个月上海社零单月 <span class="num down">-7%</span>。压力这么大，<strong>政策出手打击市场的概率非常低</strong>。</p>
+        </div>
+      </details>
+    </div>
+
+    <div class="board reveal">回顾历史：政策拐点一定是先导性的。2007 年——提准、加息、上调印花税，一路干下来；2015 年——降两融担保比例、清配资，股市掉下来。<span class="hl">现在没有这样的政策，反而在说「提升」。</span></div>
+
+    <!-- W2 信贷模拟器 -->
+    <div class="h3-block reveal"><span class="no">1.3</span><h3>通缩的本质是信贷，新的抵押物是资本市场</h3><span class="rule"></span></div>
+    <p class="reveal">今天中国最大的问题是<span class="note-term" data-note="CPI 起不来。通胀是钱多了、钱不值钱；通缩反过来——除了钱，其他东西都不值钱。物价跌、工资跌，都是这个状况。">通缩</span>。为什么会通缩？因为流入社会的货币变少了。而货币过去是靠什么创造的？<strong>靠房子，靠信贷</strong>。动手试一下：</p>
+
+    <div class="widget reveal" data-badge="实验 2 · 调一调" id="w2">
+      <div class="widget-head">
+        <h3>信贷模拟器：买一套房，钱是怎么被「创造」出来的</h3>
+        <p>房价固定 300 万。拖动首付比例，看银行放出了多少信贷——那才是市场上真正多出来的钱。</p>
+      </div>
+      <div class="credit-grid">
+        <div>
+          <label for="dpSlider" style="font:700 .9rem var(--font-body)">首付比例：<span class="num" id="dpPct">30%</span></label>
+          <input type="range" id="dpSlider" min="10" max="50" step="5" value="30">
+          <div class="credit-nums">
+            <div class="credit-row"><span class="name">你的首付</span><div class="bar"><i id="barSelf" style="background:var(--border-strong)"></i></div><span class="val" id="dpSelf">90 万</span></div>
+            <div class="credit-row"><span class="name">银行放出信贷</span><div class="bar"><i id="barBank" style="background:var(--accent)"></i></div><span class="val up" id="dpBank">210 万</span></div>
+            <div class="credit-row"><span class="name">市场新增的钱</span><div class="bar"><i id="barNew" style="background:var(--gold)"></i></div><span class="val" id="dpNew">210 万</span></div>
+          </div>
+        </div>
+        <div>
+          <p style="font-size:.92rem">现在房子这个「抵押物发动机」熄火了——这几年房地产总市值跌掉了 <span class="num down">100+ 万亿</span>。没概念？对比一下：</p>
+          <div class="cmp-bars">
+            <div class="cmp-bar"><div class="lbl"><span>房地产蒸发的市值</span><span class="num down">≈100+ 万亿</span></div><div class="track"><div class="fill evap" id="fillEvap" style="width:0"></div></div></div>
+            <div class="cmp-bar"><div class="lbl"><span>A 股全市场总市值</span><span class="num up">≈115 万亿</span></div><div class="track"><div class="fill astock" id="fillAstock" style="width:0"></div></div></div>
+          </div>
+          <p style="font-size:.92rem;margin-top:14px;margin-bottom:0">相当于<strong>蒸发掉了一整个 A 股</strong>。去年出生人口仅 <span class="num">792 万</span>，没有人口支撑，房子很难再当抵押物——新的抵押物只能是你手里的：<strong>股票、债券、商品</strong>。</p>
+        </div>
+      </div>
+      <div class="widget-foot">所以资本市场成了<span class="hl">没办法绕开的地方</span>：无论修复经济还是修复老百姓的资产负债表，政策都必须盯着它。</div>
+    </div>
+
+    <!-- W3 政策时间轴 -->
+    <div class="h3-block reveal"><span class="no">1.4</span><h3>把 924 以来的政策措辞连起来看</h3><span class="rule"></span></div>
+    <p class="reveal">政府对资本市场说的每句话都有位置信息。逐个点开，品一品措辞：</p>
+
+    <div class="widget reveal" data-badge="实验 3 · 点一点" id="w3">
+      <div class="timeline" id="tlNodes">
+        <button class="tl-node" data-idx="0"><span class="dot"></span><span class="t">2024.09</span><span class="w">努力提振</span></button>
+        <button class="tl-node" data-idx="1"><span class="dot"></span><span class="t">2025.04</span><span class="w">持续稳定和活跃</span></button>
+        <button class="tl-node" data-idx="2"><span class="dot"></span><span class="t">2025.07</span><span class="w">巩固</span></button>
+        <button class="tl-node" data-idx="3"><span class="dot"></span><span class="t">2025.10–12</span><span class="w">只字不提</span></button>
+        <button class="tl-node" data-idx="4"><span class="dot"></span><span class="t">2026.04</span><span class="w">稳定和增强信心</span></button>
+      </div>
+      <div class="tl-detail" id="tlDetail">
+        <div class="quote" id="tlQuote"></div>
+        <p class="plain" id="tlPlain"></p>
+        <p class="pos" id="tlPos"></p>
+      </div>
+      <div class="widget-foot">连起来品：<span class="hl">提振 → 稳住别跌 → 刚从底下爬起来 → 恢复正常 → 后面应还有高点。</span>资本市场只是行至中途。</div>
+    </div>
+
+    <div class="card reveal" style="border-left:4px solid var(--gold)">
+      <h3 style="font-size:1rem">附：经济措辞也在给信号</h3>
+      <p style="font-size:.92rem">4 月讲「稳中向好」，7 月 30 日的会议讲「困难挑战」——公文里这四个字很难得。原因：一季度名义 GDP 增速 <span class="num">5.25%</span>，二季度掉到 <span class="num down">4.3%</span>，跌破全年 <span class="num">4.5%–5%</span> 的下限。政策用词力度有排序：<strong>超常规逆周期 &gt; 逆周期 &gt; 跨周期</strong>（跨周期=当下不发力）。重提「逆周期」，意味着经济往下掉、政策要给更多。</p>
+    </div>
+
+    <div class="board reveal">为什么国家要的是「慢牛」？这轮牛市要配合完成从生产端到需求端的转型。2015 年那种半年涨完的行情，6 个月完不成转型——<span class="hl">股市多涨几年，国家就有几年时间同步完成转型</span>。</div>
+
+    <!-- Quiz 1 -->
+    <div class="quiz reveal" data-quiz="1">
+      <div class="quiz-q">
+        <div class="q-title"><span class="qn">Q1</span>「转型牛」的转型，转的是什么？</div>
+        <button class="quiz-option" data-correct="0">从科技股转到红利股——所以科技股要赶紧全卖掉</button>
+        <button class="quiz-option" data-correct="1">资本市场的定位——从服务融资、服务生产，转向服务内需、消费与股东回报</button>
+        <button class="quiz-option" data-correct="0">从牛市转成熊市——牛市已经没有了</button>
+        <div class="quiz-explain">转型转的是「市场定位」。融资→内需消费，是最大的转变；所以这轮牛市的本质是一轮「定位牛」——政策要用资本市场解决内需不足与居民增收，不会轻易打压它。</div>
+      </div>
+      <div class="quiz-q">
+        <div class="q-title"><span class="qn">Q2</span>为什么判断「政策这时候大概率不会打压市场」？</div>
+        <button class="quiz-option" data-correct="0">因为市场已经过热，需要再火上浇油</button>
+        <button class="quiz-option" data-correct="1">因为内需和消费仍然疲弱（上海社零单月 -7%），政策需要资本市场帮忙增收、提振消费</button>
+        <button class="quiz-option" data-correct="0">因为外资不允许</button>
+        <div class="quiz-explain">回顾历史，市场拐点的政策一定是先导性的（2007 提准加息上调印花税、2015 清配资）。现在没有这样的政策，措辞反而是「稳定」「提升」——说明市场行至中途，后续还应有高点。</div>
+      </div>
+      <div class="quiz-status"><span class="quiz-count">0 / 2 已答对</span><span class="stamp-ok"></span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= 第二章 ================= -->
+<section id="ch2" data-spy="ch2">
+  <div class="container">
+    <span class="eyebrow reveal">第二章 · 7 月以来到底发生了什么</span>
+    <h2 class="chapter-title blur-reveal"><span class="ch-no">02</span>三因子框架：盈利、利率、风险</h2>
+    <p class="chapter-sub reveal">判断一个市场能不能买，买方卖方通用的框架就三个东西。先逐个看懂，再亲手核对——7 月大跌，到底哪个变了。</p>
+
+    <div class="grid-3" style="margin-top:32px">
+      <div class="card reveal">
+        <span class="tag">分子</span>
+        <h3 style="margin-top:12px">盈利</h3>
+        <p style="font-size:.92rem">公司赚钱越多，股价越该贵。赚钱越来越多而股价不涨，它就会被人收购。这是价值投资日常关心的东西。</p>
+      </div>
+      <div class="card reveal">
+        <span class="tag">分母 · 负相关</span>
+        <h3 style="margin-top:12px">利率</h3>
+        <p style="font-size:.92rem">假设明天工行把一年定存从 <span class="num">0.95%</span> 调到 <span class="num up">6%</span>，你炒股还是存钱？全卖股票去存钱——定存啥也不用干就有 6%。90 年代定存利率到过 10% 以上（还有保值贴补），那种环境股市涨不了。</p>
+      </div>
+      <div class="card reveal">
+        <span class="tag">负相关</span>
+        <h3 style="margin-top:12px">风险</h3>
+        <p style="font-size:.92rem">假设明天开战，你是现在挂跌停板，还是等明天再说？肯定是先挂跌停。<strong>风险越大，股价越跌。</strong></p>
+      </div>
+    </div>
+
+    <!-- W4 三因子仪表盘 -->
+    <div class="widget reveal" data-badge="实验 4 · 拨一拨" id="w4">
+      <div class="widget-head">
+        <h3>三因子仪表盘</h3>
+        <p>每个因子拨到「上调 / 没变 / 下调」，看股价方向的推演。拨完后点「代入 7 月以来的真实读数」。</p>
+      </div>
+      <div class="factor-rows">
+        <div class="factor-row" data-factor="profit">
+          <div><span class="fname">盈利</span><span class="fhint">宏观基本面、企业赚钱能力</span></div>
+          <div class="seg" role="group" aria-label="盈利变化">
+            <button data-v="up">↑ 变好</button><button data-v="flat" class="on">— 没变</button><button data-v="down">↓ 变差</button>
+          </div>
+          <span class="fstate">中性</span>
+        </div>
+        <div class="factor-row" data-factor="rate">
+          <div><span class="fname">利率</span><span class="fhint">在分母上，与股价负相关</span></div>
+          <div class="seg" role="group" aria-label="利率变化">
+            <button data-v="up">↑ 上行</button><button data-v="flat" class="on">— 没变</button><button data-v="down">↓ 下行</button>
+          </div>
+          <span class="fstate">中性</span>
+        </div>
+        <div class="factor-row" data-factor="risk">
+          <div><span class="fname">风险</span><span class="fhint">战争、冲击等避险情绪</span></div>
+          <div class="seg" role="group" aria-label="风险变化">
+            <button data-v="up">↑ 上升</button><button data-v="flat" class="on">— 没变</button><button data-v="down">↓ 下降</button>
+          </div>
+          <span class="fstate">中性</span>
+        </div>
+      </div>
+      <div style="margin-top:18px;display:flex;gap:12px;flex-wrap:wrap">
+        <button class="btn btn-primary btn-sm" id="factorPreset">代入 7 月以来的真实读数</button>
+        <button class="btn btn-sm" id="factorReset">重置</button>
+      </div>
+      <div class="factor-result" id="factorResult">
+        <span class="arrow" id="frArrow">→</span>
+        <span class="verdict" id="frVerdict">三个因子都是中性，股价没有方向性理由</span>
+        <p class="why" id="frWhy">拨动上面的开关，或代入真实读数。</p>
+        <div class="reveal-pos" id="frReveal">盈利没变、利率没变（美债只涨了零点几个百分点）、风险没变——<b>那变的是什么？是仓位。</b>这次市场交易的东西，不在基本面里面。下一章就讲它。</div>
+      </div>
+    </div>
+
+    <!-- Quiz 2 -->
+    <div class="quiz reveal" data-quiz="2">
+      <div class="quiz-q">
+        <div class="q-title"><span class="qn">Q1</span>三因子中，利率和股价的关系是？</div>
+        <button class="quiz-option" data-correct="0">正相关——利率越高股价越涨</button>
+        <button class="quiz-option" data-correct="1">负相关——利率在分母上；定存真到 6%，大家会全卖股票去存钱</button>
+        <button class="quiz-option" data-correct="0">毫无关系</button>
+        <div class="quiz-explain">利率是机会成本。90 年代一年期定存 10% 以上加保值贴补，那种环境下股市涨不了；反过来，利率走低时股票的相对吸引力就上升。</div>
+      </div>
+      <div class="quiz-q">
+        <div class="q-title"><span class="qn">Q2</span>7 月以来市场大跌，三因子的实际变化是？</div>
+        <button class="quiz-option" data-correct="0">盈利大幅下滑、行业景气崩塌</button>
+        <button class="quiz-option" data-correct="0">利率从 0.95% 飙到 6%</button>
+        <button class="quiz-option" data-correct="1">三个都没大变——变的是第四个东西：仓位（交易结构）</button>
+        <div class="quiz-explain">大厂资本开支依然在上调加速（基本面没变）；美债只涨了零点几个百分点（利率没变）；中美没开战（风险没变）。所以下跌的原因不在基本面，在交易。</div>
+      </div>
+      <div class="quiz-status"><span class="quiz-count">0 / 2 已答对</span><span class="stamp-ok"></span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= 第三章 ================= -->
+<section id="ch3" class="section-alt" data-spy="ch3">
+  <div class="container">
+    <span class="eyebrow reveal">第三章 · 本次课的核心</span>
+    <h2 class="chapter-title blur-reveal"><span class="ch-no">03</span>仓位：极端拥挤与反身性</h2>
+    <p class="chapter-sub reveal">一个月前有人说「这是人类的黄金时代」；一个月后大家只想「炒股炒到回本」。一个月发生了什么？先做一个思想实验。</p>
+
+    <!-- W5 仓位天平 -->
+    <div class="widget reveal" data-badge="实验 5 · 拉一拉 · 本课最重要" id="w5">
+      <div class="widget-head">
+        <h3>仓位天平：全市场只有两种极端</h3>
+        <p>拖动滑块，改变「全市场的股票仓位」，看两种极端下市场会怎么走。</p>
+      </div>
+      <div class="pos-readout"><span style="font:700 .9rem var(--font-body)">全市场股票仓位</span><span class="big up" id="posBig">50%</span></div>
+      <div class="pos-split"><div class="stk" id="posStk" style="width:50%">股票</div><div class="csh" id="posCsh" style="width:50%">现金</div></div>
+      <input type="range" id="posRange" min="0" max="100" step="1" value="50" aria-label="全市场股票仓位">
+      <div class="slider-marks"><span>← 924 前夕：接近 0%（全现金）</span><span>2015 顶点：接近 100%（全股票）→</span></div>
+      <div class="pos-forces">
+        <div class="force"><div class="k">潜在买盘（现金=弹药）</div><div class="v" id="posBuy">充足</div></div>
+        <div class="force"><div class="k">潜在卖盘（股票=抛压）</div><div class="v" id="posSell">充足</div></div>
+      </div>
+      <div class="pos-verdict" id="posVerdict"><span class="zv">常态博弈区</span>多空双方都有弹药，价格由博弈决定。把滑块拉到两端试试。</div>
+      <div class="widget-foot">反直觉的结论：<span class="hl">满仓的人其实是空头（在等更高的价格卖），空仓的人才是多头（迟早要买）。</span></div>
+    </div>
+
+    <div class="grid-2">
+      <div class="card reveal">
+        <span class="tag tag-up">极端空仓 → 暴涨 · 924</span>
+        <p style="font-size:.92rem;margin-top:12px">924 之前：激进投资者两融维持担保比例平均仅 <span class="num">~120%</span>（爆仓线边缘、深度套牢）；私募仓位 <span class="num">40%+</span>；公募被要求<strong>禁止净卖出</strong>；银证转账指数是负的（钱在撤出股市）。</p>
+        <p style="font-size:.92rem;margin:0">这时央行下场、利好扔进市场：大家手里没有股票可砸，<strong>没有空头</strong>——一笔单子就能打到涨停。于是七天一千点。</p>
+      </div>
+      <div class="card reveal">
+        <span class="tag tag-down">极端满仓 → 暴跌 · 2015</span>
+        <p style="font-size:.92rem;margin-top:12px">配资就是借钱炒股——满仓加杠杆时，手里早已没有现金。国家一清配资，持有人<strong>不得不卖</strong>，而市场上没有钱来接。</p>
+        <p style="font-size:.92rem;margin:0">不是阴跌，是<strong>暴跌</strong>：一路崩下来，没有缓冲。</p>
+      </div>
+    </div>
+
+    <!-- W6 十人会场 -->
+    <div class="h3-block reveal"><span class="no">3.2</span><h3>这一次：科技持仓的极端拥挤</h3><span class="rule"></span></div>
+    <div class="data-strip reveal">
+      <div class="data-cell"><span class="num up">5 万亿</span><div class="lbl">公募 TMT 持仓规模（6 月底）</div></div>
+      <div class="data-cell"><span class="num up">+20 pct</span><div class="lbl">二季度单季加仓幅度</div></div>
+      <div class="data-cell"><span class="num up">≈70%</span><div class="lbl">含被动后科技仓位 · 历史极值</div></div>
+    </div>
+
+    <div class="widget reveal" data-badge="实验 6 · 换个视角" id="w6">
+      <div class="widget-head">
+        <h3>十人会场：7 个人已经满仓科技</h3>
+        <p>想象一个 10 人的会场。点一下「你是满仓者」，换个视角看自己的处境。</p>
+      </div>
+      <div class="arena" id="arena">
+        <div class="seat tech"><svg><use href="#i-person"/></svg><span class="s-lbl">满仓科技</span></div>
+        <div class="seat tech"><svg><use href="#i-person"/></svg><span class="s-lbl">满仓科技</span></div>
+        <div class="seat tech"><svg><use href="#i-person"/></svg><span class="s-lbl">满仓科技</span></div>
+        <div class="seat tech"><svg><use href="#i-person"/></svg><span class="s-lbl">满仓科技</span></div>
+        <div class="seat tech"><svg><use href="#i-person"/></svg><span class="s-lbl">满仓科技</span></div>
+        <div class="seat tech"><svg><use href="#i-person"/></svg><span class="s-lbl">满仓科技</span></div>
+        <div class="seat tech" id="youSeat"><svg><use href="#i-person"/></svg><span class="s-lbl">满仓科技</span></div>
+        <div class="seat"><svg><use href="#i-person"/></svg><span class="s-lbl">银行党</span></div>
+        <div class="seat"><svg><use href="#i-person"/></svg><span class="s-lbl">茅台党</span></div>
+        <div class="seat"><svg><use href="#i-person"/></svg><span class="s-lbl">观望者</span></div>
+      </div>
+      <div style="text-align:center;margin-top:18px"><button class="btn btn-sm" id="crowdToggle">切换视角：你是那 7 个人之一</button></div>
+      <div class="board" id="crowdInsight" style="display:none;margin:18px 0 0">你满仓科技时，你是多头还是空头？——<span class="hl">你是空头。你手里没有钱了，在等更高的价格卖出。</span>你希望剩下 3 个人加入科技阵营，可「年少不知银行好」的银行党不会来（银行正创新高），茅台党也不会来。<strong>增量资金在哪里？</strong></div>
+      <div class="crowd-bars">
+        <div class="crowd-bar"><span class="lbl">2015 · 科技（上轮极值·示意）</span><div class="track"><div class="fill" data-w="45"></div></div><span class="val">~45%</span></div>
+        <div class="crowd-bar"><span class="lbl">2021 · 核心资产（示意）</span><div class="track"><div class="fill" data-w="55"></div></div><span class="val">~55%</span></div>
+        <div class="crowd-bar now"><span class="lbl">2026 · 这一次</span><div class="track"><div class="fill" data-w="70"></div></div><span class="val">≈70%</span></div>
+      </div>
+      <div class="widget-foot">这种极端拥挤在 A 股已是<span class="hl">第六次</span>。2021 年核心资产见顶后，市场从大盘切到小票——同样的事又重演了一遍。</div>
+    </div>
+
+    <!-- W7 反身性螺旋 -->
+    <div class="h3-block reveal"><span class="no">3.3</span><h3>莫须有的利空，与反身性螺旋</h3><span class="rule"></span></div>
+    <p class="reveal">6 月底 7 月初，Meta 传出要<strong>出租算力</strong>——算力不是稀缺吗，怎么会拿来出租？有人开始怀疑算力过剩（实际上 Meta 自己到今天仍认为算力不足）。<strong>消息真假无所谓</strong>——高仓位 + 高拥挤的结构，最怕利空。按下按钮，看<span class="note-term" data-note="价格跌了引发更多抛售，抛售让价格更跌——下跌本身成了下跌的原因，自我强化的恶性循环。">反身性</span>怎么启动：</p>
+
+    <div class="widget reveal" data-badge="实验 7 · 按一下" id="w7">
+      <div class="spiral-stage">
+        <div class="spiral-loop">
+          <div class="sp-node" data-step="0"><span class="no">①</span>莫须有的利空出现</div>
+          <div class="sp-node" data-step="1"><span class="no">②</span>有资金「叛变」撤离</div>
+          <div class="sp-node" data-step="2"><span class="no">③</span>股价下跌</div>
+          <div class="sp-node" data-step="3"><span class="no">④</span>引发更多抛盘</div>
+        </div>
+        <div class="spiral-chart">
+          <svg id="spiralSvg" viewBox="0 0 380 220" role="img" aria-label="反身性螺旋下的股价走势">
+            <line x1="30" y1="190" x2="370" y2="190" stroke="var(--border-strong)" stroke-width="1.5"/>
+            <line x1="30" y1="190" x2="30" y2="15" stroke="var(--border-strong)" stroke-width="1.5"/>
+            <text x="34" y="26" font-size="11" fill="var(--text-tertiary)" class="num">股价</text>
+            <polyline id="spiralLine" fill="none" stroke="var(--accent)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" points=""/>
+          </svg>
+          <div style="text-align:center;margin-top:10px"><button class="btn btn-primary btn-sm" id="spiralBtn">投放利空：Meta 出租算力</button></div>
+        </div>
+      </div>
+      <div class="widget-foot" id="spiralFoot">③ 和 ④ 会循环往复——下跌制造抛盘，抛盘制造下跌。国家为什么要托底？<span class="hl">不托，跌得更快；托住，就是打断这个螺旋。</span></div>
+    </div>
+
+    <div class="board reveal">金句：<span class="hl">当一段短期行情需要用长期的宏大叙事来支撑时，这个宏大叙事往往没用。</span>因为市场当下最大的矛盾在交易上。</div>
+
+    <div class="grid-2">
+      <div class="card reveal">
+        <h3 style="font-size:1.05rem">产业 ≠ 股价：火箭回收的例子</h3>
+        <p style="font-size:.92rem">商业航天火箭回收成功了两次：长征系列海上回收、朱雀三号陆上回收。对产业，这是<strong>大发展</strong>；可股价<strong>连跌两次</strong>，第一次直接跌到水下。</p>
+        <p style="font-size:.92rem;margin:0">所以再有人跟你讲「这个光模块销量能看到多少、股价能看到多少」——他懂产业，<strong>未必懂股票</strong>。</p>
+      </div>
+      <div class="card reveal">
+        <h3 style="font-size:1.05rem">今年行情的完整脉络</h3>
+        <p style="font-size:.9rem;margin-bottom:6px"><strong>① 5 月前</strong>：科技涨科技的，其他涨其他的——资金量够。</p>
+        <p style="font-size:.9rem;margin-bottom:6px"><strong>② 5 月后</strong>：只有科技涨，其他跌——卖了其他的去追科技。</p>
+        <p style="font-size:.9rem;margin-bottom:6px"><strong>③ 随后</strong>：科技还在涨，其他不跌了——没人割了，靠两融提额加杠杆，存量自己玩。</p>
+        <p style="font-size:.9rem;margin:0"><strong>④ 最后</strong>：利空出现，踩踏。</p>
+      </div>
+    </div>
+
+    <!-- Quiz 3 -->
+    <div class="quiz reveal" data-quiz="3">
+      <div class="quiz-q">
+        <div class="q-title"><span class="qn">Q1</span>满仓科技的人，本质上是什么？</div>
+        <button class="quiz-option" data-correct="0">坚定的多头——因为他看好才会满仓</button>
+        <button class="quiz-option" data-correct="1">空头——手里已经没有钱了，在等更高的价格把股票卖给别人</button>
+        <button class="quiz-option" data-correct="0">中性观察者</button>
+        <div class="quiz-explain">多空不看嘴上说什么，看手里有什么：有股票没现金 = 潜在的卖方；有现金没股票 = 潜在的买方。会场里 7 个人满仓时，边际上只剩卖盘。</div>
+      </div>
+      <div class="quiz-q">
+        <div class="q-title"><span class="qn">Q2</span>一个「莫须有的利空」为什么能砸出连续暴跌？</div>
+        <button class="quiz-option" data-correct="0">因为利空消息一定是真的</button>
+        <button class="quiz-option" data-correct="0">因为产业基本面变差了</button>
+        <button class="quiz-option" data-correct="1">因为仓位极端拥挤：一个资金叛变 → 下跌 → 更多抛盘 → 反身性螺旋</button>
+        <div class="quiz-explain">结构最怕利空：下面没人接。真假无所谓（Meta 自己仍认为算力不足），在高仓位时点上一个怀疑，螺旋就会自己转起来。</div>
+      </div>
+      <div class="quiz-status"><span class="quiz-count">0 / 2 已答对</span><span class="stamp-ok"></span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= 第四章 ================= -->
+<section id="ch4" data-spy="ch4">
+  <div class="container">
+    <span class="eyebrow reveal">第四章 · 科技股怎么办</span>
+    <h2 class="chapter-title blur-reveal"><span class="ch-no">04</span>两条路，市场选了「时间换空间」</h2>
+    <p class="chapter-sub reveal">路一：<strong>放巨量拉升</strong>，成交从 5 万亿放到 10 万亿，解放所有套牢盘——但现在成交量缩到 <span class="num">1.8 万亿</span>附近，这条路看不见了。路二：<strong>箱体震荡</strong>——上有套牢盘解套就卖，下有基本面和政策托底。</p>
+
+    <div class="grid-2" style="margin-top:28px">
+      <div class="card reveal" style="opacity:.75">
+        <span class="tag">路 ① · 没走通</span>
+        <h3 style="margin-top:12px">放巨量拉升</h3>
+        <p style="font-size:.92rem">反正大家都套牢、产业确实好，市场直接放量一把拉上去创新高。需要成交量 5 万亿 → 10 万亿。</p>
+        <p style="font-size:.92rem;margin:0"><strong>现实：量缩到两万亿以下。</strong>看不见。</p>
+      </div>
+      <div class="card reveal" style="border-color:var(--accent)">
+        <span class="tag tag-up">路 ② · 市场选择</span>
+        <h3 style="margin-top:12px">时间换空间 · 箱体震荡</h3>
+        <p style="font-size:.92rem"><strong>上不去</strong>：上面全是套牢盘，一反弹就有解套盘卖出。<strong>下不来</strong>：基本面确实好、国家确实在托。</p>
+        <p style="font-size:.92rem;margin:0">操作口诀：<strong>涨了就卖不要犹豫；跌多了、跌到前期底部支撑位，赶紧买。</strong>同时盯一件事——量能不能放大。</p>
+      </div>
+    </div>
+
+    <!-- W8 箱体交易练习 -->
+    <div class="widget reveal" data-badge="实验 8 · 练一练" id="w8">
+      <div class="widget-head">
+        <h3>箱体交易练习</h3>
+        <p>本金 <span class="num">10,000</span> 元。价格在<span class="up">上轨（压力）</span>与<span class="down">下轨（支撑）</span>之间波动。点「下一段」推进行情，在合适的点位买入 / 卖出，看看你能不能踩准节奏。</p>
+      </div>
+      <div class="trader-chart">
+        <svg id="traderSvg" viewBox="0 0 560 260" role="img" aria-label="箱体震荡模拟行情"></svg>
+      </div>
+      <div class="trader-hud">
+        <div class="hud-item"><div class="k">当前价</div><div class="v num" id="hudPrice">100.0</div></div>
+        <div class="hud-item"><div class="k">现金</div><div class="v num" id="hudCash">10,000</div></div>
+        <div class="hud-item"><div class="k">持仓</div><div class="v num" id="hudPos">空仓</div></div>
+        <div class="hud-item"><div class="k">浮动盈亏</div><div class="v num" id="hudPnl">0%</div></div>
+      </div>
+      <div class="trader-btns">
+        <button class="btn btn-buy" id="btnBuy">买入</button>
+        <button class="btn btn-sell" id="btnSell" disabled>卖出</button>
+        <button class="btn" id="btnNext">下一段 ▶</button>
+        <button class="btn btn-sm" id="btnReset" style="margin-left:auto">重来</button>
+      </div>
+      <div class="trader-log" id="traderLog"><div class="lg">行情就绪。口诀：跌多了买，涨多了卖。</div></div>
+      <div class="trader-summary" id="traderSummary"></div>
+      <div class="widget-foot">箱体里，<span class="hl">高抛低吸反而好做；但别幻想 5、6 月那种躺着的主升浪</span>——除非量能重新放大。</div>
+    </div>
+
+    <!-- Quiz 4 -->
+    <div class="quiz reveal" data-quiz="4">
+      <div class="quiz-q">
+        <div class="q-title"><span class="qn">Q1</span>量能放不出来时，科技股大概率走哪条路？</div>
+        <button class="quiz-option" data-correct="0">放巨量再创新高</button>
+        <button class="quiz-option" data-correct="1">时间换空间：箱体震荡——上有套牢盘，下有基本面托底</button>
+        <button class="quiz-option" data-correct="0">一路阴跌归零</button>
+        <div class="quiz-explain">放量拉升需要成交 5→10 万亿，现实缩到 1.8 万亿；但基本面好、国家托底，也跌不深。夹在一起就是箱体。</div>
+      </div>
+      <div class="quiz-q">
+        <div class="q-title"><span class="qn">Q2</span>箱体里的正确操作是？</div>
+        <button class="quiz-option" data-correct="0">追涨杀跌——涨了赶紧追，跌了赶紧割</button>
+        <button class="quiz-option" data-correct="0">躺平不动，等下一波主升浪</button>
+        <button class="quiz-option" data-correct="1">高抛低吸：涨了就卖、跌到支撑位赶紧买，同时盯量能能否放大</button>
+        <div class="quiz-explain">箱体震荡期是做波段的窗口；一旦看到成交量重新放大，再切换思路。5、6 月那种「拿着就好」的环境已经过去了。</div>
+      </div>
+      <div class="quiz-status"><span class="quiz-count">0 / 2 已答对</span><span class="stamp-ok"></span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= 第五章 ================= -->
+<section id="ch5" class="section-alt" data-spy="ch5">
+  <div class="container">
+    <span class="eyebrow reveal">第五章 · 站在当下</span>
+    <h2 class="chapter-title blur-reveal"><span class="ch-no">05</span>风险偏好下移：钱从高往低流</h2>
+    <p class="chapter-sub reveal">经历一个月大波动，多数人想「稳一稳」——<span class="note-term" data-note="大家敢承担风险的意愿。波动大了，意愿下降，钱就从刺激但危险的资产，搬去 boring 但安全的资产。">风险偏好</span>就下降了。风险偏好下降，钱从高风险资产往低风险资产搬。一朝被蛇咬，十年怕井绳——<strong>银行为什么创新高？因为大家都怕了。</strong></p>
+
+    <!-- 双创对比图 -->
+    <div class="chart-card reveal">
+      <div class="cc-t">切换只差一天</div>
+      <div class="cc-d">中证红利的最低点是 6 月 30 日，科创 50 的最高点是 7 月 1 日——大跌那天，资金已经开始切换（示意走势）</div>
+      <svg viewBox="0 0 560 250" id="switchChart" role="img" aria-label="科创50与中证红利走势对比">
+        <line x1="40" y1="215" x2="540" y2="215" stroke="var(--border-strong)" stroke-width="1.5"/>
+        <line x1="40" y1="215" x2="40" y2="20" stroke="var(--border-strong)" stroke-width="1.5"/>
+        <rect x="285" y="20" width="26" height="195" fill="rgba(var(--gold-rgb),0.15)"/>
+        <text x="298" y="238" font-size="11" fill="var(--gold)" text-anchor="middle" font-weight="700">6/30·7/1</text>
+        <text x="298" y="14" font-size="10" fill="var(--text-tertiary)" text-anchor="middle">只差一天</text>
+        <path class="draw-line" id="lineKc" d="M40,150 C110,120 180,80 298,42 C340,70 400,130 540,185" fill="none" stroke="var(--accent)" stroke-width="3" stroke-linecap="round"/>
+        <path class="draw-line" id="lineDiv" d="M40,80 C120,110 200,150 285,192 C340,175 420,120 540,95" fill="none" stroke="var(--info)" stroke-width="3" stroke-linecap="round"/>
+        <circle cx="298" cy="42" r="5" fill="var(--accent)"/><text x="308" y="38" font-size="11" fill="var(--accent)" font-weight="700">科创50 见顶</text>
+        <circle cx="285" cy="192" r="5" fill="var(--info)"/><text x="196" y="212" font-size="11" fill="var(--info)" font-weight="700">中证红利 见底</text>
+      </svg>
+      <div class="chart-legend"><span><i style="background:var(--accent)"></i>科创 50（科技）</span><span><i style="background:var(--info)"></i>中证红利（低风险）</span></div>
+    </div>
+
+    <div class="data-strip reveal">
+      <div class="data-cell"><span class="num up">+68% → +8.8%</span><div class="lbl">高景气指数：一个月涨幅基本回吐</div></div>
+      <div class="data-cell"><span class="num up">+10%</span><div class="lbl">同期中证红利：慢慢爬、仍有收益</div></div>
+      <div class="data-cell"><span class="num">1 天</span><div class="lbl">红利见底与科创50见顶的时间差</div></div>
+    </div>
+
+    <!-- W9 风险光谱 -->
+    <div class="widget reveal" data-badge="实验 9 · 分一分" id="w9">
+      <div class="widget-head">
+        <h3>风险光谱归类</h3>
+        <p>点一张卡片选中它，再点一个分区把它放进去。全部分完后点「检查」。提示：300 倍市盈率 = 要 300 年回本。</p>
+      </div>
+      <div class="spec-pool" id="specPool">
+        <button class="spec-card" data-zone="high">北证 50<small>盘子小</small></button>
+        <button class="spec-card" data-zone="high">微盘股<small>市值最小后 400 只</small></button>
+        <button class="spec-card" data-zone="high">中证 2000<small>有标的 300 倍 PE</small></button>
+        <button class="spec-card" data-zone="high">中证 1000<small>小盘 · 盈利弱</small></button>
+        <button class="spec-card" data-zone="low">白酒<small>老牌消费</small></button>
+        <button class="spec-card" data-zone="low">地产<small>政策放松</small></button>
+        <button class="spec-card" data-zone="low">煤炭<small>已变红利资产</small></button>
+        <button class="spec-card" data-zone="low">银行 / 医药<small>安全属性</small></button>
+      </div>
+      <div class="spec-zones">
+        <div class="spec-zone high" id="zoneHigh"><div class="z-t">高风险区</div><div class="z-d">盘子小、盈利能力差、市盈率惊人——情绪高时才有人听遥远的故事</div><div class="z-cards"></div></div>
+        <div class="spec-zone low" id="zoneLow"><div class="z-t">低风险区</div><div class="z-d">与安全相关的资产——风险偏好下降时相对受益</div><div class="z-cards"></div></div>
+      </div>
+      <div style="margin-top:16px;display:flex;gap:12px;align-items:center;flex-wrap:wrap">
+        <button class="btn btn-primary btn-sm" id="specCheck">检查</button>
+        <button class="btn btn-sm" id="specReset">复位</button>
+        <span id="specResult" style="font:700 .9rem var(--font-body)"></span>
+      </div>
+      <div class="widget-foot">情绪高涨时才愿意听遥远的故事；情绪下降时，关心的只有<span class="hl">哪些东西安全</span>。</div>
+    </div>
+
+    <div class="card reveal" style="border-left:4px solid var(--info)">
+      <h3 style="font-size:1rem">政策空窗期 → 业绩成为线索</h3>
+      <p style="font-size:.92rem;margin:0">一年就几次会：4 月、7 月、10 月、12 月（10 月不一定谈经济——924 那次破例谈了，所以力度大）。7 月的会开完了，下个窗口在 11、12 月，很远。<strong>没有新政策的日子里，指引方向的只剩业绩：</strong>从半年报里找景气度高、股价低、机构持仓低的方向。</p>
+    </div>
+
+    <!-- 三方向 -->
+    <div class="h3-block reveal"><span class="no">5.4</span><h3>三个具体方向</h3><span class="rule"></span></div>
+
+    <div class="chart-card reveal">
+      <div class="cc-t">方向一 · 红利：十年年化约 9% 的上升通道</div>
+      <div class="cc-d">这次大跌回调完，指数刚好打到通道下沿，现在回到通道附近——赔率和胜率都还在（示意）</div>
+      <svg viewBox="0 0 560 240" id="dividendChart" role="img" aria-label="红利指数十年上升通道">
+        <line x1="40" y1="205" x2="540" y2="205" stroke="var(--border-strong)" stroke-width="1.5"/>
+        <line x1="40" y1="205" x2="40" y2="15" stroke="var(--border-strong)" stroke-width="1.5"/>
+        <line class="draw-line" x1="46" y1="150" x2="534" y2="38" stroke="var(--border-strong)" stroke-width="1.5" stroke-dasharray="6 5"/>
+        <line class="draw-line" x1="46" y1="196" x2="534" y2="84" stroke="var(--border-strong)" stroke-width="1.5" stroke-dasharray="6 5"/>
+        <path class="draw-line" id="lineChannel" d="M46,190 C100,168 130,180 170,158 C210,138 240,152 285,128 C330,106 360,122 410,100 C445,86 470,112 500,108 C515,106 525,96 534,92" fill="none" stroke="var(--accent)" stroke-width="3" stroke-linecap="round"/>
+        <circle cx="500" cy="108" r="5.5" fill="var(--down)"/><text x="380" y="135" font-size="11" fill="var(--down)" font-weight="700">大跌回调，打到通道下沿</text>
+        <circle cx="534" cy="92" r="5.5" fill="var(--accent)"/><text x="420" y="76" font-size="11" fill="var(--accent)" font-weight="700">现在：回到通道附近</text>
+        <text x="50" y="34" font-size="11" fill="var(--text-tertiary)">2016 → 2026 · 年化 ≈9%</text>
+      </svg>
+      <p style="font-size:.9rem;margin:14px 0 0">推手是保险：新规要求<strong>每年新增保费的 30% 必须进股市</strong>；财政部刚注资；明年「开门红」还会买。资产荒下，高股息是保险最愿意投的方向（股息计入投资收益，波动小）。</p>
+    </div>
+
+    <div class="grid-2">
+      <div class="card reveal">
+        <span class="tag tag-gold">方向二 · 微盘</span>
+        <h3 style="margin-top:12px;font-size:1.08rem">跷跷板的另一头</h3>
+        <p style="font-size:.9rem">微盘 = 全市场市值最小的<strong>后 400 只</strong>（剔除风险警示、ST、北交所）。规则极简：在 400 名内就持有，掉到 401 名就卖出，每天只做这一件事。历史上 11 次回撤基本全部修复。</p>
+        <p style="font-size:.9rem">2021 年的镜像：核心资产（茅指数、宁组合）2 月冲顶那天，<strong>微盘股刚好见底</strong>。这次一样：科技股倒掉后，微盘指数已涨 <span class="num up">30%+</span>。所以你最近常看到：指数是绿的，上涨家数却有 3000–4000 家——资金在扩散。</p>
+        <p style="font-size:.9rem;margin:0"><strong>个人做不了</strong>：400 只票一天倒腾一遍，只有程序化做得动。想参与，就买<strong>量化产品</strong>。</p>
+      </div>
+      <div class="card reveal">
+        <span class="tag tag-up">方向三 · 业绩线索</span>
+        <h3 style="margin-top:12px;font-size:1.08rem">从半年报里筛</h3>
+        <p style="font-size:.9rem">三条标准：</p>
+        <p style="font-size:.9rem;margin-bottom:6px">① 上半年盈利增速为正，<strong>且二季度环比也为正</strong>——景气在加速；</p>
+        <p style="font-size:.9rem;margin-bottom:6px">② <strong>机构持仓比例很低</strong>——业绩好但大家都没买；</p>
+        <p style="font-size:.9rem;margin-bottom:14px">③ 年初到现在、7 月以来<strong>都没怎么涨</strong>。</p>
+        <p style="font-size:.9rem;margin:0">有一个行业最特殊：满足全部条件，这个月涨了 <span class="num up">30%</span>。用下面的筛选器亲手把它筛出来。</p>
+      </div>
+    </div>
+
+    <!-- W10 业绩筛选器 -->
+    <div class="widget reveal" data-badge="实验 10 · 筛一筛" id="w10">
+      <div class="widget-head">
+        <h3>半年报筛选器</h3>
+        <p>打开筛选条件，看哪些行业留下来（示意数据）。</p>
+      </div>
+      <div class="filter-switches">
+        <button class="f-switch" data-f="growth"><span class="sw"></span><span><span class="sw-t">盈利正 + 环比正</span><span class="sw-d">上半年增长，二季度还在加速</span></span></button>
+        <button class="f-switch" data-f="hold"><span class="sw"></span><span><span class="sw-t">机构持仓低</span><span class="sw-d">业绩好，但大家还没买</span></span></button>
+        <button class="f-switch" data-f="flat"><span class="sw"></span><span><span class="sw-t">年内没怎么涨</span><span class="sw-d">股价还趴在低位</span></span></button>
+      </div>
+      <div class="ind-list" id="indList">
+        <div class="ind-row ind-head"><span>行业（示意）</span><span>盈利/环比</span><span>机构持仓</span><span>年内涨幅</span></div>
+        <div class="ind-row" data-growth="1" data-hold="low" data-flat="1"><span class="ind-name">航海装备<span class="hot">本月 +30%</span></span><span class="cell">+38% / +12%</span><span class="cell">低</span><span class="cell">+6%</span></div>
+        <div class="ind-row" data-growth="0" data-hold="high" data-flat="1"><span class="ind-name">白酒</span><span class="cell">-2% / -5%</span><span class="cell">高</span><span class="cell">-12%</span></div>
+        <div class="ind-row" data-growth="0" data-hold="high" data-flat="0"><span class="ind-name">光伏设备</span><span class="cell">+15% / -3%</span><span class="cell">高</span><span class="cell">+45%</span></div>
+        <div class="ind-row" data-growth="1" data-hold="low" data-flat="1"><span class="ind-name">农化制品</span><span class="cell">+22% / +8%</span><span class="cell">低</span><span class="cell">+9%</span></div>
+        <div class="ind-row" data-growth="1" data-hold="high" data-flat="0"><span class="ind-name">半导体</span><span class="cell">+40% / +15%</span><span class="cell">高</span><span class="cell">+80%</span></div>
+        <div class="ind-row" data-growth="1" data-hold="low" data-flat="0"><span class="ind-name">国有大行</span><span class="cell">+3% / +1%</span><span class="cell">低</span><span class="cell">+25%</span></div>
+        <div class="ind-row" data-growth="1" data-hold="low" data-flat="1"><span class="ind-name">出版</span><span class="cell">+9% / +4%</span><span class="cell">低</span><span class="cell">+4%</span></div>
+        <div class="ind-row" data-growth="1" data-hold="high" data-flat="0"><span class="ind-name">证券</span><span class="cell">+55% / +20%</span><span class="cell">高</span><span class="cell">+35%</span></div>
+      </div>
+      <div class="filter-count" id="filterCount">未开启筛选：共 8 个行业。</div>
+      <div class="widget-foot">季报里埋着机会：<span class="hl">业绩好、确定性强、持仓低</span>——三个条件同时满足时，池子会突然变得很小。</div>
+    </div>
+
+    <!-- Quiz 5 -->
+    <div class="quiz reveal" data-quiz="5">
+      <div class="quiz-q">
+        <div class="q-title"><span class="qn">Q1</span>风险偏好下降时，资金怎么流、谁受益？</div>
+        <button class="quiz-option" data-correct="0">从低风险流向高风险——越跌越要赌弹性</button>
+        <button class="quiz-option" data-correct="1">从高风险资产流向低风险资产——红利、银行等低风险特征资产相对受益</button>
+        <button class="quiz-option" data-correct="0">彻底离场，市场没有钱流动</button>
+        <div class="quiz-explain">一个月大波动后大家想「稳一稳」，风险偏好必然下降。红利 6/30 见底、科创50 7/1 见顶只差一天——切换不是讨论，是已经在发生。</div>
+      </div>
+      <div class="quiz-q">
+        <div class="q-title"><span class="qn">Q2</span>个人投资者想参与微盘股行情，最好的方式是？</div>
+        <button class="quiz-option" data-correct="0">自己每天盯排名，手动倒腾 400 只股票</button>
+        <button class="quiz-option" data-correct="1">买量化产品——只有程序化交易做得动「每天在 400 只里进出自如」这件事</button>
+        <button class="quiz-option" data-correct="0">满仓押注市值最小的那一只</button>
+        <div class="quiz-explain">微盘策略是高频再平衡：跌出 400 名就卖、进来就买，一天一遍。人力做不到，这正是量化产品的场景。</div>
+      </div>
+      <div class="quiz-status"><span class="quiz-count">0 / 2 已答对</span><span class="stamp-ok"></span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= 终章 ================= -->
+<section id="final" data-spy="final">
+  <div class="container">
+    <span class="eyebrow reveal">终章 · 结业</span>
+    <h2 class="chapter-title blur-reveal">三个问题，先自己答</h2>
+    <p class="chapter-sub reveal">心里先有一个自己的答案，再点开卡片揭晓。</p>
+
+    <div class="grid-3" style="margin-top:36px">
+      <div class="card answer-card reveal">
+        <div class="a-mask" role="button" tabindex="0"><span>问题 01</span><strong>牛市还在吗？</strong><span class="tap">点我揭晓</span></div>
+        <div class="a-body">
+          <h3>在。</h3>
+          <p style="font-size:.9rem">股市以前定位于融资和生产，现在定位于<strong>内需和消费</strong>。内需仍弱 → 政策还要加力 → 不轻易打压市场；措辞还在「提升」→ 后续应还有高点，<strong>慢牛</strong>继续。</p>
+          <p style="font-size:.9rem;margin:0"><strong>别把「科技牛」和「整个市场的牛市」混为一谈</strong>——科技股阶段性调整 ≠ 牛市结束。</p>
+        </div>
+      </div>
+      <div class="card answer-card reveal">
+        <div class="a-mask" role="button" tabindex="0"><span>问题 02</span><strong>科技股为什么大跌？</strong><span class="tap">点我揭晓</span></div>
+        <div class="a-body">
+          <h3>交易结构崩塌。</h3>
+          <p style="font-size:.9rem">不是基本面变差：是 <span class="num">≈70%</span> 的极端拥挤仓位，在一个莫须有的利空下发生反身性踩踏。</p>
+          <p style="font-size:.9rem;margin:0">后市两条路，放量拉升看不见 → <strong>箱体震荡</strong>：跌多了赶紧买，涨了就赶紧卖，盯量能。</p>
+        </div>
+      </div>
+      <div class="card answer-card reveal">
+        <div class="a-mask" role="button" tabindex="0"><span>问题 03</span><strong>现在怎么看、怎么做？</strong><span class="tap">点我揭晓</span></div>
+        <div class="a-body">
+          <h3>顺着资金流。</h3>
+          <p style="font-size:.9rem">风险偏好下移，钱从高往低流：<strong>红利</strong>（年化 9% 通道下沿 + 保险增量）、<strong>微盘</strong>（主线真空 + 资金扩散，买量化产品参与）、<strong>业绩线索</strong>（景气加速 + 低持仓 + 没涨）。</p>
+          <p style="font-size:.9rem;margin:0">科技继续做箱体波段。</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="seal-wrap reveal">
+      <p class="quote-line">回头看，三个问题的答案指向同一件事——<br><span class="sweep">牛市不结束，赚钱靠节奏。</span></p>
+      <p style="text-align:center;color:var(--text-secondary);max-width:640px;margin:20px auto 0">对大多数人而言，判断牛熊没那么难；难的是在正确的大方向下，<strong>管住自己的手、踩准每一次高低切换的节奏</strong>。</p>
+      <p style="text-align:center;margin-top:26px;font:700 .95rem var(--font-body)" id="finalProgress">检查点进度：0 / 5</p>
+      <div class="seal" id="seal">节奏<br>大师</div>
+      <p id="sealHint" style="text-align:center;font-size:.85rem;color:var(--text-tertiary);margin-top:14px">通过全部 5 个检查点，盖「节奏大师」印。</p>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    <p class="src">内容整理自《迎转型牛，重在交易——2026 年三季度中国权益资产投资策略展望》，为学习目的做的结构化与可视化改编。</p>
+    <p>本页所有内容仅为文章观点的互动教学演示，不构成任何投资建议。市场有风险，投资需谨慎。标注「示意」的图表为教学模拟，非真实行情数据。</p>
+    <p style="color:var(--text-tertiary)">暖纸教学风 · L2 交互 · 零依赖静态页（HTML + CSS + 原生 JS）</p>
+  </div>
+</footer>
+
+<script src="app.js"></script>
+</body>
+</html>
