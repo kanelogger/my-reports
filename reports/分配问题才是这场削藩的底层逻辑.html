@@ -1,0 +1,1522 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>分配问题，才是这场「削藩」的底层逻辑 · 互动讲义</title>
+<meta name="description" content="一堂动手操作的财政通识课：从一只木桶讲起，看懂财政包干、分税制、土地财政、城投与统一大市场背后的分配逻辑。">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@600;700;900&family=Noto+Sans+SC:wght@400;500;700&family=LXGW+WenKai&display=swap" rel="stylesheet">
+<style>
+/* ============ 0. Reset & Tokens ============ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg: #FAF8F5;
+  --surface: #FFFFFF;
+  --surface-alt: #F3EFE7;
+  --surface-hover: #FBF6EE;
+  --ink-wash: #EFE9DE;
+  --border: #E4DCCC;
+  --border-strong: #C7BBA4;
+  --text: #2C2A26;
+  --text-secondary: #5C574E;
+  --text-tertiary: #8A8172;
+  --accent: #C45C3C;
+  --accent-hover: #A8482B;
+  --accent-soft: #F6E6DC;
+  --ink-blue: #2C5F6E;
+  --ink-blue-soft: #E2ECEF;
+  --success: #3E7C59;
+  --success-soft: #E4EFE7;
+  --error: #B54334;
+  --error-soft: #F7E4E0;
+  --warning: #B98A2F;
+  --paper: #FFFDF9;              /* 朱砂/黛蓝实色上的纸白文字 */
+  --text-rgb: 44, 42, 38;
+  --bg-rgb: 250, 248, 245;
+  --accent-rgb: 196, 92, 60;
+  --ink-blue-rgb: 44, 95, 110;
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --serif: 'Noto Serif SC', 'Songti SC', 'STSong', serif;
+  --sans: 'Noto Sans SC', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+  --kai: 'LXGW WenKai', 'Kaiti SC', 'STKaiti', cursive;
+}
+html { scroll-behavior: smooth; }
+body {
+  background: var(--bg); color: var(--text);
+  font: 400 1.0625rem/1.85 var(--sans);
+  letter-spacing: 0.02em;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+/* 宣纸颗粒纹理（静态，零运行时成本） */
+body::before {
+  content: ''; position: fixed; inset: 0; z-index: -1; pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3CfeColorMatrix values='0 0 0 0 0.55 0 0 0 0 0.5 0 0 0 0 0.42 0 0 0 0.05 0'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+::selection { background: var(--accent-soft); color: var(--accent-hover); }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 2px; }
+button { font-family: inherit; }
+[id] { scroll-margin-top: 84px; }
+
+/* ============ 1. Utilities ============ */
+.container { max-width: 1120px; margin: 0 auto; padding: 0 24px; }
+.narrow { max-width: 760px; margin: 0 auto; }
+.section { padding: 110px 0; position: relative; }
+.section.alt { background: var(--surface-alt); }
+.eyebrow {
+  display: inline-block; font: 500 0.75rem/1 var(--sans);
+  letter-spacing: 0.35em; color: var(--accent); margin-bottom: 1.1rem;
+  padding-bottom: 0.5rem; position: relative;
+}
+.eyebrow::after { content: ''; position: absolute; left: 0; bottom: 0; width: 2.2rem; height: 2px; background: var(--accent); }
+h2.chapter-title { font: 700 2rem/1.4 var(--serif); letter-spacing: 0.02em; margin-bottom: 1.2rem; }
+.chapter-lead { color: var(--text-secondary); margin-bottom: 3rem; }
+.prose p { margin-bottom: 1.4em; color: var(--text-secondary); }
+.prose p strong, .prose strong { color: var(--text); font-weight: 700; }
+.key-sentence {
+  color: var(--text); font-weight: 500;
+  background: linear-gradient(transparent 62%, var(--accent-soft) 62%);
+  padding: 0 2px;
+}
+/* 章节序号背景大字 */
+.chapter-num {
+  position: absolute; top: 3rem; right: 2rem; z-index: 0;
+  font: 900 11rem/1 var(--serif); color: var(--accent); opacity: 0.06;
+  pointer-events: none; user-select: none;
+}
+.section > .container, .section > .narrow { position: relative; z-index: 1; }
+/* 朱批 */
+.ink-note {
+  font-family: var(--kai); color: var(--accent); font-size: 1.05rem;
+  border-left: 3px solid var(--accent); padding: 0.4rem 0 0.4rem 1.1rem;
+  margin: 2.2rem 0; line-height: 1.8;
+}
+.ink-note::before { content: '朱批'; display: block; font: 500 0.68rem/1 var(--sans); letter-spacing: 0.3em; color: var(--text-tertiary); margin-bottom: 0.4rem; }
+
+/* ============ 2. Reveal / Motion ============ */
+.reveal { opacity: 0; transform: translateY(28px); transition: opacity 0.7s var(--ease-out), transform 0.7s var(--ease-out); }
+.reveal.in-view { opacity: 1; transform: none; }
+.reveal-stagger > * { opacity: 0; transform: translateY(24px); transition: opacity 0.6s var(--ease-out), transform 0.6s var(--ease-out); }
+.reveal-stagger.in-view > * { opacity: 1; transform: none; }
+.hero-char { display: inline-block; opacity: 0; filter: blur(8px); transform: translateY(0.15em); transition: opacity 0.7s ease, filter 0.7s ease, transform 0.7s ease; }
+.hero-title.in .hero-char { opacity: 1; filter: blur(0); transform: none; }
+/* 章节 H2：字级滚动浮现（块级 .reveal 让位于字级） */
+.chapter-title.reveal { opacity: 1; transform: none; }
+.ct-char { display: inline-block; opacity: 0; transform: translateY(0.55em); transition: opacity 0.55s var(--ease-out), transform 0.55s var(--ease-out); }
+.chapter-title.in-view .ct-char { opacity: 1; transform: none; }
+
+/* ============ 3. Nav & Progress ============ */
+.scroll-progress { position: fixed; top: 0; left: 0; right: 0; height: 3px; z-index: 200; background: transparent; }
+.scroll-progress .bar { height: 100%; background: var(--accent); transform: scaleX(0); transform-origin: left; }
+.nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100; height: 64px;
+  display: flex; align-items: center;
+  background: transparent; border-bottom: 1px solid transparent;
+  transition: background 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+}
+.nav.scrolled {
+  background: rgba(var(--bg-rgb), 0.9);
+  backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+  border-bottom-color: var(--border); box-shadow: 0 1px 0 rgba(var(--text-rgb), 0.04);
+}
+.nav-inner { width: 100%; max-width: 1120px; margin: 0 auto; padding: 0 24px; display: flex; align-items: center; justify-content: space-between; gap: 1rem; }
+.nav-brand { font: 700 0.95rem var(--serif); color: var(--text); text-decoration: none; letter-spacing: 0.05em; white-space: nowrap; }
+.nav-brand em { color: var(--accent); font-style: normal; }
+.nav-dots { display: flex; gap: 10px; align-items: center; }
+.nav-dot {
+  width: 22px; height: 22px; border-radius: 50%; border: 1.5px solid var(--border-strong);
+  background: transparent; cursor: pointer; position: relative; padding: 0;
+  transition: border-color 0.25s ease, background 0.25s ease, transform 0.2s ease;
+}
+.nav-dot::before { content: ''; position: absolute; inset: -13px; }
+.nav-dot:hover { border-color: var(--accent); transform: scale(1.15); }
+.nav-dot.current { border-color: var(--accent); }
+.nav-dot.done { background: var(--accent); border-color: var(--accent); }
+.nav-dot.done::after { content: '✓'; position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-size: 11px; color: var(--paper); }
+.nav-dot:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+/* ============ 4. Hero ============ */
+.hero { min-height: 100svh; display: flex; align-items: center; padding: 120px 0 80px; position: relative; overflow: hidden; }
+.hero::before {
+  content: ''; position: absolute; inset: -20% -10% auto; height: 130%; z-index: -1;
+  background:
+    radial-gradient(ellipse 60% 45% at 78% 18%, rgba(var(--accent-rgb), 0.09), transparent 65%),
+    radial-gradient(ellipse 50% 40% at 12% 75%, rgba(var(--ink-blue-rgb), 0.07), transparent 65%);
+}
+.hero-seal {
+  position: absolute; right: 6%; top: 20%; width: 150px; height: 150px; z-index: 0;
+  border: 2px solid rgba(var(--accent-rgb), 0.35); border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+  font: 900 3.4rem/1.15 var(--serif); color: rgba(var(--accent-rgb), 0.3);
+  writing-mode: vertical-rl; letter-spacing: 0.1em; user-select: none;
+  transform: rotate(4deg);
+}
+.hero-kicker { font: 500 0.8rem/1 var(--sans); letter-spacing: 0.4em; color: var(--text-tertiary); margin-bottom: 1.6rem; }
+.hero-title { font: 900 3.25rem/1.35 var(--serif); letter-spacing: 0.04em; margin-bottom: 1.6rem; max-width: 16em; }
+.hero-title .hl { color: var(--accent); }
+.hero-sub { font-size: 1.15rem; color: var(--text-secondary); max-width: 34em; margin-bottom: 2.4rem; line-height: 1.9; }
+.hero-goals { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 2.6rem; }
+.hero-cta-row { display: flex; align-items: center; gap: 1.4rem; flex-wrap: wrap; }
+.hero-meta { font-size: 0.85rem; color: var(--text-tertiary); letter-spacing: 0.08em; }
+
+/* ============ 5. Buttons / Tags / Cards ============ */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem;
+  min-height: 48px; padding: 0 1.75rem; font: 500 1rem/1 var(--sans);
+  letter-spacing: 0.06em; border: 1px solid transparent; border-radius: 4px;
+  cursor: pointer; text-decoration: none;
+  transition: background 0.25s ease, color 0.25s ease, border-color 0.25s ease, transform 0.25s ease;
+  will-change: transform;
+}
+.btn-primary { background: var(--accent); color: var(--paper); }
+.btn-primary:hover { background: var(--accent-hover); transform: translateY(-2px); }
+.btn-primary:active { transform: translateY(0); }
+.btn-primary:disabled { background: var(--ink-wash); color: var(--text-tertiary); cursor: not-allowed; transform: none; }
+.btn-ghost { background: transparent; color: var(--accent); border-color: var(--border-strong); }
+.btn-ghost:hover { border-color: var(--accent); background: var(--accent-soft); }
+.btn-ghost:disabled { color: var(--text-tertiary); border-color: var(--border); cursor: not-allowed; background: transparent; }
+.tag {
+  display: inline-flex; align-items: center; min-height: 28px; padding: 0 0.75rem;
+  border-radius: 999px; font: 500 0.75rem/1 var(--sans); letter-spacing: 0.12em;
+  background: var(--accent-soft); color: var(--accent); white-space: nowrap;
+}
+.tag-blue { background: var(--ink-blue-soft); color: var(--ink-blue); }
+.tag-plain { background: var(--ink-wash); color: var(--text-secondary); }
+.card {
+  background: var(--surface); border: 1px solid var(--border); border-radius: 6px;
+  padding: 1.75rem;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
+}
+.card:hover { border-color: var(--border-strong); box-shadow: 0 8px 28px rgba(var(--text-rgb), 0.07); }
+.card-key { border-top: 3px solid var(--accent); }
+.card-data { border-top: 3px solid var(--ink-blue); }
+.card h3 { font: 700 1.3rem/1.5 var(--serif); margin-bottom: 0.6rem; }
+.card p { color: var(--text-secondary); font-size: 0.98rem; }
+.grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px; }
+.grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+.widget {
+  background: var(--surface); border: 1px solid var(--border); border-radius: 8px;
+  padding: 2.2rem; margin: 2.6rem 0;
+}
+.widget-head { display: flex; align-items: baseline; gap: 0.8rem; flex-wrap: wrap; margin-bottom: 0.5rem; }
+.widget-title { font: 700 1.25rem/1.4 var(--serif); }
+.widget-hint { font-size: 0.85rem; color: var(--text-tertiary); }
+.big-num { font: 900 2.6rem/1.1 var(--serif); font-variant-numeric: tabular-nums; }
+.big-num.accent { color: var(--accent); }
+.big-num.blue { color: var(--ink-blue); }
+.num-unit { font: 500 0.95rem var(--sans); color: var(--text-tertiary); margin-left: 4px; }
+.num-caption { font-size: 0.88rem; color: var(--text-secondary); margin-top: 0.4rem; }
+
+/* ============ 6. Widget: 百元旅程 Stepper ============ */
+.journey { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-top: 1.6rem; }
+.journey-step {
+  border: 1px solid var(--border); border-radius: 6px; padding: 1.2rem 1rem;
+  background: var(--surface); cursor: pointer; text-align: left;
+  transition: border-color 0.25s ease, background 0.25s ease, transform 0.2s ease;
+}
+.journey-step:hover { border-color: var(--accent); transform: translateY(-2px); }
+.journey-step.active { border-color: var(--accent); background: var(--accent-soft); }
+.journey-step .js-num { font: 900 1.8rem/1 var(--serif); color: var(--ink-blue); font-variant-numeric: tabular-nums; }
+.journey-step.active .js-num { color: var(--accent); }
+.journey-step .js-label { font: 500 0.85rem var(--sans); color: var(--text-secondary); margin-top: 0.5rem; }
+.bucket-svg .water { fill: var(--ink-blue); opacity: 0.35; }
+.bucket-svg .frame { stroke: var(--border-strong); }
+.bucket-svg .plank { fill: var(--ink-wash); stroke: var(--border-strong); }
+.bucket-svg .plank-consume { fill: var(--accent-soft); stroke: var(--accent); }
+.bucket-svg text { fill: var(--text-secondary); font: 12px var(--sans); }
+.bucket-svg .t-consume { fill: var(--accent); }
+.journey-detail { margin-top: 1.2rem; padding: 1.2rem 1.4rem; background: var(--ink-wash); border-radius: 6px; font-size: 0.98rem; color: var(--text-secondary); min-height: 4.5rem; }
+.journey-flow { display: flex; align-items: center; gap: 8px; margin: 1rem 0 0; flex-wrap: wrap; font: 700 0.9rem var(--sans); color: var(--text-tertiary); }
+
+/* ============ 7. Widget: 木桶模拟器 ============ */
+.bucket-wrap { display: grid; grid-template-columns: minmax(280px, 380px) 1fr; gap: 2.4rem; align-items: center; }
+.bucket-svg { width: 100%; height: auto; display: block; }
+.slider-block { margin-top: 0.6rem; }
+.slider-label { display: flex; justify-content: space-between; font: 500 0.9rem var(--sans); color: var(--text-secondary); margin-bottom: 0.2rem; }
+.slider-label output { font: 900 1.3rem var(--serif); color: var(--accent); font-variant-numeric: tabular-nums; }
+input[type="range"] { -webkit-appearance: none; appearance: none; width: 100%; height: 48px; background: transparent; cursor: pointer; }
+input[type="range"]::-webkit-slider-runnable-track { height: 6px; background: var(--ink-wash); border-radius: 3px; }
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none; appearance: none; width: 26px; height: 26px; margin-top: -10px;
+  border-radius: 50%; background: var(--accent); border: 3px solid var(--paper);
+  box-shadow: 0 2px 8px rgba(var(--accent-rgb), 0.4);
+  transition: transform 0.15s ease;
+}
+input[type="range"]::-webkit-slider-thumb:hover { transform: scale(1.12); }
+input[type="range"]::-moz-range-track { height: 6px; background: var(--ink-wash); border-radius: 3px; }
+input[type="range"]::-moz-range-thumb { width: 22px; height: 22px; border-radius: 50%; background: var(--accent); border: 3px solid var(--paper); box-shadow: 0 2px 8px rgba(var(--accent-rgb), 0.4); }
+.bucket-verdict { margin-top: 1rem; padding: 1rem 1.2rem; border-radius: 6px; background: var(--ink-wash); font-size: 0.95rem; color: var(--text-secondary); }
+.bucket-verdict strong { color: var(--accent); }
+
+/* ============ 8. Widget: 时间线 / Tabs ============ */
+.timeline { display: flex; gap: 0; margin: 1.8rem 0 1.4rem; }
+.tl-node { flex: 1; text-align: center; position: relative; padding: 0 6px; }
+.tl-node::before { content: ''; position: absolute; top: 11px; left: 0; right: 0; height: 2px; background: var(--border); }
+.tl-node:first-child::before { left: 50%; }
+.tl-node:last-child::before { right: 50%; }
+.tl-btn {
+  position: relative; z-index: 1; width: 24px; height: 24px; border-radius: 50%;
+  border: 2px solid var(--border-strong); background: var(--surface); cursor: pointer;
+  transition: border-color 0.25s ease, background 0.25s ease, transform 0.2s ease;
+}
+.tl-btn::before { content: ''; position: absolute; inset: -12px; }
+.tl-btn:hover { border-color: var(--accent); transform: scale(1.2); }
+.tl-node.active .tl-btn { background: var(--accent); border-color: var(--accent); }
+.tl-era { display: block; margin-top: 0.7rem; font: 700 1rem var(--serif); color: var(--text); }
+.tl-sub { display: block; font-size: 0.8rem; color: var(--text-tertiary); margin-top: 2px; }
+.tl-detail { padding: 1.4rem 1.6rem; background: var(--ink-wash); border-radius: 6px; color: var(--text-secondary); font-size: 0.98rem; min-height: 5.5rem; }
+.tabs { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 1.4rem; }
+.tab-btn {
+  min-height: 44px; padding: 0 1.2rem; border-radius: 999px; border: 1px solid var(--border);
+  background: var(--surface); font: 500 0.92rem var(--sans); color: var(--text-secondary);
+  cursor: pointer; transition: all 0.25s ease;
+}
+.tab-btn:hover { border-color: var(--accent); color: var(--accent); }
+.tab-btn[aria-selected="true"] { background: var(--accent); border-color: var(--accent); color: var(--paper); }
+.tab-panel { padding: 1.6rem; background: var(--ink-wash); border-radius: 6px; }
+.tab-panel h4 { font: 700 1.1rem var(--serif); margin-bottom: 0.5rem; }
+.tab-panel p { color: var(--text-secondary); font-size: 0.97rem; margin-bottom: 0.8rem; }
+.tab-panel .fact-row { display: flex; gap: 2rem; flex-wrap: wrap; margin-top: 0.6rem; }
+.tab-panel .fact { font-size: 0.85rem; color: var(--text-tertiary); }
+.tab-panel .fact b { display: block; font: 900 1.5rem var(--serif); color: var(--ink-blue); font-variant-numeric: tabular-nums; }
+
+/* ============ 9. Widget: 央地天平 / 税种卡 ============ */
+.scale-bars { margin: 1.6rem 0; }
+.scale-row { display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem; }
+.scale-row .sr-label { width: 3.5em; font: 700 0.95rem var(--sans); color: var(--text-secondary); flex-shrink: 0; }
+.scale-track { flex: 1; height: 34px; background: var(--ink-wash); border-radius: 4px; overflow: hidden; position: relative; }
+.scale-fill { height: 100%; border-radius: 4px; transition: width 0.8s var(--ease-out); display: flex; align-items: center; justify-content: flex-end; padding-right: 10px; font: 700 0.9rem var(--sans); color: var(--paper); min-width: 3.2em; }
+.scale-fill.central { background: var(--accent); }
+.scale-fill.local { background: var(--ink-blue); }
+.year-marks { display: flex; justify-content: space-between; font: 500 0.82rem var(--sans); color: var(--text-tertiary); padding: 0 2px; }
+.year-marks b { color: var(--text-secondary); }
+.tax-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; margin-top: 1.4rem; }
+.tax-card { border: 1px solid var(--border); border-radius: 6px; padding: 1.3rem; background: var(--surface); cursor: pointer; text-align: left; transition: border-color 0.25s ease, background 0.25s ease; width: 100%; }
+.tax-card:hover { border-color: var(--accent); }
+.tax-card.open { border-color: var(--accent); background: var(--surface-hover); }
+.tax-card h4 { font: 700 1.05rem var(--serif); margin-bottom: 0.8rem; }
+.split-bar { display: flex; height: 26px; border-radius: 4px; overflow: hidden; font: 700 0.8rem var(--sans); color: var(--paper); }
+.split-bar .c { background: var(--accent); display: flex; align-items: center; justify-content: center; min-width: 2.4em; }
+.split-bar .l { background: var(--ink-blue); display: flex; align-items: center; justify-content: center; min-width: 2.4em; }
+.split-legend { display: flex; gap: 1.2rem; margin-top: 0.6rem; font-size: 0.78rem; color: var(--text-tertiary); }
+.split-legend i { display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 4px; vertical-align: -1px; }
+.tax-detail { margin-top: 0.8rem; font-size: 0.88rem; color: var(--text-secondary); display: none; }
+.tax-card.open .tax-detail { display: block; }
+
+/* ============ 10. Widget: 城投循环 Stepper ============ */
+.loop-stage { display: grid; grid-template-columns: 220px 1fr; gap: 2rem; align-items: start; }
+.loop-dots { display: flex; flex-direction: column; gap: 8px; }
+.loop-dot {
+  display: flex; align-items: center; gap: 10px; padding: 0.7rem 0.9rem; min-height: 44px;
+  border: 1px solid var(--border); border-radius: 6px; background: var(--surface);
+  font: 500 0.88rem var(--sans); color: var(--text-tertiary); text-align: left;
+  transition: all 0.25s ease; cursor: default;
+}
+.loop-dot .ld-n { font: 900 0.95rem var(--serif); width: 1.4em; flex-shrink: 0; }
+.loop-dot.done { color: var(--text-secondary); border-color: var(--border-strong); }
+.loop-dot.current { border-color: var(--accent); color: var(--text); background: var(--accent-soft); }
+.loop-dot.danger.current { border-color: var(--error); background: var(--error-soft); }
+.loop-card { min-height: 220px; padding: 1.8rem; border: 1px solid var(--border); border-radius: 6px; background: var(--surface-hover); display: flex; flex-direction: column; }
+.loop-card.danger { border-color: var(--error); background: var(--error-soft); }
+.loop-card h4 { font: 700 1.2rem var(--serif); margin-bottom: 0.7rem; }
+.loop-card p { color: var(--text-secondary); font-size: 0.98rem; flex: 1; }
+.loop-actions { display: flex; gap: 12px; margin-top: 1.4rem; }
+
+/* ============ 11. Widget: 补贴竞赛 / 对比条 ============ */
+.meter { display: flex; height: 40px; border-radius: 6px; overflow: hidden; margin: 1.2rem 0 0.6rem; font: 700 0.88rem var(--sans); }
+.meter .m-corp { background: var(--accent); color: var(--paper); display: flex; align-items: center; justify-content: center; transition: width 0.5s var(--ease-out); min-width: 0; }
+.meter .m-civil { background: var(--ink-blue); color: var(--paper); display: flex; align-items: center; justify-content: center; transition: width 0.5s var(--ease-out); min-width: 0; }
+.meter-legend { display: flex; justify-content: space-between; font-size: 0.85rem; color: var(--text-secondary); }
+.vs-bars { display: flex; flex-direction: column; gap: 1.6rem; margin-top: 1.8rem; }
+.vs-row { display: grid; grid-template-columns: 7em 1fr 4.5em; align-items: center; gap: 1rem; }
+.vs-label { font: 700 0.95rem var(--sans); color: var(--text-secondary); }
+.vs-track { height: 38px; background: var(--ink-wash); border-radius: 4px; overflow: hidden; }
+.vs-fill { height: 100%; width: 0; border-radius: 4px; transition: width 1.2s var(--ease-out); }
+.vs-fill.red { background: var(--accent); }
+.vs-fill.blue { background: var(--ink-blue); }
+.vs-fill.gray { background: var(--border-strong); }
+.vs-num { font: 900 1.6rem var(--serif); font-variant-numeric: tabular-nums; color: var(--text); }
+
+/* ============ 12. Widget: 翻卡 / 对比卡 / 改革网络 ============ */
+.flip-card { perspective: 1200px; cursor: pointer; min-height: 240px; position: relative; border: none; background: none; padding: 0; text-align: left; width: 100%; }
+.flip-inner { position: relative; width: 100%; height: 100%; min-height: 240px; transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1); transform-style: preserve-3d; }
+.flip-card.flipped .flip-inner { transform: rotateY(180deg); }
+.flip-face {
+  position: absolute; inset: 0; backface-visibility: hidden; -webkit-backface-visibility: hidden;
+  border: 1px solid var(--border); border-radius: 6px; padding: 1.6rem;
+  background: var(--surface); display: flex; flex-direction: column;
+}
+.flip-face.front::after { content: '点击翻面 →'; position: absolute; bottom: 1.1rem; right: 1.3rem; font-size: 0.78rem; color: var(--text-tertiary); letter-spacing: 0.1em; }
+.flip-back { transform: rotateY(180deg); background: var(--surface-hover); border-color: var(--accent); }
+.flip-face h4 { font: 700 1.15rem var(--serif); margin-bottom: 0.6rem; }
+.flip-face p { font-size: 0.94rem; color: var(--text-secondary); }
+.flip-card:hover .flip-face.front { border-color: var(--border-strong); }
+.compare-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+.compare-card { border: 1px solid var(--border); border-radius: 6px; background: var(--surface); overflow: hidden; }
+.compare-head { padding: 1.3rem 1.5rem; border-bottom: 1px dashed var(--border); display: flex; justify-content: space-between; align-items: center; gap: 1rem; }
+.compare-head h4 { font: 700 1.15rem var(--serif); }
+.compare-body { padding: 1.3rem 1.5rem; color: var(--text-secondary); font-size: 0.95rem; }
+.compare-result { padding: 1rem 1.5rem; background: var(--ink-wash); font-size: 0.92rem; color: var(--text-secondary); display: none; }
+.compare-card.revealed .compare-result { display: block; }
+.compare-result strong { color: var(--accent); }
+.reform-rail { position: relative; margin-top: 2rem; padding-left: 34px; }
+.reform-rail::before { content: ''; position: absolute; left: 12px; top: 8px; bottom: 8px; width: 2px; background: var(--border); }
+.reform-node { position: relative; margin-bottom: 14px; }
+.reform-node::before {
+  content: ''; position: absolute; left: -28px; top: 22px; width: 12px; height: 12px;
+  border-radius: 50%; background: var(--surface); border: 2px solid var(--border-strong);
+  transition: all 0.3s ease;
+}
+.reform-node.open::before { background: var(--accent); border-color: var(--accent); }
+.reform-node.locked { opacity: 0.45; }
+.reform-btn {
+  width: 100%; text-align: left; border: 1px solid var(--border); border-radius: 6px;
+  background: var(--surface); padding: 1.1rem 1.4rem; cursor: pointer;
+  display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;
+  transition: border-color 0.25s ease, background 0.25s ease;
+}
+.reform-btn:hover:not(:disabled) { border-color: var(--accent); }
+.reform-btn:disabled { cursor: not-allowed; }
+.reform-node.open .reform-btn { border-color: var(--accent); background: var(--surface-hover); }
+.reform-btn .rb-title { font: 700 1.05rem var(--serif); flex: 1; min-width: 10em; }
+.reform-btn .rb-arrow { color: var(--text-tertiary); transition: transform 0.3s ease; }
+.reform-node.open .rb-arrow { transform: rotate(90deg); }
+.reform-detail { display: none; padding: 1.2rem 1.4rem 0.4rem; }
+.reform-node.open .reform-detail { display: block; }
+.reform-detail p { color: var(--text-secondary); font-size: 0.95rem; margin-bottom: 0.9rem; }
+.reform-cut { font-family: var(--kai); color: var(--accent); font-size: 0.98rem; padding: 0.7rem 1rem; background: var(--accent-soft); border-radius: 4px; margin-bottom: 1rem; }
+.reform-cut::before { content: '断的是哪条旧路 · '; font: 500 0.68rem var(--sans); letter-spacing: 0.2em; color: var(--text-tertiary); display: block; margin-bottom: 3px; }
+
+/* ============ 13. Quiz / Exam ============ */
+.quiz { border: 1px dashed var(--border-strong); border-radius: 8px; padding: 1.8rem; margin-top: 3rem; background: var(--surface); }
+.quiz-head { display: flex; align-items: center; gap: 10px; margin-bottom: 1.1rem; }
+.quiz-q { font: 700 1.12rem/1.6 var(--serif); margin-bottom: 1.1rem; }
+.quiz-options { display: flex; flex-direction: column; gap: 10px; }
+.quiz-option {
+  width: 100%; text-align: left; padding: 1rem 1.25rem; min-height: 52px;
+  background: var(--surface); border: 1px solid var(--border); border-radius: 6px;
+  cursor: pointer; font: 400 1rem/1.6 var(--sans); color: var(--text);
+  transition: border-color 0.25s ease, background 0.25s ease, transform 0.2s ease;
+  display: flex; gap: 0.8rem; align-items: baseline;
+}
+.quiz-option .qo-key { font: 700 0.85rem var(--sans); color: var(--text-tertiary); flex-shrink: 0; }
+.quiz-option:hover:not(:disabled) { border-color: var(--accent); background: var(--surface-hover); transform: translateX(4px); }
+.quiz-option.correct { border-color: var(--success); background: var(--success-soft); }
+.quiz-option.correct .qo-key { color: var(--success); }
+.quiz-option.wrong { border-color: var(--error); background: var(--error-soft); }
+.quiz-option.wrong .qo-key { color: var(--error); }
+.quiz-option:disabled { cursor: default; }
+.quiz-explain { display: none; margin-top: 1.2rem; padding: 1rem 1.2rem; border-radius: 6px; font-size: 0.95rem; line-height: 1.8; }
+.quiz-explain.show { display: block; }
+.quiz-explain.ok { background: var(--success-soft); color: var(--text-secondary); }
+.quiz-explain.ok .verdict { font-family: var(--kai); color: var(--success); font-size: 1.05rem; display: block; margin-bottom: 4px; }
+.quiz-explain.retry { background: var(--error-soft); color: var(--text-secondary); }
+.quiz-explain.retry .verdict { font-family: var(--kai); color: var(--error); font-size: 1.05rem; display: block; margin-bottom: 4px; }
+.exam-score { display: none; text-align: center; padding: 2.4rem 1.6rem; border-radius: 8px; background: var(--surface); border: 1px solid var(--border-strong); box-shadow: 0 12px 40px rgba(var(--text-rgb), 0.12); margin-top: 2rem; }
+.exam-score.show { display: block; }
+.exam-score .es-num { font: 900 3.6rem/1 var(--serif); color: var(--accent); font-variant-numeric: tabular-nums; }
+.exam-score .es-grade { font: 700 1.3rem var(--serif); margin: 0.8rem 0 0.5rem; }
+.exam-score .es-comment { color: var(--text-secondary); max-width: 34em; margin: 0 auto 1.4rem; }
+.review-list { margin-top: 2rem; }
+.review-list li { margin-bottom: 0.7rem; color: var(--text-secondary); list-style: none; padding-left: 1.6em; position: relative; }
+.review-list li::before { content: '→'; position: absolute; left: 0; color: var(--accent); font-weight: 700; }
+
+/* ============ 14. 术语 tooltip / Footer ============ */
+.term {
+  border: none; background: none; padding: 0 1px; font: inherit; color: var(--accent);
+  border-bottom: 1px dashed var(--accent); cursor: help; position: relative;
+}
+.term:hover { background: var(--accent-soft); }
+.term-tip {
+  position: fixed; z-index: 300; max-width: 300px; padding: 0.9rem 1.1rem;
+  background: var(--text); color: var(--bg); border-radius: 6px;
+  font-size: 0.86rem; line-height: 1.7; letter-spacing: 0.02em;
+  box-shadow: 0 12px 40px rgba(var(--text-rgb), 0.25); pointer-events: none;
+  opacity: 0; transform: translateY(6px); transition: opacity 0.2s ease, transform 0.2s ease;
+}
+.term-tip.show { opacity: 1; transform: none; }
+.footer { padding: 4rem 0 3rem; border-top: 1px solid var(--border); margin-top: 2rem; }
+.footer p { font-size: 0.85rem; color: var(--text-tertiary); margin-bottom: 0.5rem; }
+.footer .fnote { font-family: var(--kai); color: var(--text-secondary); font-size: 1rem; margin-bottom: 1.2rem; }
+
+/* ============ 15. Responsive ============ */
+@media (max-width: 900px) {
+  .grid-2, .grid-3, .compare-grid, .tax-grid { grid-template-columns: 1fr; }
+  .journey { grid-template-columns: repeat(2, 1fr); }
+  .bucket-wrap { grid-template-columns: 1fr; }
+  .loop-stage { grid-template-columns: 1fr; }
+  .loop-dots { flex-direction: row; flex-wrap: wrap; }
+  .loop-dot { flex: 1; min-width: 130px; }
+  .nav-dots { gap: 7px; }
+  .chapter-num { font-size: 6rem; top: 2rem; right: 1rem; }
+  .hero-seal { display: none; }
+}
+@media (max-width: 600px) {
+  body { font-size: 1rem; }
+  .section { padding: 72px 0; }
+  .hero-title { font-size: 2.1rem; }
+  h2.chapter-title { font-size: 1.6rem; }
+  .widget { padding: 1.4rem 1.1rem; }
+  .card { padding: 1.2rem; }
+  .timeline { flex-wrap: wrap; gap: 14px; }
+  .tl-node { flex: 1 1 40%; }
+  .tl-node::before { display: none; }
+  .journey { grid-template-columns: 1fr; }
+  .vs-row { grid-template-columns: 5.5em 1fr 3.6em; gap: 0.6rem; }
+  .vs-num { font-size: 1.2rem; }
+  .quiz { padding: 1.3rem 1.1rem; }
+}
+
+/* ============ 16. Reduced Motion ============ */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important; animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important; scroll-behavior: auto !important;
+  }
+  html { scroll-behavior: auto; }
+  .hero-char, .ct-char, .reveal, .reveal-stagger > * { opacity: 1 !important; filter: none !important; transform: none !important; }
+}
+</style>
+</head>
+<body>
+<div class="scroll-progress"><div class="bar" id="scrollBar"></div></div>
+
+<nav class="nav" id="nav" aria-label="章节导航">
+  <div class="nav-inner">
+    <a class="nav-brand" href="#top">削藩与分配<em> · 互动讲义</em></a>
+    <div class="nav-dots" id="navDots" role="navigation" aria-label="章节进度"></div>
+  </div>
+</nav>
+
+<!-- ================= 序章 ================= -->
+<header class="hero" id="top">
+  <div class="hero-seal" aria-hidden="true">削藩<br>讲义</div>
+  <div class="container">
+    <p class="hero-kicker">一堂动手操作的财政通识课</p>
+    <h1 class="hero-title" id="heroTitle">分配问题，才是这场「<span class="hl">削藩</span>」的底层逻辑</h1>
+    <p class="hero-sub">国税地税合并、城投退出、十二万亿化债、金税四期、统一大市场……这些政策看似分散，其实指向同一件事。这堂课不念文件，我们用一只木桶、一台天平、几个可以亲手拨动的模型，把背后的逻辑拆开看清楚。</p>
+    <div class="hero-goals reveal-stagger">
+      <span class="tag">看懂消费为什么是短板</span>
+      <span class="tag">理解「藩」如何从诸侯变成制度</span>
+      <span class="tag">理清分税制到土地财政的链条</span>
+      <span class="tag">明白七步改革网在收紧什么</span>
+    </div>
+    <div class="hero-cta-row">
+      <a class="btn btn-primary" href="#ch1" id="magnetCta">开始第一课 →</a>
+      <span class="hero-meta">共 7 章 · 约 15 分钟 · 10+ 个互动组件 · 每章附随堂测</span>
+    </div>
+  </div>
+</header>
+
+<!-- ================= 第一章 · 木桶 ================= -->
+<section class="section" id="ch1" data-chapter="1">
+  <div class="chapter-num" aria-hidden="true">壹</div>
+  <div class="container">
+    <div class="narrow">
+      <p class="eyebrow reveal">第一章 · 问题的起点</p>
+      <h2 class="chapter-title reveal">一只装不满的木桶</h2>
+      <div class="prose">
+        <p class="reveal">先假设有一个「水塔国」：一年创造 <strong>100 块钱</strong> 的 GDP，这笔钱主要在三个口袋之间分配——<strong>居民、企业、政府</strong>。</p>
+        <p class="reveal">居民部门大约拿到 <strong>61 块</strong>，看似超过六成；但除去日常开支，剩下的钱大多被存了起来。真正重新回到经济循环、变成消费的，只有 <strong>约 40 块</strong>。而全球的参照水平，是 <strong>约 60 块</strong>。</p>
+      </div>
+    </div>
+
+    <div class="widget reveal" id="widget-journey">
+      <div class="widget-head">
+        <span class="widget-title">动手 · 跟着 100 块钱走一遍</span>
+        <span class="widget-hint">依次点击四个站点，看钱在哪一站停了下来</span>
+      </div>
+      <div class="journey" id="journeySteps" role="tablist" aria-label="100 块钱的旅程"></div>
+      <div class="journey-detail" id="journeyDetail" aria-live="polite">点击上方任意一站，开始这趟旅程。</div>
+    </div>
+
+    <div class="narrow">
+      <div class="prose">
+        <p class="reveal">钱为什么停了？<strong>高收入群体</strong>拿到超比例份额，消费不完的财富沉淀成房产、股票和信托；<strong>低收入群体</strong>有消费意愿，却没有消费能力；<strong>中间群体</strong>上看够不着、下看怕跌落，于是也倾向于储蓄。</p>
+        <p class="reveal">把经济想象成一只木桶：技术是最长的板，资本和基建也很长——但<span class="key-sentence">木桶能装多少水，取决于最短的那块板</span>。消费，就是那块最短的板。</p>
+      </div>
+    </div>
+
+    <div class="widget reveal" id="widget-bucket">
+      <div class="widget-head">
+        <span class="widget-title">动手 · 木桶模拟器</span>
+        <span class="widget-hint">拖动滑杆改变「消费」板的高度，观察水位变化</span>
+      </div>
+      <div class="bucket-wrap">
+        <svg class="bucket-svg" viewBox="0 0 360 260" role="img" aria-label="木桶短板示意图">
+          <defs>
+            <clipPath id="bucketClip"><path d="M70 40 L290 40 L272 232 L88 232 Z"/></clipPath>
+          </defs>
+          <!-- 水 -->
+          <rect id="waterRect" class="water" x="70" y="160" width="220" height="72" clip-path="url(#bucketClip)" style="transition: y 0.5s cubic-bezier(0.16,1,0.3,1), height 0.5s cubic-bezier(0.16,1,0.3,1);"/>
+          <!-- 桶身 -->
+          <path class="frame" d="M70 40 L290 40 L272 232 L88 232 Z" fill="none" stroke-width="3"/>
+          <!-- 四块板 -->
+          <g id="planks">
+            <rect class="plank" x="86"  y="60" width="42" height="172"/>
+            <rect class="plank" x="136" y="68" width="42" height="164"/>
+            <rect class="plank" x="186" y="74" width="42" height="158"/>
+            <rect class="plank-consume" id="plankConsume" x="236" y="160" width="42" height="72" stroke-width="2" style="transition: y 0.5s cubic-bezier(0.16,1,0.3,1), height 0.5s cubic-bezier(0.16,1,0.3,1);"/>
+            <text x="107" y="50" text-anchor="middle">技术</text>
+            <text x="157" y="62" text-anchor="middle">资本</text>
+            <text x="207" y="68" text-anchor="middle">基建</text>
+            <text class="t-consume" x="257" y="248" text-anchor="middle" font-weight="700">消费</text>
+          </g>
+        </svg>
+        <div class="slider-block">
+          <div class="slider-label">
+            <span>居民消费率（消费占 GDP 比重）</span>
+            <output id="bucketOut">40%</output>
+          </div>
+          <input type="range" id="bucketSlider" min="30" max="90" value="40" step="1" aria-label="居民消费率">
+          <div class="year-marks"><span>30%</span><span>现实 ≈ 40%</span><span>全球 ≈ 60%</span><span>90%</span></div>
+          <div class="bucket-verdict" id="bucketVerdict" aria-live="polite"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="narrow">
+      <div class="ink-note reveal">技术在迭代、产业在升级、基建在扩张——只要居民在日常消费上仍精打细算，木桶就装不满水。产品卖不动、技术没有市场，通缩压力和活力下降便会随之而来。所以问题的关键不只在「多生产」，更在<span style="color:var(--accent)">让居民有钱花、敢花钱</span>。</div>
+      <div class="quiz reveal" data-quiz="1">
+        <div class="quiz-head"><span class="tag">随堂测 · 一</span></div>
+        <p class="quiz-q">水塔国一年创造 100 元 GDP，真正回到经济循环、变成消费的大约是多少？</p>
+        <div class="quiz-options">
+          <button class="quiz-option"><span class="qo-key">A</span>约 61 元——居民分到的部分</button>
+          <button class="quiz-option" data-correct="1"><span class="qo-key">B</span>约 40 元——扣除储蓄之后</button>
+          <button class="quiz-option"><span class="qo-key">C</span>约 20 元——居民存下的部分</button>
+        </div>
+        <div class="quiz-explain" data-ok="正是如此。61 元是「分到」，其中约 20 元被存起，真正花出去的约 40 元——而全球参照水平约 60 元。这就是「消费偏弱」的全部含义。" data-retry="再想想：61 元是居民「分到」的钱，但分到手不等于花出去——中间隔着储蓄。"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= 第二章 · 藩 ================= -->
+<section class="section alt" id="ch2" data-chapter="2">
+  <div class="chapter-num" aria-hidden="true">贰</div>
+  <div class="container">
+    <div class="narrow">
+      <p class="eyebrow reveal">第二章 · 概念课</p>
+      <h2 class="chapter-title reveal">「藩」是什么：从篱笆到制度闭环</h2>
+      <div class="prose">
+        <p class="reveal">「藩」最早是篱笆，后来成为政治概念：<strong>中央授予地方权力，由地方替中央守一方</strong>。周朝分封在早期有其合理性——当时的生产力，支撑不起中央直接治理全部疆域。</p>
+        <p class="reveal">但权力交出去之后，地方在运行中会更看重自身利益。经营数代，利益固化，<span class="key-sentence">「藩」就长成了与中央相互制衡甚至对抗的力量</span>。这个故事，一千年来反复上演。</p>
+      </div>
+    </div>
+
+    <div class="widget reveal" id="widget-timeline">
+      <div class="widget-head">
+        <span class="widget-title">动手 · 千年时间线</span>
+        <span class="widget-hint">点击节点，看每一朝如何面对「藩」</span>
+      </div>
+      <div class="timeline" id="timeline" role="tablist" aria-label="削藩历史时间线"></div>
+      <div class="tl-detail" id="tlDetail" aria-live="polite">点击时间线上的节点。</div>
+    </div>
+
+    <div class="narrow">
+      <div class="prose">
+        <p class="reveal">到了现代社会，「藩」不再是拥兵自重的家族，而是一套<span class="key-sentence">制度性闭环</span>：某个层级的政府或某类市场主体，拥有相对独立的<strong>裁量规则、制定权和利益结构</strong>，令中央政策难以穿透——或即使穿透，也难以执行。</p>
+        <p class="reveal">这不是某一国独有的难题。看看世界上三个著名的现代「藩」：</p>
+      </div>
+    </div>
+
+    <div class="widget reveal" id="widget-tabs">
+      <div class="widget-head">
+        <span class="widget-title">动手 · 现代「藩」的三个样本</span>
+        <span class="widget-hint">切换标签，看同一个难题的三种形态</span>
+      </div>
+      <div class="tabs" role="tablist" aria-label="现代藩案例">
+        <button class="tab-btn" role="tab" aria-selected="true" data-tab="0">美国 · 特拉华州</button>
+        <button class="tab-btn" role="tab" aria-selected="false" data-tab="1">欧盟 · 爱尔兰</button>
+        <button class="tab-btn" role="tab" aria-selected="false" data-tab="2">印度 · 邦界关卡</button>
+      </div>
+      <div class="tab-panel" id="tabPanel" aria-live="polite"></div>
+    </div>
+
+    <div class="narrow">
+      <div class="quiz reveal" data-quiz="2">
+        <div class="quiz-head"><span class="tag">随堂测 · 二</span></div>
+        <p class="quiz-q">现代社会的「藩」，最准确的含义是什么？</p>
+        <div class="quiz-options">
+          <button class="quiz-option"><span class="qo-key">A</span>拥兵自重的地方家族势力</button>
+          <button class="quiz-option" data-correct="1"><span class="qo-key">B</span>拥有独立裁量规则、制定权和利益结构的制度性闭环</button>
+          <button class="quiz-option"><span class="qo-key">C</span>设在海外的避税天堂</button>
+        </div>
+        <div class="quiz-explain" data-ok="正是如此。军队和家族是古代的形态；今天的「藩」是一纸规则——它让政策穿不透、落不了地。研究中央与地方如何分钱、分权、分责的学问，叫「财政联邦主义」。" data-retry="再想想：题目问的是「现代社会」。拥兵自重是汉唐的旧剧本。"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= 第三章 · 钱袋子 ================= -->
+<section class="section" id="ch3" data-chapter="3">
+  <div class="chapter-num" aria-hidden="true">叁</div>
+  <div class="container">
+    <div class="narrow">
+      <p class="eyebrow reveal">第三章 · 旧增长机制的起点</p>
+      <h2 class="chapter-title reveal">钱袋子的故事：从财政包干到分税制</h2>
+      <div class="prose">
+        <p class="reveal">20 世纪 80 年代，中国实行<strong>财政包干制</strong>：中央与各省约定一个上缴基数，<strong>交够基数，剩下的全归地方</strong>。这套「分灶吃饭」极大调动了地方积极性——乡镇企业、经济特区、开发区，都是这股劲头的产物。</p>
+        <p class="reveal">但问题在 90 年代初显现：<span class="key-sentence">中央财政收入占全国税收的比例，从 1984 年的约 40% 一路降到 1993 年的 22%</span>。中央财力不足，跨区域工程、区域平衡、应对经济波动都受限制，甚至需要向地方借钱维持运转。</p>
+      </div>
+    </div>
+
+    <div class="widget reveal" id="widget-scale">
+      <div class="widget-head">
+        <span class="widget-title">动手 · 央地天平</span>
+        <span class="widget-hint">拖动年份滑杆，看中央与地方的财力此消彼长</span>
+      </div>
+      <div class="slider-block">
+        <div class="slider-label"><span>年份</span><output id="yearOut">1993 年</output></div>
+        <input type="range" id="yearSlider" min="0" max="2" value="1" step="1" aria-label="年份选择：1984、1993、2000">
+        <div class="year-marks"><span><b>1984</b> 包干制下</span><span><b>1993</b> 中央最窘迫时</span><span><b>2000</b> 分税制后</span></div>
+      </div>
+      <div class="scale-bars">
+        <div class="scale-row"><span class="sr-label">中央</span><div class="scale-track"><div class="scale-fill central" id="barCentral" style="width:22%">22%</div></div></div>
+        <div class="scale-row"><span class="sr-label">地方</span><div class="scale-track"><div class="scale-fill local" id="barLocal" style="width:78%">78%</div></div></div>
+      </div>
+      <div class="bucket-verdict" id="yearVerdict" aria-live="polite"></div>
+    </div>
+
+    <div class="narrow">
+      <div class="prose">
+        <p class="reveal">1994 年 1 月 1 日，<strong>分税制改革</strong>落地，把税重新划分为中央税、地方税和共享税。中央财权得到缓解，并通过<strong>转移支付</strong>向中西部和经济薄弱地区倾斜——高速公路、高铁、义务教育、农村合作医疗，都有了财政基础；1997 和 2008 两次金融危机，也有了应对冲击的底气。</p>
+      </div>
+    </div>
+
+    <div class="widget reveal" id="widget-tax">
+      <div class="widget-head">
+        <span class="widget-title">动手 · 100 元税款怎么分</span>
+        <span class="widget-hint">点击每种税，看中央与地方各拿多少</span>
+      </div>
+      <div class="tax-grid">
+        <button class="tax-card" type="button">
+          <h4>增值税</h4>
+          <div class="split-bar"><span class="c" style="width:75%">中央 75</span><span class="l" style="width:25%">地方 25</span></div>
+          <p class="tax-detail">最大的一块共享税。地方留成虽少，但企业越多、留在本地的 25% 就越厚——这是「招商引资冲动」的直接来源。</p>
+        </button>
+        <button class="tax-card" type="button">
+          <h4>消费税</h4>
+          <div class="split-bar"><span class="c" style="width:100%">中央 100</span></div>
+          <p class="tax-detail">全部归中央。后文第七章会看到：把消费税部分下划地方，正是「给地方新动力」的改革候选方案。</p>
+        </button>
+        <button class="tax-card" type="button">
+          <h4>企业与个人所得税</h4>
+          <div class="split-bar"><span class="c" style="width:60%">中央 60</span><span class="l" style="width:40%">地方 40</span></div>
+          <p class="tax-detail">后来调整为中央 60%、地方 40%。分税制的本质：财权上收，再通过转移支付重新分配。</p>
+        </button>
+      </div>
+      <div class="split-legend"><span><i style="background:var(--accent)"></i>中央分成</span><span><i style="background:var(--ink-blue)"></i>地方分成</span></div>
+    </div>
+
+    <div class="narrow">
+      <div class="prose">
+        <p class="reveal">分税制并没有打消地方的干劲。短期内地方钱不够花，反而<strong>更有招商引资的冲动</strong>：企业越多，留在本地的增值税份额越多。经济学家周黎安称之为<span class="key-sentence">「地方锦标赛」</span>——地方管理者像经营者一样发展辖区经济。这套机制有副作用，却也是中国三十年高速增长的重要引擎之一。</p>
+      </div>
+      <div class="quiz reveal" data-quiz="3">
+        <div class="quiz-head"><span class="tag">随堂测 · 三</span></div>
+        <p class="quiz-q">1994 年分税制落地后，地方收上来 100 元增值税，能留在本地的是多少？</p>
+        <div class="quiz-options">
+          <button class="quiz-option"><span class="qo-key">A</span>75 元</button>
+          <button class="quiz-option" data-correct="1"><span class="qo-key">B</span>25 元</button>
+          <button class="quiz-option"><span class="qo-key">C</span>100 元全留</button>
+        </div>
+        <div class="quiz-explain" data-ok="正是如此。增值税 75% 归中央、25% 归地方。蛋糕的大头上收，花钱的事权却留在地方——这个缺口，就是下一章所有故事的起因。" data-retry="再想想：分税制的方向是「财权上收」。100 全留是包干制的旧时光，75 元恰好说反了。"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= 第四章 · 地方财技 ================= -->
+<section class="section alt" id="ch4" data-chapter="4">
+  <div class="chapter-num" aria-hidden="true">肆</div>
+  <div class="container">
+    <div class="narrow">
+      <p class="eyebrow reveal">第四章 · 副作用显性化</p>
+      <h2 class="chapter-title reveal">地方的三套财技</h2>
+      <div class="prose">
+        <p class="reveal">分税制适配的是高速增长、快速城镇化的阶段——增长本身消化了副作用。当增长阶段切换，副作用开始显性化：<span class="key-sentence">税收大头上收，教育、医疗、社保、基建等花钱的事权，仍主要留在地方</span>。地方必须寻找替代财源，于是有了三套「财技」。</p>
+      </div>
+    </div>
+
+    <div class="widget reveal">
+      <div class="widget-head">
+        <span class="widget-title">财技一 · 土地财政（「第二财政」）</span>
+        <span class="widget-hint">滚动到这里时，数字会自己说话</span>
+      </div>
+      <div class="grid-3">
+        <div class="card card-data">
+          <div class="big-num blue"><span data-count="1" data-suffix=" 亿亩">0</span></div>
+          <p class="num-caption">1992–2024 年全国地方累计出让土地，接近 1 亿亩</p>
+        </div>
+        <div class="card card-data">
+          <div class="big-num blue"><span data-count="83" data-suffix=" 万亿">0</span></div>
+          <p class="num-caption">同期土地出让金总额超过 83 万亿元</p>
+        </div>
+        <div class="card card-key">
+          <div class="big-num accent">差价</div>
+          <p class="num-caption">低价征地、高价卖给开发商——农民征地补偿与出让价之间的差额，是从农村向城市、从居民向政府的财富转移</p>
+        </div>
+      </div>
+      <p style="margin-top:1.2rem;font-size:0.95rem;color:var(--text-secondary)">早期卖地收入支持了新区、道路、地铁，推动了城镇化；但高地价与居民对低房价的需求形成根本矛盾。<strong>房地产下行后，这条路径难以为继。</strong></p>
+    </div>
+
+    <div class="widget reveal" id="widget-loop">
+      <div class="widget-head">
+        <span class="widget-title">财技二 · 城投：点「下一步」，走完这个循环</span>
+        <span class="widget-hint">政府信用借钱的「融资平台公司」</span>
+      </div>
+      <div class="loop-stage">
+        <div class="loop-dots" id="loopDots"></div>
+        <div class="loop-card" id="loopCard" aria-live="polite"></div>
+      </div>
+    </div>
+
+    <div class="widget reveal" id="widget-subsidy">
+      <div class="widget-head">
+        <span class="widget-title">财技三 · 补贴竞赛模拟器</span>
+        <span class="widget-hint">拖动返还比例，看财政的 100 元还剩多少用于民生</span>
+      </div>
+      <div class="slider-block">
+        <div class="slider-label"><span>税收返还比例（你返 70%、我返 80%、他返 90%……）</span><output id="subsidyOut">30%</output></div>
+        <input type="range" id="subsidySlider" min="0" max="90" value="30" step="5" aria-label="税收返还比例">
+      </div>
+      <div class="meter">
+        <div class="m-corp" id="meterCorp" style="width:30%">返给企业 30</div>
+        <div class="m-civil" id="meterCivil" style="width:70%">民生可用 70</div>
+      </div>
+      <div class="meter-legend"><span>企业缴的 100 元税，按返还比例切分</span></div>
+      <div class="bucket-verdict" id="subsidyVerdict" aria-live="polite"></div>
+    </div>
+
+    <div class="narrow">
+      <div class="prose">
+        <p class="reveal">返还和补贴早期促进了产业集聚，失控后却变成竞赛：<span class="key-sentence">本质上是全体纳税人拿钱，补贴少数企业落户</span>——企业不是因为当地适合经营才来，而是因为补贴更多；别处出价更高，它又会迁走。</p>
+        <p class="reveal">竞争最激烈时，地方还会<strong>保护本地市场</strong>：设立地方标准让外地产品进不来、招标只许本地注册企业投标、财政补贴只补本地企业。一个跨省经营的企业面对的隐性壁垒，有时甚至高于出口东南亚。超大规模市场本是中国的竞争优势，被切碎后反而成了阻碍。</p>
+      </div>
+      <div class="quiz reveal" data-quiz="4">
+        <div class="quiz-head"><span class="tag">随堂测 · 四</span></div>
+        <p class="quiz-q">城投平台「借新还旧」模式，最脆弱的一环是什么？</p>
+        <div class="quiz-options">
+          <button class="quiz-option"><span class="qo-key">A</span>基建项目的工程质量</button>
+          <button class="quiz-option" data-correct="1"><span class="qo-key">B</span>一旦续借不到新钱，旧债本息无法偿还，风险连锁传导</button>
+          <button class="quiz-option"><span class="qo-key">C</span>银行给的利率太低</button>
+        </div>
+        <div class="quiz-explain" data-ok="正是如此。借新还旧能转下去的唯一前提，是「永远能借到新钱」。截至 2025 年末，地方政府法定债务 54.8 万亿元、隐性债务 6.5 万亿元——这还没算大量城投经营性债务。" data-retry="再想想：这个循环的名字里就藏着答案——「借新」是为了「还旧」。链条断在哪一环？"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= 第五章 · 为什么是现在 ================= -->
+<section class="section" id="ch5" data-chapter="5">
+  <div class="chapter-num" aria-hidden="true">伍</div>
+  <div class="container">
+    <div class="narrow">
+      <p class="eyebrow reveal">第五章 · 时机</p>
+      <h2 class="chapter-title reveal">为什么偏偏是现在加大力度？</h2>
+      <div class="prose">
+        <p class="reveal">三个条件叠加到了一起。<strong>外部</strong>：过去国内市场再碎片化，外需仍可兜底；如今关税与反补贴调查增加了出口的不确定性，内循环成了战略底牌。<strong>财政</strong>：房地产下行、城投融资成本上升、新增借款渠道收窄，一些地方连基层工资发放都面临压力——截至 2025 年末，全国政府债务负债率 73.2%，总量可控，但结构性压力明显。<strong>消费</strong>：也就是第一章那块最短的板，短得越来越明显。</p>
+      </div>
+    </div>
+
+    <div class="widget reveal" id="widget-consume">
+      <div class="widget-head">
+        <span class="widget-title">看图 · 居民消费率的差距</span>
+        <span class="widget-hint">条形滚入视口时自动生长</span>
+      </div>
+      <div class="vs-bars" id="consumeBars">
+        <div class="vs-row"><span class="vs-label">中国</span><div class="vs-track"><div class="vs-fill red" data-w="40"></div></div><span class="vs-num"><span data-count="40" data-suffix="%">0</span></span></div>
+        <div class="vs-row"><span class="vs-label">中等收入经济体</span><div class="vs-track"><div class="vs-fill blue" data-w="55"></div></div><span class="vs-num"><span data-count="55" data-suffix="%">0</span></span></div>
+        <div class="vs-row"><span class="vs-label">全球平均</span><div class="vs-track"><div class="vs-fill gray" data-w="60"></div></div><span class="vs-num"><span data-count="60" data-suffix="%">0</span></span></div>
+      </div>
+      <div class="bucket-verdict" style="margin-top:1.4rem">居民消费支出占 GDP 的比重：中国约 <strong>40%</strong>，中等收入经济体平均约 55%，全球平均约 60%。</div>
+    </div>
+
+    <div class="widget reveal">
+      <div class="widget-head"><span class="widget-title">看图 · 钱并非不存在，只是不敢花</span><span class="widget-hint">2026 年的三组对照</span></div>
+      <div class="grid-3">
+        <div class="card card-data">
+          <div class="big-num blue"><span data-count="1.3" data-decimals="1" data-suffix="%">0</span></div>
+          <p class="num-caption">2026 年上半年社会消费品零售总额增速，5 月甚至为负</p>
+        </div>
+        <div class="card card-data">
+          <div class="big-num blue"><span data-count="75" data-suffix=" 万亿">0</span></div>
+          <p class="num-caption">2026 年居民定期存款到期规模约 75 万亿元，同比增幅 17%</p>
+        </div>
+        <div class="card card-key">
+          <div class="big-num accent">&lt;1%</div>
+          <p class="num-caption">中长期定存利率已普遍降到 1% 以下，人们仍在储蓄——收入增长 5.2%，消费支出只增长 3.7%</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="narrow">
+      <div class="prose">
+        <p class="reveal">为什么不敢花？文章把它拆成三层。<strong>点击每张牌翻面</strong>，看每一层背后的数字：</p>
+      </div>
+    </div>
+
+    <div class="grid-3 reveal-stagger" id="reasonFlips">
+      <button class="flip-card" type="button" aria-expanded="false">
+        <div class="flip-inner">
+          <div class="flip-face front"><h4>第一层 · 蛋糕小</h4><p>居民部门分到的份额，本身就偏小。</p></div>
+          <div class="flip-face flip-back"><h4>60.8%</h4><p>居民部门可支配收入占 GDP 的比重约 60.8%——分到手里的蛋糕小，消费自然受限。</p></div>
+        </div>
+      </button>
+      <button class="flip-card" type="button" aria-expanded="false">
+        <div class="flip-inner">
+          <div class="flip-face front"><h4>第二层 · 差距大</h4><p>蛋糕内部，切得也不均匀。</p></div>
+          <div class="flip-face flip-back"><h4>35% vs 25%</h4><p>过去五年，高收入组可支配收入累计增长 35%，中等收入组 25%，相差 10 个百分点。高收入群体消费不完，低收入群体没有能力消费。</p></div>
+        </div>
+      </button>
+      <button class="flip-card" type="button" aria-expanded="false">
+        <div class="flip-inner">
+          <div class="flip-face front"><h4>第三层 · 兜底弱</h4><p>四座大山任何一座，都可能压垮一个普通家庭。</p></div>
+          <div class="flip-face flip-back"><h4>预防性储蓄</h4><p>医疗、教育、养老、住房——社保兜底不足，人们就只能自己存钱防身。不敢花，是理性选择。</p></div>
+        </div>
+      </button>
+    </div>
+
+    <div class="narrow">
+      <div class="ink-note reveal">土地财政、资本避税、地方保护、招商内卷——归根到底都是分配问题。分配结构不调整，消费起不来，内循环就难以运转。所谓「削藩」是手段，<span style="color:var(--accent)">让居民有钱花、敢花钱才是目的</span>。</div>
+      <div class="quiz reveal" data-quiz="5">
+        <div class="quiz-head"><span class="tag">随堂测 · 五</span></div>
+        <p class="quiz-q">定存利率已降到 1% 以下，2026 年仍有约 75 万亿定期存款到期。人们坚持储蓄的根本原因是？</p>
+        <div class="quiz-options">
+          <button class="quiz-option"><span class="qo-key">A</span>不懂理财，只会存银行</button>
+          <button class="quiz-option"><span class="qo-key">B</span>消费主义过时了，大家不想买</button>
+          <button class="quiz-option" data-correct="1"><span class="qo-key">C</span>分得少、差距大、保障兜底不足——不敢花是理性选择</button>
+        </div>
+        <div class="quiz-explain" data-ok="正是如此。储蓄不是习惯问题，是结构问题：蛋糕小、差距大、兜底弱，三层叠加，存钱防身就成了最优解。" data-retry="再想想：75 万亿不是一笔「懒得花」的钱，而是一笔「不敢花」的钱。是什么让人不敢？"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= 第六章 · 改革网络 ================= -->
+<section class="section alt" id="ch6" data-chapter="6">
+  <div class="chapter-num" aria-hidden="true">陆</div>
+  <div class="container">
+    <div class="narrow">
+      <p class="eyebrow reveal">第六章 · 一张逐步收紧的网</p>
+      <h2 class="chapter-title reveal">削藩工具箱：七步，步步收紧</h2>
+      <div class="prose">
+        <p class="reveal">近年的政策组合，可以被解读为一张包围网。前三步<strong>收权</strong>（钱袋子），中间三步<strong>堵漏</strong>（资本的避税空间），最后一步<strong>立规</strong>（重写地方竞争规则）。</p>
+        <p class="reveal">网络按顺序展开——<span class="key-sentence">解开当前节点，下一步才会解锁</span>。每解开一步，注意看朱批：这一步断的是哪条旧路。</p>
+      </div>
+    </div>
+
+    <div class="reform-rail reveal" id="reformRail">
+      <div class="reform-node" data-step="0">
+        <button class="reform-btn" type="button" aria-expanded="false">
+          <span class="tag">收权 · 一</span><span class="rb-title">国税地税合并</span><span class="tag-plain tag">2018</span><span class="rb-arrow">→</span>
+        </button>
+        <div class="reform-detail">
+          <p>原本国税归中央、地税归地方，地方对地方税征管和企业优惠有很大操作空间。合并后人财物集中管理，税收数据进入全国系统——地方通过「征管放水」变相优惠的空间被压缩。</p>
+          <div class="reform-cut">地方在税收征管上的自由裁量。从此税收一本账。</div>
+        </div>
+      </div>
+      <div class="reform-node locked" data-step="1">
+        <button class="reform-btn" type="button" aria-expanded="false" disabled>
+          <span class="tag">收权 · 二</span><span class="rb-title">城投退出（150 号文）</span><span class="tag-plain tag">2024.8</span><span class="rb-arrow">→</span>
+        </button>
+        <div class="reform-detail">
+          <p>央行、财政部、证监会等四部门要求融资平台在 2027 年 6 月底前完成退出：隐性债务清零、获三分之二以上金融债权人同意、彻底剥离政府融资功能——或转为市场化企业，或合规注销。截至 2025 年末，超过 82% 的平台已经退出。</p>
+          <div class="reform-cut">绕开预算约束借钱。未来融资须进入中央可见、可管的政府债券体系——融资一条道。</div>
+        </div>
+      </div>
+      <div class="reform-node locked" data-step="2">
+        <button class="reform-btn" type="button" aria-expanded="false" disabled>
+          <span class="tag">收权 · 三</span><span class="rb-title">12 万亿化债</span><span class="tag-plain tag">2024.11</span><span class="rb-arrow">→</span>
+        </button>
+        <div class="reform-detail">
+          <p>三年每年 2 万亿再融资专项债置换存量隐性债务（共 6 万亿）；新增专项债连续五年每年安排 8000 亿（共 4 万亿）；再叠加原合同偿还，合计 12 万亿。置换后平均利息成本降低逾 2.5 个百分点；2028 年前地方需自行消化的隐性债务，从 14.3 万亿大幅降至 2.3 万亿。</p>
+          <div class="reform-cut">看不清、管不住的暗账。化债不是替地方还债，而是把债务从暗处移到明处。</div>
+        </div>
+      </div>
+      <div class="reform-node locked" data-step="3">
+        <button class="reform-btn" type="button" aria-expanded="false" disabled>
+          <span class="tag tag-blue">堵漏 · 四</span><span class="rb-title">金税四期</span><span class="tag-plain tag">数据监管</span><span class="rb-arrow">→</span>
+        </button>
+        <div class="reform-detail">
+          <p>接入税务、银行、海关、不动产登记、车管等 138 个数据源，为纳税人和企业建立数据画像。申报收入 30 万，名下却有两套房、百万级车、年消费 50 万——系统自动预警。2025 年前 11 个月，查处「双高」人员 1,818 名，查补税款 15.23 亿元。</p>
+          <div class="reform-cut">「收入申报」与「实际生活」之间的信息差。从人工抽查转向数据扫描。</div>
+        </div>
+      </div>
+      <div class="reform-node locked" data-step="4">
+        <button class="reform-btn" type="button" aria-expanded="false" disabled>
+          <span class="tag tag-blue">堵漏 · 五</span><span class="rb-title">CRS 境外账户交换</span><span class="tag-plain tag">2025.3 起</span><span class="rb-arrow">→</span>
+        </button>
+        <div class="reform-detail">
+          <p>中国居民在香港、新加坡、瑞士、开曼群岛的金融账户，相关信息由当地金融机构采集后，通过政府间机制交换给中国税务机关。2025 年 3 月起，湖北、山东、上海、浙江等地对未申报境外收入者追缴，随后扩展至北京、广东、福建等地。</p>
+          <div class="reform-cut">「钱在境外就看不见」。境外账户从此透明。</div>
+        </div>
+      </div>
+      <div class="reform-node locked" data-step="5">
+        <button class="reform-btn" type="button" aria-expanded="false" disabled>
+          <span class="tag tag-blue">堵漏 · 六</span><span class="rb-title">离岸信托新规</span><span class="tag-plain tag">2026.7</span><span class="rb-arrow">→</span>
+        </button>
+        <div class="reform-detail">
+          <p>个税新规覆盖三个环节：装入资产时按市场价值扣除原值缴财产转让所得税；信托内增值即使未实际分配也按年申报；终止分配时再缴一道。即使以非居民身份装入，只要由中国居民实际控制，也视为居民个人的信托。配套公告给出 90 天自查补缴窗口。</p>
+          <div class="reform-cut">用法律架构隔离税负。架构再精巧，也得在税法体系内合规存在。</div>
+        </div>
+      </div>
+      <div class="reform-node locked" data-step="6">
+        <button class="reform-btn" type="button" aria-expanded="false" disabled>
+          <span class="tag">立规 · 七</span><span class="rb-title">全国统一大市场</span><span class="tag-plain tag">2022 起 · 2026 立法</span><span class="rb-arrow">→</span>
+        </button>
+        <div class="reform-detail">
+          <p>招商引资鼓励和禁止事项清单，将违规税收返还、返还土地出让金、超标准财政补贴列为禁止；2026 年 5 月启动为期八个月的专项行动，目标是年底基本消除地方标准不当造成的市场分割。关键在于立法具有约束力——地方再搞保护，市场主体可以据此提起诉讼。</p>
+          <div class="reform-cut">地方竞争的旧规则本身。不只是解决当下困境，也防止同类结构再长出来。</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="narrow">
+      <div class="quiz reveal" data-quiz="6">
+        <div class="quiz-head"><span class="tag">随堂测 · 六</span></div>
+        <p class="quiz-q">「申报收入 30 万，名下两套房、百万级车、年消费 50 万，系统自动预警」——这个例子说明税收监管的逻辑发生了什么变化？</p>
+        <div class="quiz-options">
+          <button class="quiz-option" data-correct="1"><span class="qo-key">A</span>从人工抽查，转向多源数据比对后的自动扫描</button>
+          <button class="quiz-option"><span class="qo-key">B</span>从征税，转向不再征税</button>
+          <button class="quiz-option"><span class="qo-key">C</span>从查企业，转向只查个人</button>
+        </div>
+        <div class="quiz-explain" data-ok="正是如此。金税四期接入 138 个数据源做画像比对，盯的是「申报」与「生活」之间的不匹配——监管的对象没有变，监管的眼睛换了。" data-retry="再想想：这个例子里，税务人员并没有上门——是系统先发现了「不匹配」。"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= 第七章 · 推恩令 ================= -->
+<section class="section" id="ch7" data-chapter="7">
+  <div class="chapter-num" aria-hidden="true">柒</div>
+  <div class="container">
+    <div class="narrow">
+      <p class="eyebrow reveal">第七章 · 方法论</p>
+      <h2 class="chapter-title reveal">推恩令的智慧：渐进，而非硬削</h2>
+      <div class="prose">
+        <p class="reveal">汉初面对坐大的藩王，有过两种削法。<strong>点开两张对比卡</strong>，看两种选择各自的后果：</p>
+      </div>
+    </div>
+
+    <div class="compare-grid reveal" id="compareGrid">
+      <div class="compare-card">
+        <div class="compare-head"><h4>晁错 · 直接硬削</h4><span class="tag-plain tag">快刀</span></div>
+        <div class="compare-body">主张直接削减藩王的封地与权力，一步到位。</div>
+        <div class="compare-result"><strong>后果：</strong>迅速引发七国之乱。虽在三个月内平定，代价很大。</div>
+      </div>
+      <div class="compare-card">
+        <div class="compare-head"><h4>汉武帝 · 推恩令</h4><span class="tag">慢火</span></div>
+        <div class="compare-body">要求藩王封地由诸子均分。表面是恩赐，实际令大国一代代碎裂为小国。</div>
+        <div class="compare-result"><strong>后果：</strong>从元朔二年开始，花十余年逐步拆解主要大国。关键不在一次性夺权，而在用一系列看似合理合法的规则，逐步瓦解藩的经济基础。</div>
+      </div>
+    </div>
+
+    <div class="narrow">
+      <div class="prose">
+        <p class="reveal" style="margin-top:2.2rem">当下的改革更接近推恩令：城投退出后难以再绕开预算融资，税网收紧后难以再隐匿收入，统一市场立法后地方保护更难维持。<span class="key-sentence">每一步都未必是致命一击，却共同缩小了旧结构的生存空间</span>。但推恩令奏效，靠的是足够强的中央、足够长的执行周期、足够稳的节奏——这也解释了为什么方向明确、动作很大，推进却必须缓慢而审慎。</p>
+        <p class="reveal">改革能否持续，取决于两道尖锐的考题。<strong>翻面看题</strong>：</p>
+      </div>
+    </div>
+
+    <div class="grid-2 reveal-stagger">
+      <button class="flip-card" type="button" aria-expanded="false">
+        <div class="flip-inner">
+          <div class="flip-face front"><h4>考题一 · 地方的新动力从何而来？</h4><p>旧引擎（卖地、招商竞赛）熄火了，新引擎在哪里？</p></div>
+          <div class="flip-face flip-back"><h4>消费税下放？</h4><p>消费税是中国第四大税种，2025 年收入 1.69 万亿，目前 100% 归中央。若部分品目征收环节后移并下划地方，地方消费越旺、收入越多，就能引导地方从「拼投资」转向「促消费」。但土地出让金高峰期一年有数万亿——缺口由转移支付、地方债还是新税种填补，答案仍不清楚。</p></div>
+        </div>
+      </button>
+      <button class="flip-card" type="button" aria-expanded="false">
+        <div class="flip-inner">
+          <div class="flip-face front"><h4>考题二 · 监管的分寸在哪里？</h4><p>「扎篱笆」与「抄家」，只隔一层纸。</p></div>
+          <div class="flip-face flip-back"><h4>合规，而非清查</h4><p>目标是让财富在中国税法体系中合规存在，而非禁止投资或持有财富。但顶层设计传导到基层执法链条很长，若层层加码变成运动式清查，企业会以缩减投资回应。规则明确、可预期，企业可以配合；安全感不足，信心就会受损。</p></div>
+        </div>
+      </button>
+    </div>
+
+    <div class="narrow">
+      <div class="ink-note reveal">成败最终取决于能否在收权与放活、监管与信心、公平与效率之间找到精确平衡。对个人而言，规则和赛道都在变化——<span style="color:var(--accent)">看清脚下的路、管理好眼前的事，比沉湎于错过哪个时代更重要</span>。</div>
+      <div class="quiz reveal" data-quiz="7">
+        <div class="quiz-head"><span class="tag">随堂测 · 七</span></div>
+        <p class="quiz-q">推恩令比晁错硬削高明在哪里？</p>
+        <div class="quiz-options">
+          <button class="quiz-option"><span class="qo-key">A</span>直接没收了藩王的全部封地</button>
+          <button class="quiz-option" data-correct="1"><span class="qo-key">B</span>用看似合理合法的规则，让大国一代代自行碎裂，逐步瓦解其经济基础</button>
+          <button class="quiz-option"><span class="qo-key">C</span>花钱把封地赎买了回来</button>
+        </div>
+        <div class="quiz-explain" data-ok="正是如此。城投退出、税网收紧、统一市场立法——今天的每一步单项政策，都是同一条「推恩」思路：不硬夺，改规则。" data-retry="再想想：推恩令的表面是「恩赐」——诸子均分封地。它的力量恰恰在于不硬夺。"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= 结业 ================= -->
+<section class="section alt" id="exam" data-chapter="exam">
+  <div class="container">
+    <div class="narrow" style="text-align:center">
+      <p class="eyebrow reveal" style="display:inline-block">结业 · 总复习</p>
+      <h2 class="chapter-title reveal">五道题，验收这堂课</h2>
+      <p class="chapter-lead reveal">与随堂测不同：结业测验每题<strong>只有一次机会</strong>。答完五题，查看你的成绩。</p>
+    </div>
+
+    <div class="narrow">
+      <div class="quiz reveal" data-exam="1" data-link="#ch1">
+        <p class="quiz-q">1 · 文章所说的「木桶最短的板」，指的是哪一块？</p>
+        <div class="quiz-options">
+          <button class="quiz-option"><span class="qo-key">A</span>技术</button>
+          <button class="quiz-option"><span class="qo-key">B</span>资本与基建</button>
+          <button class="quiz-option" data-correct="1"><span class="qo-key">C</span>消费</button>
+        </div>
+        <div class="quiz-explain" data-ok="技术是最长的板，资本和基建也很长；消费——居民「有钱花、敢花钱」的能力——才是最短的板。" data-retry=""></div>
+      </div>
+      <div class="quiz reveal" data-exam="1" data-link="#ch3">
+        <p class="quiz-q">2 · 1994 年分税制直接解决的问题是什么？</p>
+        <div class="quiz-options">
+          <button class="quiz-option"><span class="qo-key">A</span>地方政府没钱搞建设</button>
+          <button class="quiz-option" data-correct="1"><span class="qo-key">B</span>中央财政占比跌到 22%，无力统筹跨区域工程和应对危机</button>
+          <button class="quiz-option"><span class="qo-key">C</span>房价过高</button>
+        </div>
+        <div class="quiz-explain" data-ok="分税制把中央占比从 22% 拉回 52%，重建了中央的再分配能力——转移支付、高铁网、危机应对都以此为底。" data-retry=""></div>
+      </div>
+      <div class="quiz reveal" data-exam="1" data-link="#ch4">
+        <p class="quiz-q">3 · 「全体纳税人拿钱补贴少数企业落户」，指的是哪种现象？</p>
+        <div class="quiz-options">
+          <button class="quiz-option"><span class="qo-key">A</span>中央对中西部的转移支付</button>
+          <button class="quiz-option" data-correct="1"><span class="qo-key">B</span>招商内卷中的税收返还竞赛</button>
+          <button class="quiz-option"><span class="qo-key">C</span>农村合作医疗</button>
+        </div>
+        <div class="quiz-explain" data-ok="「你返 70%、我返 80%、他返 90%」——返还、地价打折、财政奖励的竞赛，让补贴而非营商环境成为企业选址的理由。" data-retry=""></div>
+      </div>
+      <div class="quiz reveal" data-exam="1" data-link="#ch6">
+        <p class="quiz-q">4 · 12 万亿化债组合的核心，不是替地方还债，而是什么？</p>
+        <div class="quiz-options">
+          <button class="quiz-option" data-correct="1"><span class="qo-key">A</span>把隐性债务移入法定债务账本：低息置换、纳入监管、从暗处到明处</button>
+          <button class="quiz-option"><span class="qo-key">B</span>免除地方的全部债务</button>
+          <button class="quiz-option"><span class="qo-key">C</span>向居民加税筹钱</button>
+        </div>
+        <div class="quiz-explain" data-ok="置换后平均利息成本降低逾 2.5 个百分点；2028 年前地方需自行消化的隐性债务从 14.3 万亿降至 2.3 万亿。化债的本质是预算约束的重建。" data-retry=""></div>
+      </div>
+      <div class="quiz reveal" data-exam="1" data-link="#ch5">
+        <p class="quiz-q">5 · 作者认为这场「削藩」的最终目的是什么？</p>
+        <div class="quiz-options">
+          <button class="quiz-option"><span class="qo-key">A</span>把权力全部收回中央</button>
+          <button class="quiz-option"><span class="qo-key">B</span>打击企业与高净值人群</button>
+          <button class="quiz-option" data-correct="1"><span class="qo-key">C</span>重塑分配结构，让居民有钱花、敢花钱，让内循环转起来</button>
+        </div>
+        <div class="quiz-explain" data-ok="削藩是手段，分配是目的。2026 年的文件提出：到 2030 年社会消费品零售总额约 60 万亿元、居民消费率明显提高——这是一份重新分配的路线图。" data-retry=""></div>
+      </div>
+
+      <div style="text-align:center;margin-top:2.4rem">
+        <button class="btn btn-primary" id="examSubmit" disabled>查看成绩（还需答完 5 题）</button>
+      </div>
+
+      <div class="exam-score" id="examScore" aria-live="polite">
+        <div class="es-num"><span id="scoreNum">0</span><span style="font-size:1.6rem;color:var(--text-tertiary)"> / 5</span></div>
+        <div class="es-grade" id="scoreGrade"></div>
+        <p class="es-comment" id="scoreComment"></p>
+        <div id="scoreReview" style="margin-bottom:1.4rem"></div>
+        <button class="btn btn-ghost" id="examRetry">再考一次</button>
+      </div>
+    </div>
+
+    <div class="narrow">
+      <div class="widget reveal" style="margin-top:3.5rem">
+        <div class="widget-head"><span class="widget-title">结课笔记 · 五条带走</span></div>
+        <ul class="review-list">
+          <li>消费的短板，本质是分配的短板：居民分得少、差距大、兜底弱，所以不敢花。</li>
+          <li>「藩」的现代表述是制度性闭环——独立的裁量规则、制定权和利益结构。</li>
+          <li>分税制上收财权、留下事权，缺口催生了土地财政、城投与招商内卷。</li>
+          <li>七步改革网的共同逻辑：税收一本账、融资一条道、债务从暗到明、竞争规则重写。</li>
+          <li>推恩令式渐进改革的两道考题：地方新动力从何而来，监管分寸如何拿捏。</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="container">
+    <p class="fnote">这份讲义的内容基于转写文章《分配问题，才是这场「削藩」的底层逻辑》整理，所有数据沿用原文口径。</p>
+    <p>互动教学页 · 中文优雅 · L2 交互｜动效灵感源自 <a class="link" href="https://github.com/DavidHDev/vue-bits" target="_blank" rel="noopener">vue-bits</a>（DavidHDev, MIT）</p>
+  </div>
+</footer>
+
+<script>
+'use strict';
+const $ = (s, r) => (r || document).querySelector(s);
+const $$ = (s, r) => Array.from((r || document).querySelectorAll(s));
+const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+/* ---------- 标题字级入场：Hero 逐字 blur / 章节 H2 逐字浮现 ---------- */
+const splitChars = (el, cls) => {
+  const walk = (node) => {
+    Array.from(node.childNodes).forEach((n) => {
+      if (n.nodeType === 3) {
+        const frag = document.createDocumentFragment();
+        Array.from(n.textContent).forEach((ch) => {
+          const s = document.createElement('span');
+          s.className = cls; s.textContent = ch;
+          frag.appendChild(s);
+        });
+        node.replaceChild(frag, n);
+      } else if (n.nodeType === 1) walk(n);
+    });
+  };
+  walk(el);
+  $$('.' + cls, el).forEach((c, i) => { c.style.transitionDelay = (i * 0.05) + 's'; });
+};
+(function () {
+  const t = $('#heroTitle');
+  splitChars(t, 'hero-char');
+  requestAnimationFrame(() => requestAnimationFrame(() => t.classList.add('in')));
+})();
+$$('.chapter-title').forEach((h) => splitChars(h, 'ct-char'));
+
+/* ---------- 导航：滚动态 / 进度条 / 章节圆点 / scrollspy ---------- */
+const SECTIONS = [
+  { id: 'top', label: '序章' }, { id: 'ch1', label: '第一章 木桶' }, { id: 'ch2', label: '第二章 藩' },
+  { id: 'ch3', label: '第三章 钱袋子' }, { id: 'ch4', label: '第四章 地方财技' }, { id: 'ch5', label: '第五章 时机' },
+  { id: 'ch6', label: '第六章 改革网' }, { id: 'ch7', label: '第七章 推恩令' }, { id: 'exam', label: '结业测验' }
+];
+const dotsWrap = $('#navDots');
+SECTIONS.forEach((s) => {
+  const b = document.createElement('button');
+  b.className = 'nav-dot'; b.type = 'button';
+  b.title = s.label; b.setAttribute('aria-label', '前往' + s.label);
+  b.dataset.target = s.id;
+  b.addEventListener('click', () => {
+    const el = document.getElementById(s.id);
+    if (el) el.scrollIntoView({ behavior: reduced ? 'auto' : 'smooth' });
+  });
+  dotsWrap.appendChild(b);
+});
+const nav = $('#nav'), bar = $('#scrollBar');
+let ticking = false;
+function onScroll() {
+  if (ticking) return; ticking = true;
+  requestAnimationFrame(() => {
+    nav.classList.toggle('scrolled', scrollY > 50);
+    const h = document.documentElement;
+    const pct = scrollY / Math.max(1, h.scrollHeight - innerHeight);
+    bar.style.transform = 'scaleX(' + pct + ')';
+    ticking = false;
+  });
+}
+addEventListener('scroll', onScroll, { passive: true }); onScroll();
+const spy = new IntersectionObserver((es) => {
+  es.forEach((e) => {
+    if (!e.isIntersecting) return;
+    $$('.nav-dot').forEach((d) => d.classList.toggle('current', d.dataset.target === e.target.id));
+  });
+}, { rootMargin: '-40% 0px -55% 0px' });
+SECTIONS.forEach((s) => { const el = document.getElementById(s.id); if (el) spy.observe(el); });
+function markChapterDone(ch) {
+  const id = ch === 'exam' ? 'exam' : 'ch' + ch;
+  const dot = $('.nav-dot[data-target="' + id + '"]');
+  if (dot) dot.classList.add('done');
+}
+
+/* ---------- 滚动 reveal + stagger ---------- */
+const io = new IntersectionObserver((es) => {
+  es.forEach((e) => {
+    if (!e.isIntersecting) return;
+    const el = e.target;
+    if (el.classList.contains('reveal-stagger')) {
+      Array.from(el.children).forEach((c, i) => { c.style.transitionDelay = Math.min(i * 0.09, 0.54) + 's'; });
+    }
+    el.classList.add('in-view'); io.unobserve(el);
+  });
+}, { threshold: 0.15 });
+$$('.reveal, .reveal-stagger').forEach((el) => io.observe(el));
+
+/* ---------- 数字 CountUp + 对比条生长 ---------- */
+const ioNum = new IntersectionObserver((es) => {
+  es.forEach((e) => {
+    if (!e.isIntersecting) return;
+    ioNum.unobserve(e.target);
+    const el = e.target;
+    if (el.classList.contains('vs-fill')) { el.style.width = el.dataset.w + '%'; return; }
+    const target = parseFloat(el.dataset.count), dec = parseInt(el.dataset.decimals || '0', 10), suf = el.dataset.suffix || '';
+    if (reduced) { el.textContent = target.toFixed(dec) + suf; return; }
+    const t0 = performance.now(), dur = 1200;
+    (function tick(now) {
+      const p = Math.min(1, (now - t0) / dur), v = target * (1 - Math.pow(1 - p, 3));
+      el.textContent = v.toFixed(dec) + suf;
+      if (p < 1) requestAnimationFrame(tick); else el.textContent = target.toFixed(dec) + suf;
+    })(t0);
+  });
+}, { threshold: 0.4 });
+$$('[data-count], .vs-fill').forEach((el) => ioNum.observe(el));
+
+/* ---------- 第一章：百元旅程 ---------- */
+const JOURNEY = [
+  { n: '100', l: 'GDP 总蛋糕', d: '水塔国一年创造 100 块钱 GDP，在居民、企业、政府三个口袋之间分配。这是一切分配的起点。' },
+  { n: '61', l: '居民分到', d: '居民部门大约拿到 61 块，表面看已超过六成——但「分到」不等于「花掉」。' },
+  { n: '≈20', l: '被存起来', d: '除去日常开支，剩下的钱大多被存了起来，比例约为三分之一——约 20 块。' },
+  { n: '≈40', l: '变成消费', d: '真正回到经济循环、变成消费的只有约 40 块（还要扣除以增值税形式交回国家的部分）。全球参照水平约 60 块——这就是「消费偏弱」。' }
+];
+const jWrap = $('#journeySteps'), jDetail = $('#journeyDetail');
+JOURNEY.forEach((s, i) => {
+  const b = document.createElement('button');
+  b.className = 'journey-step'; b.type = 'button'; b.setAttribute('role', 'tab');
+  b.innerHTML = '<span class="js-num">' + s.n + '</span><span class="js-label" style="display:block">' + s.l + '</span>';
+  b.addEventListener('click', () => {
+    $$('.journey-step', jWrap).forEach((x) => x.classList.remove('active'));
+    b.classList.add('active'); jDetail.textContent = s.d;
+  });
+  jWrap.appendChild(b);
+});
+jWrap.children[0].click();
+
+/* ---------- 第一章：木桶模拟器 ---------- */
+const BUCKET_FLOOR = 232, BUCKET_MIN_Y = 60; // 板顶最低（最高板）
+const OTHER_PLANK_TOP = 74; // 技术/资本/基建中最短板（基建）的顶 y
+const bSlider = $('#bucketSlider'), bOut = $('#bucketOut'), bVerdict = $('#bucketVerdict');
+const wRect = $('#waterRect'), pConsume = $('#plankConsume');
+function bucketRender() {
+  const v = parseInt(bSlider.value, 10);
+  bOut.textContent = v + '%';
+  const yTop = BUCKET_FLOOR - v * 1.9;
+  pConsume.setAttribute('y', yTop); pConsume.setAttribute('height', BUCKET_FLOOR - yTop);
+  const waterTop = Math.max(OTHER_PLANK_TOP, yTop);
+  wRect.setAttribute('y', waterTop); wRect.setAttribute('height', BUCKET_FLOOR - waterTop);
+  let msg;
+  if (v <= 45) msg = '消费是最短的板：技术、资本、基建再长，水位（内需）也只能停在最短板的高度。<strong>这正是今天的现实——消费率约 40%。</strong>';
+  else if (v <= 70) msg = '水位在上涨：消费每补高一寸，木桶就多装一寸水。补短板比继续加长长板更有效。';
+  else if (v <= 83) msg = '接近基建板的高度了，消费即将不再是短板。';
+  else msg = '消费板已超过其他板，短板变成了基建。但请注意：<strong>这是理想态，今天中国的消费率约 40%</strong>，仍在木桶的最底端。';
+  bVerdict.innerHTML = msg;
+}
+bSlider.addEventListener('input', bucketRender); bucketRender();
+
+/* ---------- 第二章：时间线 ---------- */
+const TIMELINE = [
+  { era: '周', sub: '分封诸侯', d: '中央授予地方权力，由地方替中央守一方——在生产力撑不起直接治理的时代，这是合理安排。但诸侯经营数代后利益固化，春秋五霸、战国七雄，都是藩做大的结果。' },
+  { era: '秦', sub: '郡县制', d: '秦始皇以郡县制替代分封，目的正是逐步取消地方世袭权力。' },
+  { era: '汉', sub: '藩王坐大', d: '汉初回到分封，刘邦将亲族封为藩王，几十年后同样坐大——这才有了后来晁错削藩与汉武帝的推恩令（第七章细讲）。' },
+  { era: '唐', sub: '藩镇割据', d: '安史之乱后，节度使拥有兵权、税收和人事安排权，形成百余年的藩镇割据。' }
+];
+const tlWrap = $('#timeline'), tlDetail = $('#tlDetail');
+TIMELINE.forEach((t, i) => {
+  const node = document.createElement('div');
+  node.className = 'tl-node';
+  node.innerHTML = '<button class="tl-btn" type="button" role="tab" aria-label="' + t.era + '代：' + t.sub + '"></button><span class="tl-era">' + t.era + '</span><span class="tl-sub">' + t.sub + '</span>';
+  $('.tl-btn', node).addEventListener('click', () => {
+    $$('.tl-node', tlWrap).forEach((x) => x.classList.remove('active'));
+    node.classList.add('active'); tlDetail.textContent = t.d;
+  });
+  tlWrap.appendChild(node);
+});
+$('.tl-btn', tlWrap.children[0]).click();
+
+/* ---------- 第二章：现代藩 tabs ---------- */
+const TABS = [
+  { h: '特拉华州：公司注册的「洼地」', p: '美国 50 个州各有自己的税法、公司法与监管标准。特拉华以较低的注册门槛和宽松的公司法，吸引超过六成 500 强企业把法律归属地放在那里——企业实际经营地可能在加州或纽约，注册费和特许经营税却流入特拉华，实际经营地的税基被侵蚀。各州「你降我也降」的税率竞争，是美国财政学讨论了数十年的议题。', f: [['>60%', '500 强企业注册地占比'], ['50', '各有一套税法的州']] },
+  { h: '爱尔兰：12.5% 的企业税', p: '欧盟花数十年建成统一市场，商品、资本、人员自由流动写入条约，但成员国仍保有高度独立的财政主权。爱尔兰长期把企业税率维持在 12.5%，吸引苹果、谷歌把欧洲总部设在当地。欧盟委员会为苹果补缴 130 亿欧元税款一事，与爱尔兰诉讼了十多年。', f: [['12.5%', '企业税率'], ['€130 亿', '苹果补税争议金额']] },
+  { h: '印度：邦界上排队的卡车', p: '2017 年统一 GST 改革前，一辆卡车从南部泰米尔纳德邦开到北部旁遮普邦，要在邦界排队检查、缴纳各种过境税，等候时间加总甚至长过实际行驶时间。各邦各有消费税率、商品分类和征收环节，14 亿人口的市场被分割成二十多块。GST 用全国统一税制替代各邦体系后，博弈仍在继续。', f: [['20+', '市场被分割成的块数'], ['2017', 'GST 统一税制年份']] }
+];
+const tabPanel = $('#tabPanel');
+function renderTab(i) {
+  const t = TABS[i];
+  tabPanel.innerHTML = '<h4>' + t.h + '</h4><p>' + t.p + '</p><div class="fact-row">' +
+    t.f.map((x) => '<span class="fact"><b>' + x[0] + '</b>' + x[1] + '</span>').join('') + '</div>';
+  $$('.tab-btn').forEach((b, j) => b.setAttribute('aria-selected', j === i ? 'true' : 'false'));
+}
+$$('.tab-btn').forEach((b, i) => b.addEventListener('click', () => renderTab(i)));
+renderTab(0);
+</script>
+<script>
+'use strict';
+/* ---------- 第三章：央地天平 ---------- */
+const YEARS = [
+  { y: '1984 年', c: 40, d: '财政包干制下，中央占全国税收约 40%。「交够基数、剩下归地方」的分灶吃饭，此时央地还算均衡。' },
+  { y: '1993 年', c: 22, d: '包干制运行十年后，中央占比降到 22%。中央财力不足，跨区域工程与区域平衡都受限制，甚至需要向地方借钱维持运转——分税制改革箭在弦上。' },
+  { y: '2000 年', c: 52, d: '分税制六年后，中央占比回升到 52%。集中的财力支撑起公路网、高铁网和覆盖全国的转移支付体系，也让应对 1997、2008 两次金融危机有了底气。' }
+];
+const ySlider = $('#yearSlider'), yOut = $('#yearOut'), yVerdict = $('#yearVerdict');
+const barC = $('#barCentral'), barL = $('#barLocal');
+function renderYear() {
+  const d = YEARS[parseInt(ySlider.value, 10)];
+  yOut.textContent = d.y;
+  barC.style.width = d.c + '%'; barC.textContent = d.c + '%';
+  barL.style.width = (100 - d.c) + '%'; barL.textContent = (100 - d.c) + '%';
+  yVerdict.textContent = d.d;
+}
+ySlider.addEventListener('input', renderYear); renderYear();
+
+/* ---------- 第三章：税种卡展开 ---------- */
+$$('.tax-card').forEach((c) => c.addEventListener('click', () => c.classList.toggle('open')));
+
+/* ---------- 第四章：城投循环 ---------- */
+const LOOP = [
+  { t: '第一步 · 设立平台', d: '地方成立融资平台公司（城投），以政府信用向银行和资本市场借钱——预算约束被绕开了。' },
+  { t: '第二步 · 借钱建设', d: '资金投向道路、桥梁、污水处理、供水供电。尤其在中小城市，城投支撑了基础设施的快速扩张，这是它的历史贡献。' },
+  { t: '第三步 · 收益不够还', d: '基建项目回报周期长、现金流弱，项目收益往往覆盖不了借款的本息。' },
+  { t: '第四步 · 借新还旧', d: '于是再借一笔新钱，偿还旧债的利息和本金。只要能持续借到新钱，循环就能转下去。' },
+  { t: '第五步 · 循环加速', d: '借多少、怎么花、能否偿还都不够透明——债务在暗处越滚越大。这时你有两个选择。', fork: true },
+  { t: '链条断裂', d: '新增借款渠道收窄后，平台无法续借，风险便可能连锁传导。截至 2025 年末，地方政府法定债务 54.8 万亿元、隐性债务 6.5 万亿元，还不包括大量城投经营性债务。这正是第六章「城投退出」要拆的雷。', danger: true }
+];
+const loopDots = $('#loopDots'), loopCard = $('#loopCard');
+let loopIdx = 0;
+LOOP.forEach((s, i) => {
+  const d = document.createElement('div');
+  d.className = 'loop-dot' + (s.danger ? ' danger' : '');
+  d.innerHTML = '<span class="ld-n">' + (s.danger ? '!' : i + 1) + '</span><span>' + s.t.replace(/^第.步 · /, '') + '</span>';
+  loopDots.appendChild(d);
+});
+function renderLoop() {
+  const s = LOOP[loopIdx];
+  $$('.loop-dot', loopDots).forEach((d, i) => {
+    d.classList.toggle('done', i < loopIdx);
+    d.classList.toggle('current', i === loopIdx);
+  });
+  loopCard.classList.toggle('danger', !!s.danger);
+  let actions;
+  if (s.fork) actions = '<button class="btn btn-ghost" id="loopAgain">再借一笔（回到第三步）</button><button class="btn btn-primary" id="loopBreak">如果续不上呢？</button>';
+  else if (s.danger) actions = '<button class="btn btn-ghost" id="loopReset">重新演示</button>';
+  else actions = '<button class="btn btn-primary" id="loopNext">下一步 →</button>';
+  loopCard.innerHTML = '<h4>' + s.t + '</h4><p>' + s.d + '</p><div class="loop-actions">' + actions + '</div>';
+  const bind = (id, fn) => { const b = $(id); if (b) b.addEventListener('click', fn); };
+  bind('#loopNext', () => { loopIdx++; renderLoop(); });
+  bind('#loopAgain', () => { loopIdx = 2; renderLoop(); });
+  bind('#loopBreak', () => { loopIdx = 5; renderLoop(); });
+  bind('#loopReset', () => { loopIdx = 0; renderLoop(); });
+}
+renderLoop();
+
+/* ---------- 第四章：补贴竞赛 ---------- */
+const subSlider = $('#subsidySlider'), subOut = $('#subsidyOut'), subVerdict = $('#subsidyVerdict');
+const mCorp = $('#meterCorp'), mCivil = $('#meterCivil');
+function renderSubsidy() {
+  const v = parseInt(subSlider.value, 10);
+  subOut.textContent = v + '%';
+  mCorp.style.width = v + '%'; mCorp.textContent = v > 8 ? '返给企业 ' + v : '';
+  mCivil.style.width = (100 - v) + '%'; mCivil.textContent = (100 - v) > 8 ? '民生可用 ' + (100 - v) : '';
+  let msg;
+  if (v <= 20) msg = '正常优惠区间：返还有限，财政大头仍可用于教育、医疗、社保。';
+  else if (v <= 50) msg = '竞争开始变味：企业落户越来越看重补贴，而非当地的营商环境。';
+  else msg = '补贴竞赛失控：本质上是<strong>全体纳税人拿钱补贴少数企业</strong>。别处出价更高，企业又会迁走——补贴买不来忠诚，只买得来停留。';
+  subVerdict.innerHTML = msg;
+}
+subSlider.addEventListener('input', renderSubsidy); renderSubsidy();
+
+/* ---------- 翻卡 ---------- */
+$$('.flip-card').forEach((c) => c.addEventListener('click', () => {
+  c.classList.toggle('flipped');
+  c.setAttribute('aria-expanded', c.classList.contains('flipped') ? 'true' : 'false');
+}));
+
+/* ---------- 第六章：改革网络顺序解锁 ---------- */
+const reformNodes = $$('.reform-node');
+reformNodes.forEach((node, i) => {
+  const btn = $('.reform-btn', node);
+  btn.addEventListener('click', () => {
+    const opening = !node.classList.contains('open');
+    node.classList.toggle('open', opening);
+    btn.setAttribute('aria-expanded', opening ? 'true' : 'false');
+    if (opening && i + 1 < reformNodes.length) {
+      const next = reformNodes[i + 1];
+      next.classList.remove('locked');
+      $('.reform-btn', next).disabled = false;
+    }
+  });
+});
+
+/* ---------- 第七章：对比卡 ---------- */
+$$('.compare-card').forEach((c) => {
+  c.style.cursor = 'pointer';
+  c.addEventListener('click', () => c.classList.add('revealed'));
+});
+
+/* ---------- 测验引擎（随堂测：可重试；结业测：一次定胜负） ---------- */
+const examState = { answered: 0, correct: 0, wrongLinks: [] };
+$$('.quiz').forEach((quiz) => {
+  const isExam = quiz.hasAttribute('data-exam');
+  const chapter = quiz.dataset.quiz;
+  const explain = $('.quiz-explain', quiz);
+  const opts = $$('.quiz-option', quiz);
+  let solved = false;
+  opts.forEach((opt) => {
+    opt.addEventListener('click', () => {
+      if (solved || opt.disabled) return;
+      const right = opt.dataset.correct === '1';
+      if (isExam) {
+        solved = true;
+        opts.forEach((o) => { o.disabled = true; if (o.dataset.correct === '1') o.classList.add('correct'); });
+        if (!right) { opt.classList.add('wrong'); examState.wrongLinks.push(quiz.dataset.link); }
+        else examState.correct++;
+        examState.answered++;
+        explain.className = 'quiz-explain show ' + (right ? 'ok' : 'retry');
+        explain.innerHTML = '<span class="verdict">' + (right ? '✓ 答对了' : '✗ 答错了，正确答案已标出') + '</span>' + explain.dataset.ok;
+        updateExamButton();
+      } else if (right) {
+        solved = true;
+        opts.forEach((o) => (o.disabled = true));
+        opt.classList.add('correct');
+        explain.className = 'quiz-explain show ok';
+        explain.innerHTML = '<span class="verdict">✓ 正是如此</span>' + explain.dataset.ok;
+        if (chapter) markChapterDone(chapter);
+      } else {
+        opt.classList.add('wrong'); opt.disabled = true;
+        explain.className = 'quiz-explain show retry';
+        explain.innerHTML = '<span class="verdict">✗ 再想想</span>' + explain.dataset.retry;
+      }
+    });
+  });
+});
+
+/* ---------- 结业成绩 ---------- */
+const examBtn = $('#examSubmit');
+function updateExamButton() {
+  const left = 5 - examState.answered;
+  examBtn.disabled = left > 0;
+  examBtn.textContent = left > 0 ? '查看成绩（还需答完 ' + left + ' 题）' : '查看成绩 →';
+}
+examBtn.addEventListener('click', () => {
+  const n = examState.correct;
+  $('#scoreNum').textContent = n;
+  const grade = $('#scoreGrade'), comment = $('#scoreComment'), review = $('#scoreReview');
+  if (n === 5) { grade.textContent = '甲上 · 融会贯通'; comment.textContent = '五个概念全部拿下——从木桶到推恩令，你已经可以把这堂课讲给别人听了。'; }
+  else if (n === 4) { grade.textContent = '甲等 · 几近通透'; comment.textContent = '骨架和细节都立住了，只有一处需要回头确认。'; }
+  else if (n === 3) { grade.textContent = '乙等 · 骨架已立'; comment.textContent = '主线已经清楚，有几个环节还值得回到对应章节再拨弄一遍。'; }
+  else { grade.textContent = '丙等 · 值得回炉'; comment.textContent = '没关系，这本来就是一门需要动手才能学会的课——回到下面的章节，把组件再玩一遍。'; }
+  review.innerHTML = examState.wrongLinks.length
+    ? '<p style="font-size:0.9rem;color:var(--text-secondary)">建议回读：' + examState.wrongLinks.map((l) => '<a class="link" href="' + l + '">' + ({ '#ch1': '第一章', '#ch3': '第三章', '#ch4': '第四章', '#ch5': '第五章', '#ch6': '第六章' })[l] + '</a>').join(' · ') + '</p>'
+    : '';
+  $('#examScore').classList.add('show');
+  markChapterDone('exam');
+  $('#examScore').scrollIntoView({ behavior: reduced ? 'auto' : 'smooth', block: 'center' });
+});
+$('#examRetry').addEventListener('click', () => {
+  examState.answered = 0; examState.correct = 0; examState.wrongLinks = [];
+  $$('.quiz[data-exam]').forEach((q) => {
+    $$('.quiz-option', q).forEach((o) => { o.disabled = false; o.classList.remove('correct', 'wrong'); });
+    $('.quiz-explain', q).className = 'quiz-explain';
+  });
+  $('#examScore').classList.remove('show');
+  updateExamButton();
+  $('#exam').scrollIntoView({ behavior: reduced ? 'auto' : 'smooth' });
+});
+
+/* ---------- CTA 磁吸（仅桌面、非 reduced-motion） ---------- */
+if (matchMedia('(hover: hover)').matches && !reduced) {
+  const cta = $('#magnetCta');
+  let raf = null;
+  cta.addEventListener('pointermove', (e) => {
+    if (raf) return;
+    raf = requestAnimationFrame(() => {
+      const r = cta.getBoundingClientRect();
+      const dx = Math.max(-6, Math.min(6, (e.clientX - r.left - r.width / 2) * 0.15));
+      const dy = Math.max(-6, Math.min(6, (e.clientY - r.top - r.height / 2) * 0.3));
+      cta.style.transform = 'translate(' + dx + 'px,' + dy + 'px)';
+      raf = null;
+    });
+  });
+  cta.addEventListener('pointerleave', () => { cta.style.transform = ''; });
+}
+</script>
+</body>
+</html>
