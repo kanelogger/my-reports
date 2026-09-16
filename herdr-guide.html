@@ -1,0 +1,1605 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Herdr 实战手册 — 一篇讲透多智能体工作台</title>
+<meta name="description" content="从工作区、标签页与窗格，到状态、集成、派工与远程：学习路径带你走一遍，⌘K 速查台让你随时回来。">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@700;800;900&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;700&family=Noto+Sans+SC:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+/* ============ Tokens (DESIGN.md §2) ============ */
+:root {
+  --bg: #141417; --surface: #1a1a1f; --surface-alt: #17171a;
+  --surface-hover: #212129; --terminal: #0c0c0d; --on-accent: #0c0c0d;
+  --border: #2a2a32; --border-hover: #3f3f4c;
+  --text: #eaecee; --text-secondary: #b0afb6; --text-tertiary: #6c7086;
+  --accent: #a87fff; --accent-hover: #c1a6ff; --accent-deep: #8839ef;
+  --bg-rgb: 20,20,23; --surface-rgb: 26,26,31; --accent-rgb: 168,127,255;
+  --success: #5fae74; --error: #c73e3e; --warning: #d3a027; --info: #4a9eff;
+  --st-working: #d3a027; --st-blocked: #c73e3e; --st-done: #94e2d5;
+  --st-idle: #5fae74; --st-unknown: #8a8a84;
+  --term-prompt: #4a9eff; --term-cmd: #8ecf7a; --term-str: #e6c060;
+  --term-text: #c8cdd4; --term-muted: #5a6068;
+  --font-display: "Archivo","Noto Sans SC",system-ui,sans-serif;
+  --font-body: "Inter","Noto Sans SC",system-ui,-apple-system,sans-serif;
+  --font-mono: "JetBrains Mono","Noto Sans SC",ui-monospace,SFMono-Regular,Menlo,monospace;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+[id] { scroll-margin-top: 84px; }
+body {
+  background: var(--bg); color: var(--text-secondary);
+  font-family: var(--font-body); font-size: 16px; line-height: 1.8;
+  letter-spacing: 0.02em; overflow-x: hidden;
+}
+::selection { background: rgba(var(--accent-rgb), .3); color: var(--text); }
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-thumb { background: var(--border-hover); border-radius: 5px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+
+h1, h2, h3 { font-family: var(--font-display); color: var(--text); }
+.mono { font-family: var(--font-mono); }
+.container { max-width: 1160px; margin: 0 auto; padding: 0 32px; }
+section { padding: 96px 0; }
+a { color: var(--accent); text-decoration: none;
+    border-bottom: 1px solid rgba(var(--accent-rgb), .35);
+    transition: color .15s, border-color .15s; }
+a:hover { color: var(--accent-hover); border-bottom-color: var(--accent-hover); }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+/* ============ Reveal ============ */
+.reveal { opacity: 0; transform: translateY(24px);
+  transition: opacity .7s cubic-bezier(.16,1,.3,1), transform .7s cubic-bezier(.16,1,.3,1); }
+.reveal.in-view { opacity: 1; transform: translateY(0); }
+
+/* ============ Scroll progress ============ */
+.scroll-progress { position: fixed; top: 0; left: 0; height: 3px; width: 100%;
+  background: linear-gradient(90deg, var(--accent-deep), var(--accent));
+  transform-origin: left; transform: scaleX(0); z-index: 300; }
+
+/* ============ Nav ============ */
+.nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; height: 60px;
+  display: flex; align-items: center; gap: 28px; padding: 0 32px;
+  background: transparent; border-bottom: 1px solid transparent;
+  transition: background .3s, border-color .3s; }
+.nav.scrolled { background: rgba(var(--bg-rgb), .85);
+  backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+  border-bottom-color: var(--border); }
+.nav__logo { display: flex; align-items: center; gap: 10px; margin-right: auto;
+  font-family: var(--font-mono); font-size: 14px; font-weight: 700;
+  color: var(--text); border: none; letter-spacing: 0; }
+.nav__logo:hover { color: var(--text); }
+.nav__logo-mark { display: inline-flex; align-items: center; justify-content: center;
+  width: 26px; height: 26px; border-radius: 4px; background: var(--accent);
+  color: var(--on-accent); font-size: 12px; font-weight: 700; }
+.nav__link { font-family: var(--font-mono); font-size: 12px; letter-spacing: .12em;
+  text-transform: uppercase; color: var(--text-tertiary); border: none;
+  padding: 4px 2px; transition: color .15s, box-shadow .15s; }
+.nav__link:hover { color: var(--text); }
+.nav__link.active { color: var(--text); box-shadow: inset 0 -2px 0 var(--accent); }
+.nav__kbd-btn { display: inline-flex; align-items: center; gap: 8px;
+  font-family: var(--font-mono); font-size: 12px; color: var(--text-tertiary);
+  background: var(--surface); border: 1px solid var(--border); border-radius: 4px;
+  padding: 6px 12px; cursor: pointer; transition: color .15s, border-color .15s; }
+.nav__kbd-btn:hover { color: var(--accent); border-color: var(--accent); }
+
+/* ============ Hero ============ */
+.hero { position: relative; min-height: 100vh; display: flex; align-items: center;
+  padding: 140px 0 80px; overflow: hidden; }
+.hero__bg { position: absolute; inset: 0; pointer-events: none;
+  background-image: radial-gradient(circle, rgba(var(--accent-rgb), .13) 1px, transparent 1px);
+  background-size: 28px 28px;
+  mask-image: radial-gradient(ellipse 80% 60% at 50% 30%, #000 30%, transparent 75%);
+  -webkit-mask-image: radial-gradient(ellipse 80% 60% at 50% 30%, #000 30%, transparent 75%); }
+.hero__glow { position: absolute; width: 520px; height: 520px; border-radius: 50%;
+  background: radial-gradient(circle, rgba(var(--accent-rgb), .08), transparent 70%);
+  transform: translate(-50%, -50%); pointer-events: none; opacity: 0;
+  transition: opacity .4s; }
+.hero .container { position: relative; display: grid;
+  grid-template-columns: 1.05fr .95fr; gap: 56px; align-items: center; }
+.eyebrow { font-family: var(--font-mono); font-size: 12px; font-weight: 500;
+  letter-spacing: .18em; text-transform: uppercase; color: var(--text-tertiary); }
+.hero h1 { font-size: clamp(44px, 6.4vw, 76px); font-weight: 900;
+  line-height: 1.08; letter-spacing: -0.02em; margin: 20px 0 24px; }
+.hero h1 .h1-line { display: block; overflow: hidden; }
+.hero h1 .h1-word { display: inline-block; opacity: 0; transform: translateY(110%);
+  animation: h1Up .8s cubic-bezier(.16,1,.3,1) forwards; }
+@keyframes h1Up { to { opacity: 1; transform: translateY(0); } }
+.gradient-word {
+  background: linear-gradient(120deg, var(--accent-hover), var(--accent-deep), var(--accent-hover));
+  background-size: 220% 100%;
+  -webkit-background-clip: text; background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: h1Up .8s cubic-bezier(.16,1,.3,1) forwards, gradFlow 7s ease-in-out infinite 1s; }
+@keyframes gradFlow { 0%,100% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } }
+.hero__sub { max-width: 56ch; margin-bottom: 36px; font-size: 16.5px; }
+.hero__ctas { display: flex; gap: 14px; flex-wrap: wrap; margin-bottom: 44px; }
+.hero__stats { display: flex; gap: 0; border: 1px solid var(--border);
+  border-radius: 6px; overflow: hidden; width: fit-content; }
+.hero__stat { padding: 12px 20px; border-right: 1px solid var(--border); }
+.hero__stat:last-child { border-right: none; }
+.hero__stat b { display: block; font-family: var(--font-display); font-size: 20px;
+  font-weight: 800; color: var(--text); line-height: 1.2; }
+.hero__stat span { font-family: var(--font-mono); font-size: 11px;
+  letter-spacing: .1em; color: var(--text-tertiary); text-transform: uppercase; }
+
+/* ============ Buttons ============ */
+.btn { display: inline-flex; align-items: center; gap: 8px;
+  font-family: var(--font-mono); font-size: 13px; font-weight: 500;
+  letter-spacing: .06em; text-transform: uppercase;
+  padding: 12px 22px; border-radius: 4px; border: 1px solid var(--border);
+  background: transparent; color: var(--text); cursor: pointer;
+  transition: transform .15s, background .2s, border-color .2s, box-shadow .2s; }
+.btn:hover { border-color: var(--accent); color: var(--accent-hover);
+  transform: translateY(-1px); }
+.btn:active { transform: translateY(0) scale(.97); }
+.btn--primary { background: var(--accent); border-color: var(--accent); color: var(--on-accent); }
+.btn--primary:hover { background: var(--accent-hover); color: var(--on-accent);
+  box-shadow: 0 0 24px rgba(var(--accent-rgb), .25); }
+.btn .kbd-hint { font-size: 11px; opacity: .7; border: 1px solid currentColor;
+  border-radius: 3px; padding: 1px 5px; }
+
+/* ============ Terminal mock ============ */
+.termmock { background: var(--terminal); border: 1px solid var(--border-hover);
+  border-radius: 8px; overflow: hidden;
+  box-shadow: 0 24px 80px rgba(0,0,0,.6); }
+.termmock__bar { display: flex; align-items: center; gap: 8px;
+  padding: 10px 14px; border-bottom: 1px solid var(--border);
+  background: var(--surface-alt); }
+.termmock__dot { width: 11px; height: 11px; border-radius: 50%; background: var(--border-hover); }
+.termmock__title { margin-left: 8px; font-family: var(--font-mono);
+  font-size: 11.5px; color: var(--term-muted); letter-spacing: .06em; }
+.termmock__tabs { display: flex; gap: 4px; margin-left: auto; }
+.termmock__tab { font-family: var(--font-mono); font-size: 10.5px;
+  padding: 3px 10px; border-radius: 3px; color: var(--term-muted); }
+.termmock__tab--on { background: var(--accent); color: var(--on-accent); font-weight: 700; }
+.termmock__body { padding: 18px 20px; min-height: 300px;
+  font-family: var(--font-mono); font-size: 13.5px; line-height: 1.75;
+  color: var(--term-text); white-space: pre-wrap; word-break: break-all; }
+.t-prompt { color: var(--term-prompt); user-select: none; }
+.t-cmd { color: var(--term-cmd); }
+.t-str { color: var(--term-str); }
+.t-dim { color: var(--term-muted); }
+.t-ok { color: var(--st-idle); }
+.t-warn { color: var(--st-working); }
+.t-caret { display: inline-block; width: 8px; height: 16px;
+  background: var(--term-text); vertical-align: -2px;
+  animation: caretBlink .9s step-end infinite; }
+@keyframes caretBlink { 50% { opacity: 0; } }
+.termmock__status { display: flex; gap: 16px; padding: 8px 14px;
+  border-top: 1px solid var(--border); background: var(--surface-alt);
+  font-family: var(--font-mono); font-size: 11px; color: var(--term-muted); }
+.termmock__status .st { display: inline-flex; align-items: center; gap: 6px; }
+
+/* ============ Marquee ============ */
+.marquee { border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);
+  background: var(--surface-alt); overflow: hidden; padding: 16px 0; }
+.marquee__track { display: flex; gap: 0; width: max-content;
+  animation: marqueeScroll 36s linear infinite; }
+.marquee:hover .marquee__track { animation-play-state: paused; }
+.marquee__item { display: flex; align-items: center; gap: 20px; padding: 0 20px;
+  font-family: var(--font-mono); font-size: 14px; font-weight: 500;
+  letter-spacing: .08em; color: var(--text); white-space: nowrap; }
+.marquee__item i { font-style: normal; color: var(--accent); }
+@keyframes marqueeScroll { to { transform: translateX(-50%); } }
+
+/* ============ Section headers ============ */
+.sec-head { position: relative; margin-bottom: 56px; }
+.sec-head__num { position: absolute; top: -34px; left: -8px;
+  font-family: var(--font-display); font-size: 88px; font-weight: 900;
+  color: rgba(var(--accent-rgb), .07); line-height: 1; user-select: none; }
+.sec-head h2 { font-size: clamp(28px, 4vw, 40px); font-weight: 800;
+  line-height: 1.15; letter-spacing: -0.01em; margin: 12px 0 14px; }
+.sec-head p { max-width: 64ch; }
+
+/* ============ Object model diagram ============ */
+.model-grid { display: grid; grid-template-columns: 1.1fr .9fr; gap: 24px; align-items: stretch; }
+.diagram { background: var(--terminal); border: 1px solid var(--border);
+  border-radius: 8px; padding: 28px; font-family: var(--font-mono); }
+.diagram__ws { border: 1px solid var(--border-hover); border-radius: 6px;
+  padding: 18px; position: relative; }
+.diagram__tab { border: 1px dashed var(--border-hover); border-radius: 6px;
+  padding: 16px; margin-top: 14px; position: relative; }
+.diagram__panes { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 12px; }
+.diagram__pane { border: 1px solid var(--accent); border-radius: 4px;
+  padding: 14px 12px; background: rgba(var(--accent-rgb), .06); font-size: 12.5px; }
+.diagram__pane--plain { border-color: var(--border-hover); background: transparent; }
+.diagram__label { position: absolute; top: -9px; left: 14px; padding: 0 8px;
+  background: var(--terminal); font-size: 11px; letter-spacing: .1em;
+  color: var(--text-tertiary); text-transform: uppercase; }
+.diagram__tab .diagram__label { color: var(--text-secondary); }
+.diagram__pane b { display: block; color: var(--text); font-weight: 500; }
+.diagram__note { margin-top: 14px; font-size: 12px; color: var(--term-muted); line-height: 1.7; }
+
+/* ============ Cards / rules ============ */
+.grid { display: grid; gap: 16px; }
+.grid--2 { grid-template-columns: repeat(2, 1fr); }
+.card { background: var(--surface); border: 1px solid var(--border);
+  border-radius: 6px; padding: 24px;
+  transition: transform .3s, border-color .3s, box-shadow .3s; }
+.card:hover { border-color: var(--border-hover); transform: translateY(-2px); }
+.card h3 { font-size: 19px; font-weight: 700; line-height: 1.3; margin-bottom: 10px; }
+.card p { font-size: 15px; line-height: 1.75; }
+.spotlight { position: relative; overflow: hidden; }
+.spotlight::before { content: ''; position: absolute; inset: 0;
+  background: radial-gradient(240px circle at var(--mx, 50%) var(--my, 50%),
+    rgba(var(--accent-rgb), .09), transparent 70%);
+  opacity: 0; transition: opacity .3s; pointer-events: none; }
+.spotlight:hover::before { opacity: 1; }
+
+.rule { display: flex; gap: 12px; align-items: flex-start;
+  border: 1px solid rgba(211,160,39,.35); border-left: 3px solid var(--warning);
+  background: rgba(211,160,39,.06); border-radius: 4px;
+  padding: 14px 18px; font-size: 15px; line-height: 1.7; color: var(--text); }
+.rule--error { border-color: rgba(199,62,62,.35); border-left-color: var(--error);
+  background: rgba(199,62,62,.06); }
+.rule__icon { font-family: var(--font-mono); font-weight: 700;
+  color: var(--warning); flex: none; }
+.rule--error .rule__icon { color: var(--error); }
+
+/* ============ Code blocks ============ */
+.codeblock { position: relative; background: var(--terminal);
+  border: 1px solid var(--border); border-radius: 6px;
+  padding: 18px 20px; overflow-x: auto;
+  font-family: var(--font-mono); font-size: 14px; line-height: 1.7;
+  color: var(--term-text); }
+.codeblock code { display: block; white-space: pre; }
+.copy-btn { position: absolute; top: 10px; right: 10px;
+  font-family: var(--font-mono); font-size: 11px; letter-spacing: .08em;
+  padding: 6px 10px; border-radius: 3px; border: 1px solid var(--border);
+  background: var(--surface); color: var(--text-tertiary); cursor: pointer;
+  opacity: 0; transition: opacity .2s, color .15s, border-color .15s; }
+.codeblock:hover .copy-btn, .copy-btn:focus-visible { opacity: 1; }
+.copy-btn:hover { color: var(--accent); border-color: var(--accent); }
+.copy-btn.copied { color: var(--success); border-color: var(--success); opacity: 1; }
+
+/* ============ Learn path ============ */
+.act { border: 1px solid var(--border); border-radius: 8px; margin-bottom: 24px;
+  background: var(--surface-alt); overflow: hidden; }
+.act__head { display: flex; align-items: center; gap: 18px;
+  padding: 22px 26px; border-bottom: 1px solid var(--border); flex-wrap: wrap; }
+.act__num { font-family: var(--font-display); font-size: 34px; font-weight: 900;
+  color: var(--accent); line-height: 1; }
+.act__head h3 { font-size: 21px; font-weight: 800; }
+.act__goal { font-size: 13.5px; color: var(--text-tertiary); }
+.act__progress { margin-left: auto; font-family: var(--font-mono);
+  font-size: 12px; color: var(--text-tertiary); }
+.act__progress b { color: var(--accent); }
+.act__body { padding: 8px 26px 26px; }
+.step { padding: 22px 0; border-bottom: 1px solid var(--border); }
+.step:last-child { border-bottom: none; }
+.step__head { display: flex; align-items: flex-start; gap: 14px; margin-bottom: 12px; }
+.step__check { flex: none; width: 22px; height: 22px; margin-top: 3px;
+  border: 1px solid var(--border-hover); border-radius: 4px; background: transparent;
+  cursor: pointer; display: inline-flex; align-items: center; justify-content: center;
+  color: transparent; transition: background .2s, border-color .2s, color .2s; }
+.step__check:hover { border-color: var(--accent); }
+.step__check.done { background: var(--accent); border-color: var(--accent); color: var(--on-accent); }
+.step__check svg { width: 13px; height: 13px; }
+.step__title { font-size: 17px; font-weight: 700; color: var(--text);
+  font-family: var(--font-display); }
+.step__title .tag { margin-left: 10px; vertical-align: 2px; }
+.step p { font-size: 15px; line-height: 1.8; margin-bottom: 12px; max-width: 72ch; }
+.step .codeblock, .step .rule { margin: 12px 0; }
+.step ol { margin: 0 0 12px 22px; font-size: 15px; line-height: 1.9; }
+.step table { width: 100%; border-collapse: collapse; margin: 12px 0;
+  font-size: 14px; }
+.step th { font-family: var(--font-mono); font-size: 11.5px; letter-spacing: .1em;
+  text-transform: uppercase; color: var(--text-tertiary); text-align: left;
+  padding: 8px 12px; border-bottom: 1px solid var(--border-hover); }
+.step td { padding: 9px 12px; border-bottom: 1px solid var(--border);
+  color: var(--text-secondary); vertical-align: top; }
+.step td code { font-family: var(--font-mono); font-size: 13px; color: var(--term-cmd); }
+.learn__overall { display: flex; align-items: center; gap: 16px; margin-bottom: 32px;
+  font-family: var(--font-mono); font-size: 12.5px; color: var(--text-tertiary); }
+.learn__bar { flex: 1; max-width: 320px; height: 4px; border-radius: 2px;
+  background: var(--border); overflow: hidden; }
+.learn__bar i { display: block; height: 100%; width: 0;
+  background: linear-gradient(90deg, var(--accent-deep), var(--accent));
+  transition: width .4s cubic-bezier(.16,1,.3,1); }
+.learn__overall b { color: var(--accent); }
+
+.tag { display: inline-block; font-family: var(--font-mono); font-size: 11px;
+  font-weight: 500; letter-spacing: .1em; text-transform: uppercase;
+  padding: 3px 10px; border-radius: 3px; border: 1px solid var(--border);
+  color: var(--text-tertiary); }
+.tag--accent { border-color: rgba(var(--accent-rgb), .5); color: var(--accent); }
+
+/* ============ Find (速查台) ============ */
+.find__search svg { position: absolute; left: 16px; top: 50%;
+  transform: translateY(-50%); width: 16px; height: 16px; color: var(--text-tertiary); }
+.find__search input { width: 100%; padding: 15px 18px 15px 44px;
+  background: var(--surface); border: 1px solid var(--border); border-radius: 6px;
+  color: var(--text); font-family: var(--font-mono); font-size: 14px;
+  transition: border-color .2s, box-shadow .2s; }
+.find__search input:focus { outline: none; border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(var(--accent-rgb), .15); }
+.find__search input::placeholder { color: var(--text-tertiary); }
+.find__tabs { display: flex; gap: 6px; margin-bottom: 24px; flex-wrap: wrap; }
+.find__tab { font-family: var(--font-mono); font-size: 12.5px; font-weight: 500;
+  letter-spacing: .08em; padding: 9px 18px; border-radius: 4px;
+  border: 1px solid var(--border); background: transparent;
+  color: var(--text-tertiary); cursor: pointer;
+  transition: color .15s, border-color .15s, background .15s; }
+.find__tab:hover { color: var(--text); border-color: var(--border-hover); }
+.find__tab.active { background: var(--accent); border-color: var(--accent);
+  color: var(--on-accent); font-weight: 700; }
+.find__panel { display: none; }
+.find__panel.active { display: block; }
+.find__empty { padding: 48px 0; text-align: center;
+  font-family: var(--font-mono); font-size: 13px; color: var(--text-tertiary); }
+
+.cmd-group { border: 1px solid var(--border); border-radius: 6px;
+  margin-bottom: 12px; background: var(--surface-alt); overflow: hidden; }
+.cmd-group summary { display: flex; align-items: center; gap: 12px;
+  padding: 14px 18px; cursor: pointer; list-style: none;
+  font-family: var(--font-mono); font-size: 13.5px; font-weight: 700;
+  color: var(--text); transition: background .15s; }
+.cmd-group summary::-webkit-details-marker { display: none; }
+.cmd-group summary:hover { background: var(--surface); }
+.cmd-group summary .count { margin-left: auto; font-size: 11px;
+  color: var(--text-tertiary); font-weight: 400; }
+.cmd-group summary .chev { transition: transform .2s; color: var(--text-tertiary); }
+.cmd-group[open] summary .chev { transform: rotate(90deg); }
+.cmd-row { display: flex; align-items: center; gap: 14px;
+  padding: 9px 18px 9px 26px; border-top: 1px solid var(--border);
+  font-family: var(--font-mono); font-size: 13px; transition: background .15s; }
+.cmd-row:hover { background: var(--surface); }
+.cmd-row.flash { animation: rowFlash 1.4s ease; }
+@keyframes rowFlash { 0% { background: rgba(var(--accent-rgb), .22); }
+  100% { background: transparent; } }
+.cmd-row__zh { flex: none; width: 132px; color: var(--text-secondary);
+  font-size: 12.5px; font-family: var(--font-body); }
+.cmd-row__sig { flex: 1; color: var(--term-text); overflow-x: auto;
+  white-space: nowrap; scrollbar-width: none; }
+.cmd-row__sig::-webkit-scrollbar { display: none; }
+.cmd-row__sig b { color: var(--term-cmd); font-weight: 500; }
+.cmd-row__copy { flex: none; opacity: 0; border: 1px solid var(--border);
+  background: var(--surface); color: var(--text-tertiary); border-radius: 3px;
+  font-family: var(--font-mono); font-size: 11px; padding: 4px 9px;
+  cursor: pointer; transition: opacity .15s, color .15s, border-color .15s; }
+.cmd-row:hover .cmd-row__copy, .cmd-row__copy:focus-visible { opacity: 1; }
+.cmd-row__copy:hover { color: var(--accent); border-color: var(--accent); }
+
+/* scenarios */
+.scn-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
+.scn-card { background: var(--surface); border: 1px solid var(--border);
+  border-radius: 6px; padding: 22px; transition: transform .3s, border-color .3s; }
+.scn-card:hover { border-color: var(--border-hover); transform: translateY(-2px); }
+.scn-card h4 { font-family: var(--font-display); font-size: 16.5px;
+  color: var(--text); margin-bottom: 6px; }
+.scn-card > p { font-size: 13.5px; color: var(--text-tertiary); margin-bottom: 14px; }
+.scn-card .codeblock { font-size: 12.5px; padding: 14px 16px; }
+
+/* keybindings */
+.keys-note { display: flex; gap: 12px; align-items: center; margin-bottom: 20px;
+  border: 1px dashed rgba(var(--accent-rgb), .5); border-radius: 6px;
+  padding: 14px 18px; font-size: 14px; color: var(--text); }
+.keys-note .tag--accent { flex: none; }
+.keys-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+.key-card { background: var(--surface); border: 1px solid var(--border);
+  border-radius: 6px; padding: 16px 18px; transition: border-color .2s, box-shadow .2s; }
+.key-card.lit { border-color: var(--accent);
+  box-shadow: 0 0 18px rgba(var(--accent-rgb), .35); }
+.key-card__keys { display: flex; gap: 6px; align-items: center; margin-bottom: 10px; flex-wrap: wrap; }
+.kbd { display: inline-flex; align-items: center; justify-content: center;
+  min-width: 28px; height: 28px; padding: 0 8px;
+  font-family: var(--font-mono); font-size: 13px; font-weight: 500;
+  color: var(--text); background: var(--surface-hover);
+  border: 1px solid var(--border-hover); border-bottom-width: 2px; border-radius: 4px; }
+.key-card__keys .then { color: var(--text-tertiary); font-family: var(--font-mono); font-size: 12px; }
+.key-card p { font-size: 13.5px; line-height: 1.6; }
+.key-card .cmd-echo { display: block; margin-top: 8px; font-family: var(--font-mono);
+  font-size: 11.5px; color: var(--st-idle); opacity: 0; transition: opacity .2s; }
+.key-card.lit .cmd-echo { opacity: 1; }
+.keys-trainer-out { margin-top: 16px; }
+
+/* states */
+.states-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 16px; }
+.state-card { grid-column: span 2; background: var(--surface);
+  border: 1px solid var(--border); border-left: 3px solid var(--state-color);
+  border-radius: 6px; padding: 22px;
+  transition: transform .3s, border-color .3s; }
+.state-card--big { grid-column: span 3; }
+.state-card:hover { transform: translateY(-2px); }
+.state-card__head { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+.state-dot { width: 9px; height: 9px; border-radius: 50%; background: var(--state-color); }
+.state-dot--pulse { animation: statePulse 2s ease-in-out infinite; }
+@keyframes statePulse {
+  0%,100% { box-shadow: 0 0 0 0 rgba(var(--state-rgb), .5); }
+  50% { box-shadow: 0 0 0 7px rgba(var(--state-rgb), 0); } }
+.state-card__name { font-family: var(--font-mono); font-size: 15px;
+  font-weight: 700; color: var(--state-color); }
+.state-card__mean { font-size: 14px; color: var(--text); margin-bottom: 8px; }
+.state-card__next { font-size: 13px; color: var(--text-tertiary); }
+.state-card__next b { color: var(--text-secondary); font-weight: 500; }
+.states-foot { margin-top: 20px; }
+
+/* ============ Footer ============ */
+footer { border-top: 1px solid var(--border); padding: 48px 0;
+  background: var(--surface-alt); }
+footer .container { display: flex; gap: 24px; flex-wrap: wrap;
+  align-items: flex-start; justify-content: space-between; }
+footer p { font-size: 13px; color: var(--text-tertiary); max-width: 60ch; }
+footer .mono { font-size: 12px; }
+
+/* ============ ⌘K Palette ============ */
+.palette-overlay { position: fixed; inset: 0; z-index: 200;
+  background: rgba(12,12,13,.7);
+  backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+  display: flex; justify-content: center; padding-top: 12vh;
+  opacity: 0; pointer-events: none; transition: opacity .18s; }
+.palette-overlay.open { opacity: 1; pointer-events: auto; }
+.palette { width: min(640px, 92vw); max-height: 62vh; display: flex;
+  flex-direction: column; background: var(--surface);
+  border: 1px solid var(--border-hover); border-radius: 8px; overflow: hidden;
+  box-shadow: 0 24px 80px rgba(0,0,0,.6);
+  transform: translateY(-8px) scale(.98);
+  transition: transform .18s cubic-bezier(.16,1,.3,1); }
+.palette-overlay.open .palette { transform: translateY(0) scale(1); }
+.palette__input-row { display: flex; align-items: center; gap: 12px;
+  padding: 16px 18px; border-bottom: 1px solid var(--border); }
+.palette__input-row .t-prompt { font-family: var(--font-mono); font-size: 15px; }
+.palette__input { flex: 1; background: none; border: none; outline: none;
+  color: var(--text); font-family: var(--font-mono); font-size: 15px; }
+.palette__input::placeholder { color: var(--text-tertiary); }
+.palette__list { overflow-y: auto; padding: 8px; }
+.palette__group { font-family: var(--font-mono); font-size: 10.5px;
+  letter-spacing: .14em; text-transform: uppercase; color: var(--text-tertiary);
+  padding: 10px 12px 4px; }
+.palette__item { display: flex; align-items: center; gap: 12px;
+  padding: 9px 12px; border-radius: 4px; cursor: pointer;
+  border-left: 2px solid transparent; }
+.palette__item[aria-selected="true"] { background: rgba(var(--accent-rgb), .12);
+  border-left-color: var(--accent); }
+.palette__item-title { font-family: var(--font-mono); font-size: 13px;
+  color: var(--text); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.palette__item-sub { font-size: 12px; color: var(--text-tertiary);
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex: 1; }
+.palette__item-tag { flex: none; font-family: var(--font-mono); font-size: 10px;
+  letter-spacing: .08em; padding: 2px 7px; border-radius: 3px;
+  border: 1px solid var(--border); color: var(--text-tertiary); }
+.palette__foot { display: flex; gap: 18px; padding: 10px 16px;
+  border-top: 1px solid var(--border); font-family: var(--font-mono);
+  font-size: 11px; color: var(--text-tertiary); }
+.palette__foot .kbd { min-width: 20px; height: 20px; font-size: 10.5px;
+  padding: 0 5px; margin-right: 5px; }
+.palette__empty { padding: 32px; text-align: center;
+  font-family: var(--font-mono); font-size: 12.5px; color: var(--text-tertiary); }
+
+/* ============ Toast ============ */
+.toast { position: fixed; bottom: 28px; left: 50%; z-index: 300;
+  transform: translate(-50%, 12px); opacity: 0;
+  font-family: var(--font-mono); font-size: 13px;
+  background: var(--terminal); border: 1px solid var(--border-hover);
+  border-radius: 4px; padding: 10px 16px; color: var(--term-cmd);
+  transition: opacity .25s, transform .25s; pointer-events: none; }
+.toast.show { opacity: 1; transform: translate(-50%, 0); }
+.toast .t-dim { margin-right: 6px; }
+
+/* ============ Responsive ============ */
+@media (max-width: 1024px) {
+  .hero .container { grid-template-columns: 1fr; gap: 40px; }
+  .model-grid { grid-template-columns: 1fr; }
+  .keys-grid { grid-template-columns: repeat(2, 1fr); }
+  .scn-grid { grid-template-columns: 1fr; }
+}
+@media (max-width: 760px) {
+  .nav__link { display: none; }
+}
+@media (max-width: 640px) {
+  section { padding: 72px 0; }
+  .container { padding: 0 20px; }
+  .grid--2, .keys-grid { grid-template-columns: 1fr; }
+  .states-grid { grid-template-columns: 1fr; }
+  .state-card, .state-card--big { grid-column: span 1; }
+  .sec-head__num { font-size: 52px; top: -20px; }
+  .hero__stats { flex-wrap: wrap; }
+  .hero__stat { flex: 1 1 40%; border-bottom: 1px solid var(--border); }
+  .keys-note__trainer { display: none; }
+  .termmock__tabs, .termmock__title { display: none; }
+  .cmd-row__zh { display: none; }
+  .palette-overlay { padding-top: 0; align-items: flex-end; }
+  .palette { width: 100%; max-height: 72vh; border-radius: 12px 12px 0 0; }
+  .find__search input, .find__tab, .cmd-row__copy { min-height: 44px; }
+  .cmd-row__copy { opacity: 1; }
+}
+
+/* ============ Reduced motion ============ */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .01ms !important; }
+  html { scroll-behavior: auto; }
+  .marquee__track { animation: none; flex-wrap: wrap; width: 100%; }
+  .reveal { opacity: 1; transform: none; }
+  .hero h1 .h1-word, .gradient-word { opacity: 1; transform: none; }
+}
+</style>
+</head>
+<body>
+
+<div class="scroll-progress" id="scrollProgress"></div>
+
+<!-- ============ Nav ============ -->
+<nav class="nav" id="nav">
+  <a class="nav__logo" href="#top"><span class="nav__logo-mark">&gt;_</span>herdr<span style="color:var(--text-tertiary);font-weight:400">/实战手册</span></a>
+  <a class="nav__link" href="#model" data-spy="model">对象模型</a>
+  <a class="nav__link" href="#learn" data-spy="learn">学习路径</a>
+  <a class="nav__link" href="#find" data-spy="find">速查台</a>
+  <button class="nav__kbd-btn" id="navPaletteBtn" aria-label="打开搜索面板">
+    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+    搜索 <span class="kbd" style="min-width:20px;height:20px;font-size:10.5px;padding:0 5px">⌘K</span>
+  </button>
+</nav>
+
+<!-- ============ Hero ============ -->
+<header class="hero" id="top">
+  <div class="hero__bg"></div>
+  <div class="hero__glow" id="heroGlow"></div>
+  <div class="container">
+    <div>
+      <p class="eyebrow">—— THE AGENT RUNTIME · 实战手册</p>
+      <h1>
+        <span class="h1-line"><span class="h1-word" style="animation-delay:.05s">一篇讲透&nbsp;</span><span class="h1-word" style="animation-delay:.18s">Herdr</span></span>
+        <span class="h1-line"><span class="h1-word gradient-word" style="animation-delay:.34s">多智能体工作台</span></span>
+      </h1>
+      <p class="hero__sub">从工作区、标签页与窗格，到状态、集成、派工与远程——<b style="color:var(--text)">学习路径</b>带你走一遍，<b style="color:var(--text)">⌘K 速查台</b>让你想用的时候一秒找到。</p>
+      <div class="hero__ctas">
+        <a class="btn btn--primary" href="#learn">开始学习路径</a>
+        <button class="btn" id="heroPaletteBtn">打开速查 <span class="kbd-hint">⌘K</span></button>
+      </div>
+      <div class="hero__stats">
+        <div class="hero__stat"><b>12</b><span>命令组</span></div>
+        <div class="hero__stat"><b>11</b><span>核心键位</span></div>
+        <div class="hero__stat"><b>5</b><span>Agent 状态</span></div>
+        <div class="hero__stat"><b>10</b><span>实战场景</span></div>
+      </div>
+    </div>
+    <div class="termmock" id="heroTerm" aria-label="Herdr 终端演示">
+      <div class="termmock__bar">
+        <span class="termmock__dot"></span><span class="termmock__dot"></span><span class="termmock__dot"></span>
+        <span class="termmock__title" id="termTitle">herdr — w1 · t1</span>
+        <span class="termmock__tabs"><span class="termmock__tab">shell</span><span class="termmock__tab termmock__tab--on">herdr</span><span class="termmock__tab">reviewer</span></span>
+      </div>
+      <div class="termmock__body" id="termBody"></div>
+      <div class="termmock__status">
+        <span class="st"><span class="state-dot" style="--state-color:var(--st-idle);background:var(--st-idle)"></span>idle · herdr</span>
+        <span class="st"><span class="state-dot state-dot--pulse" style="--state-color:var(--st-working);--state-rgb:211,160,39;background:var(--st-working)"></span>working · reviewer</span>
+        <span style="margin-left:auto">3 panes</span>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- ============ Marquee: 核心定律 ============ -->
+<div class="marquee" aria-hidden="true">
+  <div class="marquee__track" id="marqueeTrack">
+    <span class="marquee__item">分屏是布局操作 <i>·</i> 启动 Agent 是运行进程 <i>✦</i></span>
+    <span class="marquee__item">blocked 不是完成 <i>✦</i></span>
+    <span class="marquee__item">ID 从返回 JSON 读，别猜侧边栏顺序 <i>✦</i></span>
+    <span class="marquee__item">done 和 idle 只差一次查看 <i>✦</i></span>
+    <span class="marquee__item">控制前先检查 HERDR_ENV <i>✦</i></span>
+    <span class="marquee__item">unknown 不表示任务成功 <i>✦</i></span>
+  </div>
+</div>
+
+<!-- ============ 01 对象模型 ============ -->
+<section id="model">
+  <div class="container">
+    <div class="sec-head reveal">
+      <span class="sec-head__num">01</span>
+      <p class="eyebrow">—— OBJECT MODEL</p>
+      <h2>先建立对象模型，再谈任何命令</h2>
+      <p>Herdr 是为编程 Agent 设计的终端工作台：提供运行位置、状态视图和控制入口。它的布局分三层——所有命令都在操作这三层对象。</p>
+    </div>
+    <div class="model-grid">
+      <div class="diagram reveal" role="img" aria-label="Workspace 包含 Tab，Tab 包含 Pane 的嵌套布局图">
+        <div class="diagram__ws">
+          <span class="diagram__label">Workspace · 一个项目或工作上下文</span>
+          <div class="diagram__tab">
+            <span class="diagram__label">Tab · 一组相关终端的布局</span>
+            <div class="diagram__panes">
+              <div class="diagram__pane"><b>Pane</b>运行 Codex</div>
+              <div class="diagram__pane diagram__pane--plain"><b>Pane</b>测试 / 服务 / 其他 Agent</div>
+            </div>
+          </div>
+          <p class="diagram__note">Agent = Herdr 在某个窗格中识别出的当前进程。窗格也可以只跑 shell、测试或开发服务器。</p>
+        </div>
+      </div>
+      <div class="grid" style="grid-template-columns:1fr;gap:16px">
+        <div class="card spotlight reveal">
+          <h3 class="mono" style="font-size:15px">Herdr Session</h3>
+          <p>保存后台服务、布局和仍在运行的终端。分离客户端、甚至重启服务器后，布局都能恢复。</p>
+        </div>
+        <div class="card spotlight reveal">
+          <h3 class="mono" style="font-size:15px">Agent Session</h3>
+          <p>保存对话上下文，由对应 Agent 自己管理。只有集成上报了有效的原生会话引用，Herdr 才能在服务器重启后恢复对应对话。</p>
+        </div>
+        <div class="rule reveal"><span class="rule__icon">!</span><span><b>分屏是布局操作；启动 Agent 是在窗格中运行进程。</b>两个动作，两套命令——这是全文最重要的一句话。</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 02 学习路径 ============ -->
+<section id="learn" style="background:var(--surface-alt);border-top:1px solid var(--border);border-bottom:1px solid var(--border)">
+  <div class="container">
+    <div class="sec-head reveal">
+      <span class="sec-head__num">02</span>
+      <p class="eyebrow">—— LEARN · 三幕课程</p>
+      <h2>学习路径：跑起来 → 派得动 → 带得走</h2>
+      <p>按顺序走完 13 步，每步勾掉会记住进度。命令全部可复制，键位建议边看边按。</p>
+    </div>
+    <div class="learn__overall reveal">
+      <span>总进度</span>
+      <div class="learn__bar"><i id="learnBar"></i></div>
+      <span><b id="learnDone">0</b> / 13 步</span>
+    </div>
+
+    <!-- 第一幕 -->
+    <div class="act reveal" data-act="1">
+      <div class="act__head">
+        <span class="act__num">壹</span>
+        <div><h3>入门 · 跑起来</h3><p class="act__goal">装好 Herdr，认出对象模型，记住前缀键</p></div>
+        <span class="act__progress"><b data-act-done>0</b> / 4</span>
+      </div>
+      <div class="act__body">
+
+        <div class="step" data-step="s1">
+          <div class="step__head">
+            <button class="step__check" aria-label="标记完成"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></button>
+            <span class="step__title">安装、启动与集成</span>
+          </div>
+          <p>macOS / Linux / Windows 各一行。装完顺手装上你用的 Agent 集成，再验证版本。</p>
+          <div class="codeblock"><button class="copy-btn" data-copy="brew install herdr">copy</button><code><span class="t-prompt">$ </span><span class="t-cmd">brew install herdr</span>
+<span class="t-prompt">$ </span><span class="t-cmd">curl -fsSL https://herdr.dev/install.sh | sh</span>   <span class="t-dim"># Linux 或 macOS</span>
+<span class="t-prompt">$ </span><span class="t-cmd">herdr integration install codex</span>              <span class="t-dim"># 还有 pi / omp 等</span>
+<span class="t-prompt">$ </span><span class="t-cmd">herdr integration status</span>
+<span class="t-prompt">$ </span><span class="t-cmd">herdr --version</span></code></div>
+        </div>
+
+        <div class="step" data-step="s2">
+          <div class="step__head">
+            <button class="step__check" aria-label="标记完成"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></button>
+            <span class="step__title">认出三层布局与两种 Session</span>
+          </div>
+          <p>回到上面 01 的对象模型图：Workspace → Tab → Pane。再分清 Herdr Session（布局与进程）和 Agent Session（对话上下文）——恢复能力完全不同。</p>
+        </div>
+
+        <div class="step" data-step="s3">
+          <div class="step__head">
+            <button class="step__check" aria-label="标记完成"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></button>
+            <span class="step__title">先学这些键位<span class="tag tag--accent">可练习</span></span>
+          </div>
+          <p>默认前缀键是 <span class="kbd">ctrl</span>+<span class="kbd">b</span>，先按前缀、松开、再按后续键——让 Herdr 的键位与 shell、编辑器、Agent TUI 的快捷键分开。也支持鼠标：单击切焦点，右键创建或分屏，拖动分隔线调整大小。</p>
+          <p>复制模式中 <span class="kbd">h</span><span class="kbd">j</span><span class="kbd">k</span><span class="kbd">l</span> 移动，<span class="kbd">/</span> 或 <span class="kbd">?</span> 搜索，<span class="kbd">v</span> 或空格开始选择，<span class="kbd">y</span> 或回车复制，<span class="kbd">q</span> 或 Esc 退出。复制模式不会暂停窗格进程。</p>
+          <p>到<a href="#find" data-goto-tab="keys">速查台 · 键位</a>可以直接在页面上按真键练习。</p>
+        </div>
+
+        <div class="step" data-step="s4">
+          <div class="step__head">
+            <button class="step__check" aria-label="标记完成"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></button>
+            <span class="step__title">案例：第一次启动并重连一个 Agent<span class="tag">5 min</span></span>
+          </div>
+          <ol>
+            <li>在普通终端确认版本并安装集成</li>
+            <li>在项目目录启动 Herdr</li>
+            <li>在窗格中运行 <code class="mono" style="color:var(--term-cmd)">codex</code>，提交一个小任务，确认侧边栏出现 Agent</li>
+            <li>按 <span class="kbd">ctrl</span>+<span class="kbd">b</span> 再按 <span class="kbd">q</span> 分离客户端</li>
+            <li>回到外部普通终端再次运行 <code class="mono" style="color:var(--term-cmd)">herdr</code>，确认布局和进程仍然可见</li>
+          </ol>
+          <div class="rule"><span class="rule__icon">!</span><span>Agent 状态不能代替代码、测试和实际行为验收。</span></div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- 第二幕 -->
+    <div class="act reveal" data-act="2">
+      <div class="act__head">
+        <span class="act__num">贰</span>
+        <div><h3>进阶 · 派得动</h3><p class="act__goal">读懂五种状态，掌握派工四步与等待语义</p></div>
+        <span class="act__progress"><b data-act-done>0</b> / 6</span>
+      </div>
+      <div class="act__body">
+
+        <div class="step" data-step="s5">
+          <div class="step__head">
+            <button class="step__check" aria-label="标记完成"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></button>
+            <span class="step__title">五种 Agent 状态</span>
+          </div>
+          <p>Herdr 把状态汇总到窗格、标签页和工作区，帮你定位谁在运行、谁在等输入、谁可以审阅。完整五色卡见<a href="#find" data-goto-tab="states">速查台 · 状态</a>。</p>
+          <div class="rule"><span class="rule__icon">!</span><span><b>done 和 idle 的差别只是标签页是否已被查看。</b>显式执行 pane focus 或 agent focus 会标记已查看；只读输出不会。</span></div>
+          <div class="rule rule--error"><span class="rule__icon">×</span><span><b>unknown 只表示生命周期判断不可靠，不表示任务成功完成。</b></span></div>
+        </div>
+
+        <div class="step" data-step="s6">
+          <div class="step__head">
+            <button class="step__check" aria-label="标记完成"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></button>
+            <span class="step__title">状态来自哪里</span>
+          </div>
+          <p>每个窗格只有一个状态权威：Pi、OMP 等有完整生命周期上报的 Agent 由集成决定状态；Codex、Claude Code 等主要靠前台进程和终端底部缓冲区的屏幕规则。不受支持的 Agent 仍能作为普通终端进程运行，只是状态可能不完整。</p>
+          <div class="rule"><span class="rule__icon">!</span><span>对屏幕检测型 Agent，<b>blocked 的判断刻意从严</b>——未识别的新提示界面可能暂时显示为 idle。Agent 若运行在 Herdr 窗格内的 tmux、虚拟机或沙箱包装器之后，Herdr 可能看不到真实前台进程。</span></div>
+          <p>排查时直接看解释结果：</p>
+          <div class="codeblock"><button class="copy-btn" data-copy="herdr agent explain reviewer --json">copy</button><code><span class="t-prompt">$ </span><span class="t-cmd">herdr agent explain reviewer --json</span>
+<span class="t-dim"># 输出最终状态、清单来源、匹配规则和回退原因</span></code></div>
+        </div>
+
+        <div class="step" data-step="s7">
+          <div class="step__head">
+            <button class="step__check" aria-label="标记完成"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></button>
+            <span class="step__title">集成与 Skill 的分工</span>
+          </div>
+          <table>
+            <tr><th>能力</th><th>作用</th></tr>
+            <tr><td>集成</td><td>上报生命周期状态、原生会话身份，或两者之一</td></tr>
+            <tr><td>Skill</td><td>教 Agent 如何操作 Herdr 的布局、窗格和 Agent 命令</td></tr>
+          </table>
+          <div class="codeblock"><button class="copy-btn" data-copy="npx skills add herdrdev/herdr --skill herdr -g">copy</button><code><span class="t-prompt">$ </span><span class="t-cmd">npx skills add herdrdev/herdr --skill herdr -g</span>   <span class="t-dim"># -g 全局；只用于当前项目时省略</span>
+<span class="t-prompt">$ </span><span class="t-cmd">herdr --skill</span>   <span class="t-dim"># 已装 Herdr：输出与当前二进制匹配的内置版本</span></code></div>
+          <div class="rule rule--error"><span class="rule__icon">×</span><span><b>执行 Herdr 控制命令的 Agent 必须运行在 Herdr 管理的窗格中。</b>控制前先检查 <code class="mono" style="color:var(--term-cmd)">test "${HERDR_ENV:-}" = 1</code>；检查失败就停止控制操作，从 Herdr 窗格重新启动 Agent。不要手工设置 HERDR_ENV 绕过检查。</span></div>
+        </div>
+
+        <div class="step" data-step="s8">
+          <div class="step__head">
+            <button class="step__check" aria-label="标记完成"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></button>
+            <span class="step__title">派工四步：分屏、启动、提交、读取<span class="tag tag--accent">核心</span></span>
+          </div>
+          <p>最省事的方式是把位置、角色、任务和边界一次说清：</p>
+          <div class="codeblock"><button class="copy-btn" data-copy="使用 Herdr Skill，在当前项目目录的相邻窗格启动一个 Codex Reviewer。保持当前焦点。让它只读审阅当前 diff，对照需求检查遗漏和错误路径，报告文件、行号、触发条件与影响，不修改文件。等待状态变化后读取结果；遇到 blocked，先说明它在等待什么。">copy</button><code style="white-space:pre-wrap"><span class="t-str">使用 Herdr Skill，在当前项目目录的相邻窗格启动一个 Codex Reviewer。
+保持当前焦点。让它只读审阅当前 diff，对照需求检查遗漏和错误路径，
+报告文件、行号、触发条件与影响，不修改文件。
+等待状态变化后读取结果；遇到 blocked，先说明它在等待什么。</span></code></div>
+          <p>对应的 CLI 流程：</p>
+          <div class="codeblock"><button class="copy-btn" data-copy='test "${HERDR_ENV:-}" = 1
+split=$(herdr pane split --current --direction right --cwd "$PWD" --no-focus)
+review_pane=$(printf "%s\n" "$split" | jq -r ".result.pane.pane_id")
+herdr agent start reviewer --kind codex --pane "$review_pane"
+herdr agent prompt reviewer "只读审阅当前 git diff，列出文件、行号、触发条件与影响；不修改文件。" --wait --timeout 60000
+herdr agent get reviewer
+herdr agent read reviewer --source recent-unwrapped --lines 120'>copy</button><code><span class="t-prompt">$ </span><span class="t-cmd">test "${HERDR_ENV:-}" = 1</span>
+<span class="t-prompt">$ </span><span class="t-cmd">split=$(herdr pane split --current --direction right --cwd "$PWD" --no-focus)</span>
+<span class="t-prompt">$ </span><span class="t-cmd">review_pane=$(printf '%s\n' "$split" | jq -r '.result.pane.pane_id')</span>
+<span class="t-prompt">$ </span><span class="t-cmd">herdr agent start reviewer --kind codex --pane "$review_pane"</span>
+<span class="t-prompt">$ </span><span class="t-cmd">herdr agent prompt reviewer \</span>
+<span class="t-cmd">    "只读审阅当前 git diff，列出文件、行号、触发条件与影响；不修改文件。" \</span>
+<span class="t-cmd">    --wait --timeout 60000</span>
+<span class="t-prompt">$ </span><span class="t-cmd">herdr agent get reviewer</span>
+<span class="t-prompt">$ </span><span class="t-cmd">herdr agent read reviewer --source recent-unwrapped --lines 120</span></code></div>
+          <div class="rule rule--error"><span class="rule__icon">×</span><span>创建命令返回 JSON，<b>必须从响应读取新窗格 ID，不能按侧边栏顺序猜测。</b>窗格移动后 ID 可能变化，继续使用新响应中的 ID。</span></div>
+          <div class="rule"><span class="rule__icon">!</span><span><code class="mono" style="color:var(--term-cmd)">agent prompt --wait</code> 默认等待稳定的 idle、done 或 blocked。<b>blocked 不是完成，等待超时也不表示提示没有发出</b>——超时后先 agent get 和 agent read，避免重复提交同一任务。</span></div>
+        </div>
+
+        <div class="step" data-step="s9">
+          <div class="step__head">
+            <button class="step__check" aria-label="标记完成"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></button>
+            <span class="step__title">窗格命令 vs Agent 命令</span>
+          </div>
+          <table>
+            <tr><th>目标</th><th>使用的命令</th></tr>
+            <tr><td>运行 shell 命令</td><td><code>pane run</code></td></tr>
+            <tr><td>发送纯文本或按键</td><td><code>pane send-text</code>、<code>pane send-keys</code></td></tr>
+            <tr><td>等待文本或正则</td><td><code>pane wait-output</code></td></tr>
+            <tr><td>启动受支持的 Agent</td><td><code>agent start</code></td></tr>
+            <tr><td>提交提示并等待生命周期状态</td><td><code>agent prompt</code></td></tr>
+            <tr><td>操作 Agent 的交互界面</td><td><code>agent send-keys</code></td></tr>
+            <tr><td>等待精确 Agent 状态</td><td><code>agent wait</code></td></tr>
+          </table>
+          <p><b style="color:var(--text)">对 shell、测试、服务器和 CI 监视器用窗格命令；需要识别 Agent 身份或生命周期状态时用 Agent 命令。</b></p>
+          <div class="rule"><span class="rule__icon">!</span><span><code class="mono" style="color:var(--term-cmd)">pane wait-output</code> 只匹配终端文本，不解释生命周期，已有文本也可能立即命中；<code class="mono" style="color:var(--term-cmd)">agent wait</code> 观察当前状态，已匹配会立即返回。两个等待命令省略 --timeout 都会无限等待。</span></div>
+        </div>
+
+        <div class="step" data-step="s10">
+          <div class="step__head">
+            <button class="step__check" aria-label="标记完成"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></button>
+            <span class="step__title">读取输出 + 案例：等待审批</span>
+          </div>
+          <table>
+            <tr><th>来源</th><th>适用场景</th></tr>
+            <tr><td><code>visible</code></td><td>当前渲染的屏幕，适合处理交互界面</td></tr>
+            <tr><td><code>recent</code></td><td>保留终端软换行的最近回滚内容</td></tr>
+            <tr><td><code>recent-unwrapped</code></td><td>合并软换行，适合日志和长回复</td></tr>
+            <tr><td><code>detection</code></td><td>状态检测使用的底部纯文本快照</td></tr>
+          </table>
+          <p>全屏 Agent（Claude Code、OpenCode 等）可能把历史放在备用屏幕：读取不完整时先加 --lines；仍缺失就等 Agent 空闲后再读，或让它把完整结果写入 Markdown 文件并返回路径。</p>
+          <div class="codeblock"><button class="copy-btn" data-copy='herdr agent wait reviewer --until blocked --timeout 120000
+herdr agent read reviewer --source recent-unwrapped --lines 80
+herdr agent send-keys reviewer esc'>copy</button><code><span class="t-prompt">$ </span><span class="t-cmd">herdr agent wait reviewer --until blocked --timeout 120000</span>
+<span class="t-prompt">$ </span><span class="t-cmd">herdr agent read reviewer --source recent-unwrapped --lines 80</span>
+<span class="t-prompt">$ </span><span class="t-cmd">herdr agent send-keys reviewer esc</span></code></div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- 第三幕 -->
+    <div class="act reveal" data-act="3">
+      <div class="act__head">
+        <span class="act__num">叁</span>
+        <div><h3>拓展 · 带得走</h3><p class="act__goal">分离恢复、远程多机、Worktree 与自助速查</p></div>
+        <span class="act__progress"><b data-act-done>0</b> / 3</span>
+      </div>
+      <div class="act__body">
+
+        <div class="step" data-step="s11">
+          <div class="step__head">
+            <button class="step__check" aria-label="标记完成"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></button>
+            <span class="step__title">布局、分离与恢复</span>
+          </div>
+          <p>离开时按 <span class="kbd">ctrl</span>+<span class="kbd">b</span> 再按 <span class="kbd">q</span> 分离，返回时在外部终端重新运行 <code class="mono" style="color:var(--term-cmd)">herdr</code>。不要在 Herdr 窗格中嵌套启动不带参数的 herdr。服务器重启后，Herdr 恢复保存的布局，以及已上报原生会话引用的 Agent 对话；普通测试、开发服务器和没有会话引用的 Agent 需要重新启动。</p>
+          <div class="rule rule--error"><span class="rule__icon">×</span><span>只有确实要结束服务器及其全部窗格进程时，才运行 <code class="mono" style="color:var(--error)">herdr server stop</code>。</span></div>
+          <div class="codeblock"><button class="copy-btn" data-copy='herdr workspace list
+herdr tab list
+herdr pane list
+herdr pane split --current --direction right --cwd "$PWD" --no-focus'>copy</button><code><span class="t-dim"># 常见布局命令，按对象分组</span>
+<span class="t-prompt">$ </span><span class="t-cmd">herdr workspace list</span>
+<span class="t-prompt">$ </span><span class="t-cmd">herdr tab list</span>
+<span class="t-prompt">$ </span><span class="t-cmd">herdr pane list</span>
+<span class="t-prompt">$ </span><span class="t-cmd">herdr pane split --current --direction right --cwd "$PWD" --no-focus</span></code></div>
+        </div>
+
+        <div class="step" data-step="s12">
+          <div class="step__head">
+            <button class="step__check" aria-label="标记完成"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></button>
+            <span class="step__title">远程机器与 Git Worktree</span>
+          </div>
+          <p>用 <code class="mono" style="color:var(--term-cmd)">--remote</code> 通过 SSH 连接远程 Herdr 服务器；<code class="mono" style="color:var(--term-cmd)">machine</code> 命令组管理多机；<code class="mono" style="color:var(--term-cmd)">worktree</code> 命令组为任务开出隔离的 Git 工作树。</p>
+          <div class="codeblock"><button class="copy-btn" data-copy='herdr --remote devbox
+herdr machine add devbox --label "开发机"
+herdr worktree create --branch feat/review --label "审阅工作树"'>copy</button><code><span class="t-prompt">$ </span><span class="t-cmd">herdr --remote devbox</span>                        <span class="t-dim"># SSH 连接远程服务器</span>
+<span class="t-prompt">$ </span><span class="t-cmd">herdr machine add devbox --label "开发机"</span>
+<span class="t-prompt">$ </span><span class="t-cmd">herdr worktree create --branch feat/review --label "审阅工作树"</span></code></div>
+        </div>
+
+        <div class="step" data-step="s13">
+          <div class="step__head">
+            <button class="step__check" aria-label="标记完成"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></button>
+            <span class="step__title">以后不用背：自助速查</span>
+          </div>
+          <p>CLI 通过与集成和 Agent 相同的本地 socket API 与服务器通信，大多数命令输出 JSON——脚本里直接用。完整选项以 <code class="mono" style="color:var(--term-cmd)">herdr &lt;group&gt; --help</code> 为准；本页<a href="#find">速查台</a>已按命令组建好索引，<button class="nav__kbd-btn" id="learnPaletteBtn" style="vertical-align:2px">⌘K</button> 随时呼出搜索。</p>
+          <div class="rule"><span class="rule__icon">→</span><span>集成支持：pi · omp · claude · codex · copilot · devin · droid · kimi · opencode · kilo · hermes · mastracode · qodercli · qwen · cursor · antigravity-cli · grok</span></div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 03 速查台 ============ -->
+<section id="find">
+  <div class="container">
+    <div class="sec-head reveal">
+      <span class="sec-head__num">03</span>
+      <p class="eyebrow">—— FIND · 想用的时候一秒找到</p>
+      <h2>速查台</h2>
+      <p>四个抽屉：命令、场景、键位、状态。输入即过滤；命令行行尾一键复制。或者干脆 <span class="kbd">⌘</span>+<span class="kbd">K</span>。</p>
+    </div>
+    <div class="reveal">
+      <div class="find__search">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+        <input id="findSearch" type="text" placeholder="过滤当前抽屉… 试试 split / 审批 / 分离 / blocked" autocomplete="off" spellcheck="false">
+      </div>
+      <div class="find__tabs" role="tablist">
+        <button class="find__tab active" data-tab="commands" role="tab">命令</button>
+        <button class="find__tab" data-tab="scenarios" role="tab">场景</button>
+        <button class="find__tab" data-tab="keys" role="tab">键位</button>
+        <button class="find__tab" data-tab="states" role="tab">状态</button>
+      </div>
+
+      <div class="find__panel active" id="panel-commands" role="tabpanel"></div>
+
+      <div class="find__panel" id="panel-scenarios" role="tabpanel">
+        <div class="scn-grid" id="scnGrid"></div>
+      </div>
+
+      <div class="find__panel" id="panel-keys" role="tabpanel">
+        <div class="keys-note keys-note__trainer">
+          <span class="tag tag--accent">练习场</span>
+          <span>在页面空白处直接按真键：<span class="kbd">ctrl</span>+<span class="kbd">b</span> 再按后续键，命中的卡片会亮。</span>
+        </div>
+        <div class="keys-grid" id="keysGrid"></div>
+        <div class="codeblock keys-trainer-out" id="trainerOut" style="display:none"><code id="trainerLog"></code></div>
+      </div>
+
+      <div class="find__panel" id="panel-states" role="tabpanel">
+        <div class="states-grid" id="statesGrid"></div>
+        <div class="states-foot">
+          <div class="rule"><span class="rule__icon">!</span><span>done 与 idle 只差「标签页是否已被查看」；unknown 只表示生命周期判断不可靠，<b>不表示任务成功完成</b>。排查用 <code class="mono" style="color:var(--term-cmd)">herdr agent explain &lt;target&gt; --json</code>。</span></div>
+        </div>
+      </div>
+      <div class="find__empty" id="findEmpty" style="display:none">→ 没有命中。换个关键词，或按 ⌘K 搜全站。</div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ Footer ============ -->
+<footer>
+  <div class="container">
+    <div>
+      <a class="nav__logo" href="#top" style="margin-bottom:14px"><span class="nav__logo-mark">&gt;_</span>herdr<span style="color:var(--text-tertiary);font-weight:400">/实战手册</span></a>
+      <p>内容整理自《分屏不提供隔离：一篇讲透 Herdr 多智能体工作台》（同目录 03-herdr.md），命令签名以 <span class="mono" style="color:var(--term-cmd)">herdr &lt;group&gt; --help</span> 与 <a href="https://herdr.dev/zh-cn/docs/install/" target="_blank" rel="noopener">herdr.dev 官方文档</a> 为准。</p>
+    </div>
+    <p class="mono">Motion effects derived from <a href="https://github.com/DavidHDev/vue-bits" target="_blank" rel="noopener">vue-bits</a> by DavidHDev (MIT).<br>Design tokens measured from herdr.dev (Ink theme).</p>
+  </div>
+</footer>
+
+<!-- ============ ⌘K Palette ============ -->
+<div class="palette-overlay" id="paletteOverlay">
+  <div class="palette" role="dialog" aria-label="全站搜索">
+    <div class="palette__input-row">
+      <span class="t-prompt">$</span>
+      <input class="palette__input" id="paletteInput" placeholder="find —— 命令 / 键位 / 状态 / 场景 / 概念" autocomplete="off" spellcheck="false">
+    </div>
+    <div class="palette__list" id="paletteList"></div>
+    <div class="palette__foot">
+      <span><span class="kbd">↑↓</span>选择</span>
+      <span><span class="kbd">↵</span>跳转到条目</span>
+      <span><span class="kbd">⌘↵</span>直接复制</span>
+      <span><span class="kbd">esc</span>关闭</span>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"><span class="t-dim">$</span><span id="toastText">✓ copied → $CLIPBOARD</span></div>
+
+<script>
+'use strict';
+/* ================================================================
+   DATA — 速查台与 ⌘K 面板共用同一数据源（DESIGN.md §8）
+   ================================================================ */
+const CLI_GROUPS = [
+{ id:'start', name:'启动与状态', items:[
+ ['启动或连接默认会话','herdr'],
+ ['使用或创建命名持久会话','herdr --session <name>'],
+ ['通过 SSH 连接远程 Herdr 服务器','herdr --remote <ssh-target>'],
+ ['远程附加使用哪一侧的按键绑定','herdr --remote-keybindings <local|server>'],
+ ['打印默认配置并退出','herdr --default-config'],
+ ['打印与二进制版本匹配的 Agent Skill','herdr --skill'],
+ ['查看版本','herdr --version'],
+ ['查看状态','herdr status [server|client]'],
+ ['更新 Herdr','herdr update [--handoff]'],
+ ['查看 / 切换更新通道','herdr channel show | set <stable|preview>'],
+ ['导出 API schema','herdr api schema [--json] [--output PATH]'],
+ ['打印实时会话快照','herdr api snapshot'],
+ ['配置检查 / 重置键位','herdr config check | reset-keys'],
+ ['生成 shell 补全','herdr completion <bash|zsh|fish|powershell|elvish>'],
+]},
+{ id:'server', name:'服务器', items:[
+ ['显式运行无界面服务器','herdr server'],
+ ['停止服务器及全部窗格进程','herdr server stop'],
+ ['重新加载配置','herdr server reload-config'],
+ ['查看 Agent 清单','herdr server agent-manifests [--json]'],
+ ['更新 Agent 清单','herdr server update-agent-manifests [--json]'],
+ ['重新加载 Agent 清单','herdr server reload-agent-manifests'],
+]},
+{ id:'machine', name:'机器与会话', items:[
+ ['列出机器','herdr machine list [--json]'],
+ ['添加远程机器','herdr machine add <host> [--label TEXT] [--remote-session <name>]'],
+ ['重命名机器','herdr machine rename <profile-id> --label TEXT'],
+ ['启用 / 停用 / 移除机器','herdr machine enable | disable | remove <profile-id>'],
+ ['列出会话','herdr session list [--json]'],
+ ['接入会话','herdr session attach <name>'],
+ ['停止会话','herdr session stop <name> [--json]'],
+ ['删除会话','herdr session delete <name> [--json]'],
+]},
+{ id:'workspace', name:'工作区', items:[
+ ['列出工作区','herdr workspace list'],
+ ['创建工作区（同时创建根窗格）','herdr workspace create [--cwd PATH] [--label TEXT] [--env KEY=VALUE] [--focus] [--no-focus]'],
+ ['查看工作区','herdr workspace get <workspace_id>'],
+ ['聚焦工作区','herdr workspace focus <workspace_id>'],
+ ['重命名工作区','herdr workspace rename <workspace_id> <label>'],
+ ['上报工作区元数据','herdr workspace report-metadata <workspace_id> --source ID [--token NAME=VALUE] [--clear-token NAME] [--seq N] [--ttl-ms N]'],
+ ['关闭工作区','herdr workspace close <workspace_id> [--group]'],
+]},
+{ id:'worktree', name:'Worktree', items:[
+ ['列出 worktree','herdr worktree list [--workspace ID | --cwd PATH] [--trust-repository]'],
+ ['创建 worktree','herdr worktree create [--workspace ID | --cwd PATH] [--branch NAME] [--base REF] [--path PATH] [--label TEXT] [--focus] [--no-focus] [--trust-repository]'],
+ ['打开已有 worktree','herdr worktree open [--workspace ID | --cwd PATH] (--path PATH | --branch NAME) [--label TEXT] [--focus] [--no-focus] [--trust-repository]'],
+ ['移除 worktree','herdr worktree remove --workspace ID [--force] [--trust-repository]'],
+]},
+{ id:'tab', name:'标签页', items:[
+ ['列出标签页','herdr tab list [--workspace <workspace_id>]'],
+ ['创建标签页（同时创建根窗格）','herdr tab create [--workspace <workspace_id>] [--cwd PATH] [--label TEXT] [--env KEY=VALUE] [--focus] [--no-focus]'],
+ ['查看 / 聚焦 / 重命名 / 关闭标签页','herdr tab get <tab_id> | focus <tab_id> | rename <tab_id> <label> | close <tab_id>'],
+]},
+{ id:'pane', name:'窗格', items:[
+ ['列出窗格','herdr pane list [--workspace <workspace_id>]'],
+ ['当前窗格','herdr pane current [--pane ID|--current]'],
+ ['查看窗格','herdr pane get <pane_id>'],
+ ['查看布局','herdr pane layout [--pane ID|--current]'],
+ ['查看前台进程信息','herdr pane process-info [--pane ID|--current]'],
+ ['查看相邻窗格','herdr pane neighbor --direction left|right|up|down [--pane ID|--current]'],
+ ['查看窗格边缘','herdr pane edges [--pane ID|--current]'],
+ ['按方向移动焦点','herdr pane focus --direction left|right|up|down [--pane ID|--current]'],
+ ['调整窗格大小','herdr pane resize --direction left|right|up|down [--amount FLOAT] [--pane ID|--current]'],
+ ['缩放窗格','herdr pane zoom [<pane_id>|--pane ID|--current] [--toggle|--on|--off]'],
+ ['重命名窗格','herdr pane rename <pane_id> <label>|--clear'],
+ ['分割窗格','herdr pane split [<pane_id>|--pane ID|--current] --direction right|down [--ratio FLOAT] [--cwd PATH] [--env KEY=VALUE] [--focus] [--no-focus]'],
+ ['交换窗格','herdr pane swap --direction left|right|up|down [--pane ID|--current]'],
+ ['指定两窗格交换','herdr pane swap --source-pane ID --target-pane ID'],
+ ['移动窗格到已有标签页','herdr pane move <pane_id> --tab <tab_id> --split right|down [--target-pane ID] [--ratio FLOAT] [--focus|--no-focus]'],
+ ['移动窗格到新标签页','herdr pane move <pane_id> --new-tab [--workspace ID] [--label TEXT] [--focus|--no-focus]'],
+ ['移动窗格到新工作区','herdr pane move <pane_id> --new-workspace [--label TEXT] [--tab-label TEXT] [--focus|--no-focus]'],
+ ['关闭窗格','herdr pane close <pane_id>'],
+ ['设置窗格输入路由','herdr pane input'],
+ ['读取窗格输出','herdr pane read <pane_id> [--source visible|recent|recent-unwrapped|detection] [--lines N] [--format text|ansi] [--ansi] [--raw]'],
+ ['发送纯文本','herdr pane send-text <pane_id> <text>'],
+ ['发送按键','herdr pane send-keys <pane_id> <key> [key ...]'],
+ ['在窗格运行 shell 命令','herdr pane run <pane_id> <command>'],
+ ['等待文本或正则出现','herdr pane wait-output <pane_id> (--match <text> | --regex <pattern>) [--source visible|recent|recent-unwrapped] [--lines N] [--timeout MS] [--raw]'],
+]},
+{ id:'agent', name:'Agent', items:[
+ ['列出 Agent','herdr agent list'],
+ ['查看 Agent','herdr agent get <target>'],
+ ['读取 Agent 输出','herdr agent read <target> [--source visible|recent|recent-unwrapped|detection] [--lines N] [--format text|ansi] [--ansi]'],
+ ['向 Agent 界面发按键','herdr agent send-keys <target> <key> [key ...]'],
+ ['提交提示，可等待生命周期状态','herdr agent prompt <target> <text> [--wait] [--until STATUS]... [--timeout MS]'],
+ ['重命名 Agent','herdr agent rename <target> <name>|--clear'],
+ ['聚焦 Agent（标记标签页已查看）','herdr agent focus <target>'],
+ ['等待精确 Agent 状态','herdr agent wait <target> [--until STATUS]... [--timeout MS]'],
+ ['接入 Agent 终端','herdr agent attach <target> [--takeover]'],
+ ['在空闲 shell 窗格中启动 Agent','herdr agent start <name> --kind KIND --pane ID [--timeout MS] [-- <agent-args...>]'],
+ ['解释状态判定结果','herdr agent explain <target> [--json|--verbose]'],
+ ['对离线输出文件做状态判定','herdr agent explain --file PATH --agent LABEL [--json|--verbose]'],
+]},
+{ id:'terminal', name:'终端直连', items:[
+ ['接入终端','herdr terminal attach <terminal_id> [--takeover]'],
+ ['设置终端标题','herdr terminal title set <title>'],
+ ['清除终端标题','herdr terminal title clear'],
+]},
+{ id:'report', name:'上报接口', items:[
+ ['上报 Agent 生命周期状态','herdr pane report-agent <pane_id> --source ID --agent LABEL --state idle|working|blocked|unknown [--message TEXT] [--seq N] [--agent-session-id ID] [--agent-session-path PATH]'],
+ ['上报 Agent 会话引用','herdr pane report-agent-session <pane_id> --source ID --agent LABEL [--seq N] [--agent-session-id ID] [--agent-session-path PATH] [--session-start-source SOURCE]'],
+ ['释放 Agent 上报','herdr pane release-agent <pane_id> --source ID --agent LABEL [--seq N]'],
+ ['上报窗格元数据（自定义侧边栏）','herdr pane report-metadata <pane_id> --source ID [--agent LABEL] [--applies-to-source ID] [--title TEXT|--clear-title] [--display-agent TEXT|--clear-display-agent] [--state-label STATUS=TEXT] [--clear-state-labels] [--token NAME=VALUE] [--clear-token NAME] [--seq N] [--ttl-ms N]'],
+]},
+{ id:'integration', name:'集成', items:[
+ ['安装集成','herdr integration install <pi|omp|claude|codex|copilot|devin|droid|kimi|opencode|kilo|hermes|mastracode|qodercli|qwen|cursor|antigravity-cli|grok>'],
+ ['卸载集成','herdr integration uninstall <同上>'],
+ ['查看集成状态','herdr integration status [--outdated-only]'],
+]},
+{ id:'plugin', name:'插件', items:[
+ ['安装插件','herdr plugin install <owner>/<repo>[/subdir...] [--ref REF] [--yes]'],
+ ['链接本地插件','herdr plugin link <path> [--disabled]'],
+ ['取消链接','herdr plugin unlink <plugin_id>'],
+ ['卸载插件','herdr plugin uninstall <plugin_id|owner/repo[/subdir...]>'],
+ ['启用 / 停用插件','herdr plugin enable | disable <plugin_id>'],
+ ['列出插件','herdr plugin list [--plugin ID] [--json]'],
+ ['查看插件配置目录','herdr plugin config-dir <plugin_id>'],
+ ['列出插件动作','herdr plugin action list [--plugin ID]'],
+ ['触发插件动作','herdr plugin action invoke <action_id> [--plugin ID]'],
+ ['查看插件日志','herdr plugin log list [--plugin ID] [--limit N]'],
+ ['打开插件窗格','herdr plugin pane open --plugin ID --entrypoint ID [--placement overlay|popup|split|tab|zoomed] [--width SIZE] [--height SIZE] [--workspace ID] [--target-pane PANE] [--direction right|down] [--cwd PATH] [--env KEY=VALUE] [--focus|--no-focus]'],
+ ['聚焦 / 关闭插件窗格','herdr plugin pane focus <pane_id> | close <pane_id>'],
+]},
+];
+
+const KEYS = [
+ ['查看当前生效的键位','?','herdr 键位一览'],
+ ['打开设置','s','herdr 设置'],
+ ['新建标签页','c','tab create'],
+ ['向右分割','v','pane split --direction right'],
+ ['向下分割','-','pane split --direction down'],
+ ['窗格间移动','h/j/k/l','pane focus --direction …'],
+ ['工作区导航','w','workspace list'],
+ ['缩放当前窗格','z','pane zoom --toggle'],
+ ['进入复制模式','[','copy-mode'],
+ ['切换侧边栏','b','sidebar --toggle'],
+ ['分离客户端','q','detach'],
+];
+
+const STATES = [
+ { name:'working', zh:'正在处理任务', next:'继续等待，必要时查看进展', color:'var(--st-working)', rgb:'211,160,39', big:true, pulse:true },
+ { name:'blocked', zh:'识别到审批、提问或权限界面', next:'读取输出，确认它需要什么', color:'var(--st-blocked)', rgb:'199,62,62', big:true, pulse:false },
+ { name:'done', zh:'已回到可输入状态，标签页尚未查看', next:'查看结果并验收', color:'var(--st-done)', rgb:'148,226,213', big:false, pulse:false },
+ { name:'idle', zh:'可以接收输入，且标签页已被查看', next:'派下一项任务', color:'var(--st-idle)', rgb:'95,174,116', big:false, pulse:false },
+ { name:'unknown', zh:'识别到 Agent，但无法可靠分类', next:'检查集成和实际输出', color:'var(--st-unknown)', rgb:'138,138,132', big:false, pulse:false },
+];
+
+const SCENARIOS = [
+ { t:'安装并验证', d:'三条路：Homebrew、安装脚本、Windows PowerShell。', copy:'brew install herdr', code:'$ brew install herdr\n$ curl -fsSL https://herdr.dev/install.sh | sh\n$ herdr --version' },
+ { t:'装上 Agent 集成与 Skill', d:'集成管状态上报，Skill 教 Agent 操作 Herdr。', copy:'herdr integration install codex', code:'$ herdr integration install codex\n$ npx skills add herdrdev/herdr --skill herdr -g' },
+ { t:'第一次启动并重连', d:'启动 → 跑个 codex → prefix+q 分离 → 外部重连验证布局还在。', copy:'herdr', code:'$ herdr            # 项目目录启动\n# 窗格里运行 codex，提交小任务\n# ctrl+b 然后 q    # 分离客户端\n$ herdr            # 外部终端重连' },
+ { t:'派一个只读 reviewer', d:'分屏 → 启动 → 提交 → 读取；ID 从返回 JSON 里读。', copy:'herdr agent prompt reviewer "只读审阅当前 git diff，列出文件、行号、触发条件与影响；不修改文件。" --wait --timeout 60000', code:'$ split=$(herdr pane split --current --direction right --cwd "$PWD" --no-focus)\n$ review_pane=$(printf \'%s\\n\' "$split" | jq -r \'.result.pane.pane_id\')\n$ herdr agent start reviewer --kind codex --pane "$review_pane"\n$ herdr agent prompt reviewer "只读审阅当前 git diff…不修改文件。" --wait --timeout 60000\n$ herdr agent read reviewer --source recent-unwrapped --lines 120' },
+ { t:'等待审批，再读取结果', d:'blocked 不是完成——先读输出，再处理审批。', copy:'herdr agent wait reviewer --until blocked --timeout 120000', code:'$ herdr agent wait reviewer --until blocked --timeout 120000\n$ herdr agent read reviewer --source recent-unwrapped --lines 80\n$ herdr agent send-keys reviewer esc' },
+ { t:'监听测试或 CI 输出', d:'普通进程用窗格命令，别伪装成 Agent。', copy:'herdr pane wait-output w1:p3 --regex "passed|failed" --timeout 120000', code:'$ herdr pane run w1:p3 "just test --watch"\n$ herdr pane wait-output w1:p3 --regex "passed|failed" --timeout 120000' },
+ { t:'读取长回复 / 日志', d:'合并软换行的来源最适合长文本；不全就加 --lines。', copy:'herdr agent read reviewer --source recent-unwrapped --lines 120', code:'$ herdr agent read reviewer --source recent-unwrapped --lines 120\n$ herdr pane read <pane_id> --source visible\n$ herdr agent read reviewer --source detection' },
+ { t:'离开并回来', d:'分离是 prefix+q；重连是外部终端再跑一次 herdr。', copy:'herdr', code:'# ctrl+b 然后 q    # 分离客户端\n$ herdr            # 重新连接，布局与进程仍在' },
+ { t:'彻底关闭一切', d:'只有确实要结束服务器及全部窗格进程时才用。', copy:'herdr server stop', code:'$ herdr server stop' },
+ { t:'排查状态识别', d:'explain 给出最终状态、清单来源、匹配规则和回退原因。', copy:'herdr agent explain reviewer --json', code:'$ herdr agent explain reviewer --json' },
+];
+
+const CONCEPTS = [
+ { t:'分屏是布局操作；启动 Agent 是在窗格中运行进程', target:'model' },
+ { t:'Herdr Session ≠ Agent Session', target:'model' },
+ { t:'五种 Agent 状态：working / blocked / done / idle / unknown', target:'find', tab:'states' },
+ { t:'done 和 idle 的差别：标签页是否已被查看', target:'find', tab:'states' },
+ { t:'blocked 不是完成；超时不表示提示没发出', target:'learn' },
+ { t:'创建命令返回 JSON，从响应读取新窗格 ID', target:'learn' },
+ { t:'执行控制命令前检查 HERDR_ENV=1', target:'learn' },
+ { t:'窗格命令管进程，Agent 命令管身份与生命周期', target:'learn' },
+ { t:'读取输出来源：visible / recent / recent-unwrapped / detection', target:'learn' },
+ { t:'集成 vs Skill：上报状态 vs 教会操作', target:'learn' },
+];
+
+/* ================================================================
+   Toast / Copy
+   ================================================================ */
+const toast = document.getElementById('toast');
+let toastTimer;
+function showToast(msg) {
+  document.getElementById('toastText').textContent = msg || '✓ copied → $CLIPBOARD';
+  toast.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => toast.classList.remove('show'), 1600);
+}
+function copyText(text, btn) {
+  const done = () => {
+    showToast();
+    if (btn) { btn.classList.add('copied'); btn.textContent = '✓';
+      setTimeout(() => { btn.classList.remove('copied'); btn.textContent = 'copy'; }, 1200); }
+  };
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(text).then(done).catch(() => fallbackCopy(text, done));
+  } else fallbackCopy(text, done);
+}
+function fallbackCopy(text, done) {
+  const ta = document.createElement('textarea');
+  ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0';
+  document.body.appendChild(ta); ta.select();
+  try { document.execCommand('copy'); done(); } catch (e) { showToast('✗ copy failed'); }
+  document.body.removeChild(ta);
+}
+document.addEventListener('click', e => {
+  const el = e.target.closest('[data-copy]');
+  if (el) copyText(el.getAttribute('data-copy'), el.classList.contains('copy-btn') ? el : null);
+});
+
+/* ================================================================
+   Render: 命令组 / 场景 / 键位 / 状态
+   ================================================================ */
+const esc = s => s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+const cmdId = sig => 'cmd-' + sig.replace(/[^a-z0-9]+/gi, '-').toLowerCase().slice(0, 60);
+
+function renderCommands() {
+  document.getElementById('panel-commands').innerHTML = CLI_GROUPS.map(g => `
+    <details class="cmd-group" open data-group="${g.id}">
+      <summary><span class="chev">▸</span> ${g.name} <span class="count">${g.items.length}</span></summary>
+      ${g.items.map(([zh, sig]) => `
+        <div class="cmd-row" id="${cmdId(sig)}" data-search="${esc((zh + ' ' + sig).toLowerCase())}">
+          <span class="cmd-row__zh">${zh}</span>
+          <span class="cmd-row__sig">${esc(sig)}</span>
+          <button class="cmd-row__copy" data-copy="${esc(sig)}" aria-label="复制命令">copy</button>
+        </div>`).join('')}
+    </details>`).join('');
+}
+
+function renderScenarios() {
+  const paintLine = l => l.startsWith('$ ')
+    ? '<span class="t-prompt">$ </span><span class="t-cmd">' + esc(l.slice(2)) + '</span>'
+    : '<span class="t-dim">' + esc(l) + '</span>';
+  document.getElementById('scnGrid').innerHTML = SCENARIOS.map((s, i) => `
+    <div class="scn-card spotlight" id="scn-${i}" data-search="${esc((s.t + ' ' + s.d).toLowerCase())}">
+      <h4>我想…${s.t}</h4>
+      <p>${s.d}</p>
+      <div class="codeblock"><button class="copy-btn" data-copy="${esc(s.copy)}">copy</button><code>${s.code.split('\n').map(paintLine).join('\n')}</code></div>
+    </div>`).join('');
+}
+
+function renderKeys() {
+  document.getElementById('keysGrid').innerHTML = KEYS.map(([zh, key, echo], i) => {
+    const parts = key === 'h/j/k/l'
+      ? '<span class="kbd">ctrl</span><span class="then">+</span><span class="kbd">b</span><span class="then">→</span><span class="kbd">h</span><span class="kbd">j</span><span class="kbd">k</span><span class="kbd">l</span>'
+      : `<span class="kbd">ctrl</span><span class="then">+</span><span class="kbd">b</span><span class="then">→</span><span class="kbd">${key === '-' ? '−' : key}</span>`;
+    return `<div class="key-card" id="key-${i}" data-key="${key}" data-search="${esc((zh + ' ' + key).toLowerCase())}">
+      <div class="key-card__keys">${parts}</div>
+      <p>${zh}</p>
+      <span class="cmd-echo">✓ ${esc(echo)}</span>
+    </div>`;
+  }).join('');
+}
+
+function renderStates() {
+  document.getElementById('statesGrid').innerHTML = STATES.map(s => `
+    <div class="state-card spotlight ${s.big ? 'state-card--big' : ''}" id="state-${s.name}"
+         style="--state-color:${s.color};--state-rgb:${s.rgb}"
+         data-search="${esc((s.name + ' ' + s.zh + ' ' + s.next).toLowerCase())}">
+      <div class="state-card__head">
+        <span class="state-dot ${s.pulse ? 'state-dot--pulse' : ''}"></span>
+        <span class="state-card__name">${s.name}</span>
+      </div>
+      <p class="state-card__mean">${s.zh}</p>
+      <p class="state-card__next">接下来：<b>${s.next}</b></p>
+    </div>`).join('');
+}
+renderCommands(); renderScenarios(); renderKeys(); renderStates();
+
+/* ================================================================
+   速查台：tabs + 过滤
+   ================================================================ */
+let activeTab = 'commands';
+const findEmpty = document.getElementById('findEmpty');
+function switchTab(name) {
+  activeTab = name;
+  document.querySelectorAll('.find__tab').forEach(t => t.classList.toggle('active', t.dataset.tab === name));
+  document.querySelectorAll('.find__panel').forEach(p => p.classList.toggle('active', p.id === 'panel-' + name));
+  applyFilter();
+}
+document.querySelectorAll('.find__tab').forEach(t => t.addEventListener('click', () => switchTab(t.dataset.tab)));
+document.querySelectorAll('[data-goto-tab]').forEach(a => a.addEventListener('click', () => switchTab(a.dataset.gotoTab)));
+
+function applyFilter() {
+  const q = document.getElementById('findSearch').value.trim().toLowerCase();
+  const panel = document.getElementById('panel-' + activeTab);
+  let visible = 0;
+  if (activeTab === 'commands') {
+    panel.querySelectorAll('.cmd-group').forEach(g => {
+      let gv = 0;
+      g.querySelectorAll('.cmd-row').forEach(r => {
+        const hit = !q || r.dataset.search.includes(q);
+        r.style.display = hit ? '' : 'none';
+        if (hit) gv++;
+      });
+      g.style.display = gv ? '' : 'none';
+      if (q && gv) g.open = true;
+      visible += gv;
+    });
+  } else {
+    panel.querySelectorAll('[data-search]').forEach(el => {
+      const hit = !q || el.dataset.search.includes(q);
+      el.style.display = hit ? '' : 'none';
+      if (hit) visible++;
+    });
+  }
+  findEmpty.style.display = visible ? 'none' : '';
+}
+document.getElementById('findSearch').addEventListener('input', applyFilter);
+
+/* ================================================================
+   ⌘K Palette
+   ================================================================ */
+const PALETTE = [];
+CLI_GROUPS.forEach(g => g.items.forEach(([zh, sig]) =>
+  PALETTE.push({ type:'命令', title:sig, sub:zh + ' · ' + g.name, copy:sig, target:cmdId(sig), tab:'commands' })));
+KEYS.forEach(([zh, key], i) =>
+  PALETTE.push({ type:'键位', title:'ctrl+b → ' + key, sub:zh, copy:null, target:'key-' + i, tab:'keys' }));
+STATES.forEach(s =>
+  PALETTE.push({ type:'状态', title:s.name, sub:s.zh + ' → ' + s.next, copy:'--until ' + s.name, target:'state-' + s.name, tab:'states' }));
+SCENARIOS.forEach((s, i) =>
+  PALETTE.push({ type:'场景', title:'我想…' + s.t, sub:s.d, copy:s.copy, target:'scn-' + i, tab:'scenarios' }));
+CONCEPTS.forEach(c =>
+  PALETTE.push({ type:'概念', title:c.t, sub:'学习路径 / 对象模型', copy:null, target:c.target, tab:c.tab || null }));
+
+const overlay = document.getElementById('paletteOverlay');
+const paletteInput = document.getElementById('paletteInput');
+const paletteList = document.getElementById('paletteList');
+let paletteOpen = false, palSel = 0, palResults = [];
+
+function fuzzyScore(item, q) {
+  const hay = (item.title + ' ' + item.sub).toLowerCase();
+  if (!q) return 1;
+  const idx = hay.indexOf(q);
+  if (idx >= 0) return 100 - idx * 0.1;
+  // subsequence fallback
+  let hi = 0, gaps = 0;
+  for (const ch of q) {
+    const found = hay.indexOf(ch, hi);
+    if (found < 0) return 0;
+    gaps += found - hi; hi = found + 1;
+  }
+  return 50 - gaps;
+}
+function renderPalette() {
+  const q = paletteInput.value.trim().toLowerCase();
+  palResults = PALETTE.map(it => ({ it, s: fuzzyScore(it, q) }))
+    .filter(r => r.s > 0).sort((a, b) => b.s - a.s).slice(0, 40).map(r => r.it);
+  palSel = 0;
+  if (!palResults.length) {
+    paletteList.innerHTML = '<div class="palette__empty">→ 没有命中。试试 split / 审批 / prefix / idle</div>';
+    return;
+  }
+  let lastType = null;
+  paletteList.innerHTML = palResults.map((it, i) => {
+    const head = it.type !== lastType ? `<div class="palette__group">${it.type}</div>` : '';
+    lastType = it.type;
+    return head + `<div class="palette__item" data-i="${i}" aria-selected="${i === palSel}">
+      <span class="palette__item-tag">${it.type}</span>
+      <span class="palette__item-title">${esc(it.title)}</span>
+      <span class="palette__item-sub">${esc(it.sub)}</span>
+    </div>`;
+  }).join('');
+}
+function openPalette() {
+  paletteOpen = true;
+  overlay.classList.add('open');
+  paletteInput.value = ''; renderPalette();
+  setTimeout(() => paletteInput.focus(), 30);
+}
+function closePalette() {
+  paletteOpen = false;
+  overlay.classList.remove('open');
+}
+function paletteGo(copyOnly) {
+  const it = palResults[palSel];
+  if (!it) return;
+  if (copyOnly && it.copy) { copyText(it.copy); closePalette(); return; }
+  closePalette();
+  if (it.tab) switchTab(it.tab);
+  requestAnimationFrame(() => {
+    const el = document.getElementById(it.target);
+    if (!el) return;
+    if (el.closest('details')) el.closest('details').open = true;
+    el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    el.classList.remove('flash'); void el.offsetWidth; el.classList.add('flash');
+  });
+}
+document.getElementById('navPaletteBtn').addEventListener('click', openPalette);
+document.getElementById('heroPaletteBtn').addEventListener('click', openPalette);
+document.getElementById('learnPaletteBtn').addEventListener('click', openPalette);
+overlay.addEventListener('click', e => { if (e.target === overlay) closePalette(); });
+paletteInput.addEventListener('input', renderPalette);
+paletteList.addEventListener('click', e => {
+  const item = e.target.closest('.palette__item');
+  if (item) { palSel = +item.dataset.i; paletteGo(false); }
+});
+paletteList.addEventListener('mousemove', e => {
+  const item = e.target.closest('.palette__item');
+  if (item && +item.dataset.i !== palSel) {
+    palSel = +item.dataset.i;
+    paletteList.querySelectorAll('.palette__item').forEach(el =>
+      el.setAttribute('aria-selected', el.dataset.i == palSel));
+  }
+});
+
+/* ================================================================
+   Global keyboard: ⌘K + 键位练习场
+   ================================================================ */
+const KEY_BINDINGS = { '?':0, 's':1, 'c':2, 'v':3, '-':4, 'h':5, 'j':5, 'k':5, 'l':5, 'w':6, 'z':7, '[':8, 'b':9, 'q':10 };
+let prefixArmed = false, prefixTimer;
+const trainerOut = document.getElementById('trainerOut');
+const trainerLog = document.getElementById('trainerLog');
+function trainerEcho(text) {
+  trainerOut.style.display = '';
+  const line = document.createElement('div');
+  line.innerHTML = '<span class="t-prompt">$ </span><span class="t-ok">' + esc(text) + '</span>';
+  trainerLog.appendChild(line);
+  while (trainerLog.children.length > 4) trainerLog.removeChild(trainerLog.firstChild);
+}
+document.addEventListener('keydown', e => {
+  if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
+    e.preventDefault();
+    paletteOpen ? closePalette() : openPalette();
+    return;
+  }
+  if (paletteOpen) {
+    if (e.key === 'Escape') closePalette();
+    else if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+      e.preventDefault();
+      if (!palResults.length) return;
+      palSel = (palSel + (e.key === 'ArrowDown' ? 1 : -1) + palResults.length) % palResults.length;
+      paletteList.querySelectorAll('.palette__item').forEach(el =>
+        el.setAttribute('aria-selected', el.dataset.i == palSel));
+      const sel = paletteList.querySelector(`[data-i="${palSel}"]`);
+      if (sel) sel.scrollIntoView({ block: 'nearest' });
+    } else if (e.key === 'Enter') {
+      e.preventDefault();
+      paletteGo(e.metaKey || e.ctrlKey);
+    }
+    return;
+  }
+  // 键位练习场：仅桌面键盘、且焦点不在输入框时
+  const tag = (document.activeElement || {}).tagName;
+  if (tag === 'INPUT' || tag === 'TEXTAREA' || e.metaKey) return;
+  if (e.ctrlKey && e.key.toLowerCase() === 'b') {
+    e.preventDefault();
+    prefixArmed = true;
+    trainerEcho('prefix — 等待后续键…');
+    clearTimeout(prefixTimer);
+    prefixTimer = setTimeout(() => { prefixArmed = false; }, 1600);
+    return;
+  }
+  if (prefixArmed) {
+    const k = e.key.length === 1 ? e.key.toLowerCase() : e.key;
+    if (k in KEY_BINDINGS) {
+      e.preventDefault();
+      prefixArmed = false; clearTimeout(prefixTimer);
+      const idx = KEY_BINDINGS[k];
+      const card = document.getElementById('key-' + idx);
+      if (card) {
+        card.classList.add('lit');
+        trainerEcho(card.querySelector('.cmd-echo').textContent);
+        setTimeout(() => card.classList.remove('lit'), 1200);
+      }
+    } else if (e.key === 'Escape') {
+      prefixArmed = false; clearTimeout(prefixTimer);
+    }
+  }
+});
+
+/* ================================================================
+   Hero terminal typing loop
+   ================================================================ */
+const T_SCENARIOS = [
+ { title:'herdr — 安装与集成', lines:[
+   ['cmd','brew install herdr'],
+   ['out','✓ herdr 0.9.0 installed'],
+   ['cmd','herdr integration install codex'],
+   ['out','✓ integration installed: codex'],
+   ['cmd','herdr --version'],
+   ['dim','herdr 0.9.0'],
+ ]},
+ { title:'herdr — 派工 reviewer', lines:[
+   ['cmd','herdr pane split --current --direction right --no-focus'],
+   ['dim','{"result":{"pane":{"pane_id":"w1:p4"}}}'],
+   ['cmd','herdr agent start reviewer --kind codex --pane w1:p4'],
+   ['out','✓ agent "reviewer" ready on w1:p4'],
+   ['cmd','herdr agent prompt reviewer "只读审阅当前 diff" --wait'],
+   ['dim','→ waiting for idle | done | blocked …'],
+   ['out','✓ done — herdr agent read reviewer 查看结果'],
+ ]},
+ { title:'herdr — 等待审批', lines:[
+   ['cmd','herdr agent wait reviewer --until blocked --timeout 120000'],
+   ['warn','→ blocked: 等待审批确认（blocked 不是完成）'],
+   ['cmd','herdr agent read reviewer --source recent-unwrapped --lines 80'],
+   ['cmd','herdr agent send-keys reviewer esc'],
+   ['out','✓ 审批已处理'],
+ ]},
+];
+const termBody = document.getElementById('termBody');
+const termTitle = document.getElementById('termTitle');
+const REDUCED = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+const sleep = ms => new Promise(r => setTimeout(r, ms));
+let termVisible = true, termRunning = false;
+
+function lineEl(kind) {
+  const d = document.createElement('div');
+  if (kind === 'cmd') { const p = document.createElement('span'); p.className = 't-prompt'; p.textContent = '$ ';
+    const c = document.createElement('span'); c.className = 't-cmd'; d.append(p, c); }
+  else { const c = document.createElement('span');
+    c.className = kind === 'out' ? 't-ok' : kind === 'warn' ? 't-warn' : 't-dim';
+    d.appendChild(c); }
+  return d;
+}
+async function typeLoop() {
+  if (termRunning) return; termRunning = true;
+  let i = 0;
+  while (true) {
+    const sc = T_SCENARIOS[i % T_SCENARIOS.length]; i++;
+    if (!termVisible) { await sleep(800); continue; }
+    termTitle.textContent = sc.title;
+    termBody.innerHTML = '';
+    for (const [kind, text] of sc.lines) {
+      if (!termVisible) break;
+      const el = lineEl(kind);
+      termBody.appendChild(el);
+      const target = el.lastChild;
+      if (kind === 'cmd') {
+        for (let n = 0; n <= text.length; n++) {
+          target.textContent = text.slice(0, n);
+          await sleep(24 + Math.random() * 30);
+        }
+        await sleep(380);
+      } else {
+        el.style.opacity = '0';
+        target.textContent = text;
+        el.style.transition = 'opacity .3s';
+        requestAnimationFrame(() => { el.style.opacity = '1'; });
+        await sleep(520);
+      }
+    }
+    const caret = document.createElement('span'); caret.className = 't-caret';
+    termBody.appendChild(caret);
+    await sleep(2600);
+  }
+}
+if (REDUCED) {
+  const sc = T_SCENARIOS[1];
+  termTitle.textContent = sc.title;
+  sc.lines.forEach(([kind, text]) => {
+    const el = lineEl(kind); el.lastChild.textContent = text; termBody.appendChild(el);
+  });
+} else {
+  new IntersectionObserver(en => { termVisible = en[0].isIntersecting; }, { threshold: .1 })
+    .observe(document.getElementById('heroTerm'));
+  typeLoop();
+}
+
+/* ================================================================
+   Scroll: nav 状态 / 进度条 / scrollspy / reveal
+   ================================================================ */
+const nav = document.getElementById('nav');
+const progressBar = document.getElementById('scrollProgress');
+window.addEventListener('scroll', () => {
+  nav.classList.toggle('scrolled', window.scrollY > 50);
+  const pct = window.scrollY / (document.body.scrollHeight - window.innerHeight);
+  progressBar.style.transform = 'scaleX(' + Math.min(pct, 1) + ')';
+}, { passive: true });
+
+const spyObs = new IntersectionObserver(ens => {
+  ens.forEach(en => {
+    if (!en.isIntersecting) return;
+    document.querySelectorAll('.nav__link').forEach(l =>
+      l.classList.toggle('active', l.dataset.spy === en.target.id));
+  });
+}, { rootMargin: '-40% 0px -55% 0px' });
+['model', 'learn', 'find'].forEach(id => spyObs.observe(document.getElementById(id)));
+
+const revealObs = new IntersectionObserver(ens => {
+  ens.forEach(en => {
+    if (!en.isIntersecting) return;
+    Array.from(en.target.children).forEach((c, i) => {
+      c.style.transitionDelay = Math.min(i * 0.08, 0.5) + 's';
+    });
+    en.target.classList.add('in-view');
+    revealObs.unobserve(en.target);
+  });
+}, { threshold: 0, rootMargin: '0px 0px -8% 0px' });
+document.querySelectorAll('.reveal').forEach(el => revealObs.observe(el));
+
+/* ================================================================
+   Spotlight hover（rAF 节流）
+   ================================================================ */
+if (window.matchMedia('(hover: hover)').matches) {
+  let sTick = false;
+  document.addEventListener('pointermove', e => {
+    if (sTick) return; sTick = true;
+    requestAnimationFrame(() => {
+      const card = e.target.closest && e.target.closest('.spotlight');
+      if (card) {
+        const r = card.getBoundingClientRect();
+        card.style.setProperty('--mx', (e.clientX - r.left) + 'px');
+        card.style.setProperty('--my', (e.clientY - r.top) + 'px');
+      }
+      sTick = false;
+    });
+  }, { passive: true });
+  // Hero 光标辉光
+  const hero = document.querySelector('.hero'), glow = document.getElementById('heroGlow');
+  let gTick = false;
+  hero.addEventListener('pointermove', e => {
+    if (gTick) return; gTick = true;
+    requestAnimationFrame(() => {
+      glow.style.opacity = '1';
+      glow.style.left = e.clientX + 'px';
+      glow.style.top = (e.clientY + window.scrollY) + 'px';
+      gTick = false;
+    });
+  }, { passive: true });
+  hero.addEventListener('pointerleave', () => { glow.style.opacity = '0'; });
+}
+
+/* ================================================================
+   学习进度（localStorage）
+   ================================================================ */
+const LS_KEY = 'herdr-guide-progress-v1';
+let doneSet = new Set(JSON.parse(localStorage.getItem(LS_KEY) || '[]'));
+function syncProgress() {
+  document.querySelectorAll('.step').forEach(st => {
+    const done = doneSet.has(st.dataset.step);
+    st.querySelector('.step__check').classList.toggle('done', done);
+  });
+  document.querySelectorAll('.act').forEach(act => {
+    const steps = act.querySelectorAll('.step');
+    const done = act.querySelectorAll('.step .step__check.done').length;
+    act.querySelector('[data-act-done]').textContent = done;
+  });
+  document.getElementById('learnDone').textContent = doneSet.size;
+  document.getElementById('learnBar').style.width = (doneSet.size / 13 * 100) + '%';
+}
+document.querySelectorAll('.step').forEach(st => {
+  st.querySelector('.step__check').addEventListener('click', () => {
+    const id = st.dataset.step;
+    doneSet.has(id) ? doneSet.delete(id) : doneSet.add(id);
+    localStorage.setItem(LS_KEY, JSON.stringify([...doneSet]));
+    syncProgress();
+    if (doneSet.has(id)) showToast('✓ progress saved → localStorage');
+  });
+});
+syncProgress();
+</script>
+</body>
+</html>

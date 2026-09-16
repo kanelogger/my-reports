@@ -1,0 +1,1028 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pi 完全指南 · 从安装到团队流水线</title>
+<style>
+:root{
+  --bg:#0c0e12; --bg-soft:#10141a; --panel:#12161d; --panel-2:#171c26; --panel-3:#1c2230;
+  --border:#232b3a; --border-soft:#1b2230;
+  --text:#e8eaf0; --text-2:#9aa3b2; --text-3:#5c6577;
+  --green:#4ade80; --amber:#fbbf24; --purple:#a78bfa; --blue:#60a5fa; --red:#f87171;
+  --mono:ui-monospace,"Cascadia Code","JetBrains Mono","SF Mono",Consolas,"Courier New",monospace;
+  --sans:-apple-system,"SF Pro Text","PingFang SC","Microsoft YaHei","Noto Sans SC",sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  background:var(--bg);color:var(--text);font-family:var(--sans);
+  font-size:15px;line-height:1.8;
+  background-image:radial-gradient(1200px 500px at 70% -200px,rgba(74,222,128,.06),transparent 60%),
+                   radial-gradient(900px 420px at 10% -160px,rgba(96,165,250,.05),transparent 60%);
+  min-height:100vh;
+}
+::selection{background:rgba(74,222,128,.25)}
+code,kbd,pre,.mono{font-family:var(--mono)}
+
+/* ============ 顶栏 ============ */
+.topbar{
+  position:sticky;top:0;z-index:50;
+  display:flex;align-items:center;gap:18px;flex-wrap:wrap;
+  padding:12px 24px;
+  background:rgba(12,14,18,.86);backdrop-filter:blur(14px);
+  border-bottom:1px solid var(--border-soft);
+}
+.brand{display:flex;align-items:baseline;gap:12px;min-width:0}
+.logo{
+  font-family:var(--mono);font-weight:700;font-size:18px;color:var(--green);
+  background:linear-gradient(180deg,#141a12,#0e130e);
+  border:1px solid #1f3526;border-radius:8px;padding:3px 10px;line-height:1.4;
+  text-shadow:0 0 12px rgba(74,222,128,.5);
+}
+.brand-title{font-size:16px;font-weight:650;letter-spacing:.02em;white-space:nowrap}
+.brand-sub{font-size:12px;color:var(--text-3);white-space:nowrap}
+.mode-switch{
+  display:flex;background:var(--panel);border:1px solid var(--border);
+  border-radius:10px;padding:3px;gap:2px;
+}
+.mode-btn{
+  font-family:var(--sans);font-size:13.5px;color:var(--text-2);
+  background:transparent;border:none;border-radius:8px;padding:6px 16px;cursor:pointer;
+  transition:all .18s ease;white-space:nowrap;
+}
+.mode-btn:hover{color:var(--text)}
+.mode-btn.active{background:var(--panel-3);color:var(--text);box-shadow:inset 0 0 0 1px var(--border)}
+.searchbox{
+  margin-left:auto;display:flex;align-items:center;gap:8px;
+  background:var(--panel);border:1px solid var(--border);border-radius:10px;
+  padding:7px 12px;min-width:260px;flex:0 1 340px;
+  transition:border-color .18s ease;
+}
+.searchbox:focus-within{border-color:var(--green);box-shadow:0 0 0 3px rgba(74,222,128,.12)}
+.searchbox svg{flex:none;opacity:.55}
+.searchbox input{
+  flex:1;min-width:0;background:transparent;border:none;outline:none;
+  color:var(--text);font-size:13.5px;font-family:var(--sans);
+}
+.searchbox input::placeholder{color:var(--text-3)}
+.searchbox kbd{flex:none}
+.progress-pill{
+  font-family:var(--mono);font-size:12px;color:var(--text-2);
+  border:1px solid var(--border);border-radius:999px;padding:5px 12px;
+  background:var(--panel);white-space:nowrap;cursor:pointer;
+}
+.progress-pill b{color:var(--green);font-weight:600}
+
+/* ============ 布局 ============ */
+.container{max-width:1240px;margin:0 auto;padding:28px 24px 120px}
+.view-grid{display:grid;grid-template-columns:250px minmax(0,1fr);gap:32px;align-items:start}
+@media(max-width:920px){.view-grid{grid-template-columns:1fr}.side{position:static!important}}
+.side{position:sticky;top:76px}
+
+/* ============ 学习路径：大纲 ============ */
+.outline-stage{margin-bottom:20px}
+.outline-stage-head{
+  display:flex;align-items:center;gap:8px;margin-bottom:8px;
+  font-size:12px;font-weight:700;letter-spacing:.14em;color:var(--text-3);
+}
+.stage-dot{width:8px;height:8px;border-radius:50%;flex:none}
+.stage-bar{flex:1;height:3px;background:var(--panel-3);border-radius:2px;overflow:hidden}
+.stage-bar i{display:block;height:100%;border-radius:2px;transition:width .3s ease}
+.outline-item{
+  display:flex;align-items:center;gap:10px;width:100%;text-align:left;
+  padding:7px 10px;border-radius:8px;border:1px solid transparent;
+  background:transparent;color:var(--text-2);font-size:13.5px;cursor:pointer;
+  font-family:var(--sans);transition:all .15s ease;
+}
+.outline-item:hover{background:var(--panel);color:var(--text)}
+.outline-item.current{background:var(--panel-2);border-color:var(--border);color:var(--text)}
+.outline-item .tick{
+  flex:none;width:15px;height:15px;border-radius:50%;
+  border:1.5px solid var(--text-3);display:grid;place-items:center;
+  font-size:10px;color:transparent;transition:all .15s ease;
+}
+.outline-item.done .tick{background:var(--green);border-color:var(--green);color:#08130c}
+.outline-item.done{color:var(--text-3)}
+.outline-reset{
+  margin-top:8px;width:100%;font-size:12px;color:var(--text-3);
+  background:transparent;border:1px dashed var(--border);border-radius:8px;
+  padding:6px;cursor:pointer;font-family:var(--sans);
+}
+.outline-reset:hover{color:var(--red);border-color:var(--red)}
+
+/* ============ 学习路径：单元 ============ */
+.stage-banner{
+  display:flex;align-items:center;gap:14px;margin:44px 0 18px;
+}
+.stage-banner:first-child{margin-top:0}
+.stage-num{
+  font-family:var(--mono);font-size:12px;font-weight:700;letter-spacing:.12em;
+  padding:4px 10px;border-radius:6px;border:1px solid;
+}
+.stage-banner h2{font-size:22px;font-weight:700;letter-spacing:.01em}
+.stage-banner p{font-size:13px;color:var(--text-3);margin-left:auto;text-align:right}
+.unit{
+  background:var(--panel);border:1px solid var(--border-soft);border-radius:14px;
+  padding:22px 24px;margin-bottom:16px;scroll-margin-top:84px;
+  transition:border-color .2s ease;
+}
+.unit:hover{border-color:var(--border)}
+.unit-head{display:flex;align-items:flex-start;gap:14px;margin-bottom:6px}
+.unit-check{
+  flex:none;margin-top:5px;width:22px;height:22px;border-radius:50%;cursor:pointer;
+  border:2px solid var(--text-3);background:transparent;display:grid;place-items:center;
+  color:transparent;font-size:12px;transition:all .18s ease;
+}
+.unit-check:hover{border-color:var(--green)}
+.unit.done .unit-check{background:var(--green);border-color:var(--green);color:#08130c}
+.unit.done .unit-title{color:var(--text-3);text-decoration:line-through;text-decoration-color:var(--text-3)}
+.unit-title{font-size:17px;font-weight:650}
+.unit-tag{
+  flex:none;margin-top:3px;font-size:11px;font-weight:700;letter-spacing:.1em;
+  padding:2px 8px;border-radius:5px;
+}
+.tag-case{background:rgba(251,191,36,.12);color:var(--amber);border:1px solid rgba(251,191,36,.3)}
+.tag-core{background:rgba(74,222,128,.1);color:var(--green);border:1px solid rgba(74,222,128,.28)}
+.unit-body{color:var(--text-2);font-size:14.5px}
+.unit-body p{margin:8px 0}
+.unit-body strong{color:var(--text);font-weight:600}
+
+/* 块：提示 */
+.tip,.warn{
+  border-radius:10px;padding:10px 14px;margin:12px 0;font-size:13.5px;
+  display:flex;gap:10px;align-items:flex-start;line-height:1.7;
+}
+.tip{background:rgba(96,165,250,.07);border:1px solid rgba(96,165,250,.22);color:#b9d4f5}
+.warn{background:rgba(251,191,36,.07);border:1px solid rgba(251,191,36,.25);color:#f0dcab}
+.tip::before{content:"提示";flex:none;font-size:11px;font-weight:700;color:var(--blue);border:1px solid rgba(96,165,250,.4);border-radius:4px;padding:1px 6px;margin-top:3px}
+.warn::before{content:"注意";flex:none;font-size:11px;font-weight:700;color:var(--amber);border:1px solid rgba(251,191,36,.4);border-radius:4px;padding:1px 6px;margin-top:3px}
+
+/* 块：列表 */
+.blist{list-style:none;margin:10px 0}
+.blist li{position:relative;padding:3px 0 3px 20px}
+.blist li::before{content:"▸";position:absolute;left:0;color:var(--green)}
+
+/* 块：终端 */
+.term{
+  background:#0a0d13;border:1px solid var(--border);border-radius:10px;
+  overflow:hidden;margin:12px 0;
+}
+.term-head{
+  display:flex;align-items:center;gap:6px;padding:8px 12px;
+  border-bottom:1px solid var(--border-soft);background:rgba(255,255,255,.015);
+}
+.term-dot{width:10px;height:10px;border-radius:50%}
+.term-title{margin-left:6px;font-family:var(--mono);font-size:11px;color:var(--text-3);letter-spacing:.06em}
+.term-body{padding:6px 0;font-family:var(--mono);font-size:13px;line-height:1.9;overflow-x:auto}
+.term-line{
+  display:flex;align-items:baseline;gap:10px;padding:2px 14px;
+  cursor:pointer;transition:background .12s ease;position:relative;white-space:pre;
+}
+.term-line:hover{background:rgba(74,222,128,.05)}
+.term-line .prompt{color:var(--green);flex:none;user-select:none}
+.term-line .cmd-text{color:#d7e0ee}
+.term-line .cmd-desc{
+  color:var(--text-3);font-family:var(--sans);font-size:12.5px;
+  white-space:normal;margin-left:auto;text-align:right;padding-left:16px;
+}
+.copy-hint{
+  position:absolute;right:10px;top:50%;transform:translateY(-50%);
+  font-family:var(--sans);font-size:11px;color:var(--green);
+  background:#0f1a12;border:1px solid #1f3526;border-radius:5px;padding:1px 7px;
+  opacity:0;pointer-events:none;transition:opacity .15s ease;
+}
+.term-line:hover .copy-hint{opacity:1}
+.term-line.has-desc:hover .copy-hint{opacity:0}
+
+/* 块：键帽 */
+.keys-row{
+  display:flex;align-items:center;gap:12px;padding:9px 4px;
+  border-bottom:1px dashed var(--border-soft);cursor:pointer;border-radius:6px;
+  transition:background .12s ease;
+}
+.keys-row:last-child{border-bottom:none}
+.keys-row:hover{background:rgba(255,255,255,.02)}
+.keys-row .kcombo{display:flex;align-items:center;gap:5px;flex:none;min-width:210px;flex-wrap:wrap}
+kbd{
+  font-family:var(--mono);font-size:12.5px;color:#dbe2f0;
+  background:var(--panel-3);border:1px solid #2c3548;border-bottom-width:3px;
+  border-radius:6px;padding:2px 8px;line-height:1.5;white-space:nowrap;
+}
+.keys-row .kalt{font-size:11.5px;color:var(--text-3)}
+.keys-row .kdesc{color:var(--text-2);font-size:13.5px}
+
+/* 块：代码 */
+.codeblock{
+  background:#0a0d13;border:1px solid var(--border);border-radius:10px;
+  padding:14px 16px;margin:12px 0;font-family:var(--mono);font-size:13px;
+  line-height:1.75;overflow-x:auto;white-space:pre;color:#c9d4e6;cursor:pointer;
+  position:relative;transition:border-color .15s ease;
+}
+.codeblock:hover{border-color:#31405a}
+.codeblock .lang{
+  position:absolute;top:8px;right:12px;font-size:10.5px;color:var(--text-3);
+  letter-spacing:.1em;text-transform:uppercase;
+}
+
+/* 块：表格 */
+.dtable{width:100%;border-collapse:collapse;margin:12px 0;font-size:13.5px}
+.dtable th{
+  text-align:left;font-size:12px;letter-spacing:.08em;color:var(--text-3);
+  font-weight:600;padding:8px 12px;border-bottom:1px solid var(--border);
+}
+.dtable td{padding:9px 12px;border-bottom:1px solid var(--border-soft);color:var(--text-2);vertical-align:top}
+.dtable td:first-child{color:var(--text);font-family:var(--mono);font-size:12.5px;white-space:nowrap}
+.dtable tr:last-child td{border-bottom:none}
+
+/* 块：案例步骤 */
+.steps{list-style:none;counter-reset:step;margin:14px 0 4px}
+.steps li{
+  counter-increment:step;position:relative;padding:0 0 22px 44px;
+}
+.steps li::before{
+  content:counter(step);position:absolute;left:0;top:1px;
+  width:26px;height:26px;border-radius:50%;
+  background:var(--panel-3);border:1px solid var(--border);
+  color:var(--text);font-family:var(--mono);font-size:12.5px;font-weight:600;
+  display:grid;place-items:center;
+}
+.steps li::after{
+  content:"";position:absolute;left:13px;top:30px;bottom:2px;width:1px;
+  background:var(--border);
+}
+.steps li:last-child::after{display:none}
+.steps li:last-child{padding-bottom:4px}
+.step-text{color:var(--text);font-size:14.5px;padding-top:2px}
+
+/* ============ 速查手册 ============ */
+.ref-nav-item{
+  display:flex;align-items:center;gap:9px;width:100%;text-align:left;
+  padding:8px 11px;border-radius:8px;border:1px solid transparent;
+  background:transparent;color:var(--text-2);font-size:13.5px;cursor:pointer;
+  font-family:var(--sans);transition:all .15s ease;
+}
+.ref-nav-item:hover{background:var(--panel);color:var(--text)}
+.ref-nav-item.active{background:var(--panel-2);border-color:var(--border);color:var(--text)}
+.ref-nav-item .cat-dot{width:7px;height:7px;border-radius:2px;flex:none}
+.ref-nav-item .cnt{margin-left:auto;font-family:var(--mono);font-size:11.5px;color:var(--text-3)}
+.ref-group{margin-bottom:36px;scroll-margin-top:84px}
+.ref-group-head{
+  display:flex;align-items:baseline;gap:10px;margin-bottom:12px;
+  padding-bottom:8px;border-bottom:1px solid var(--border);
+}
+.ref-group-head h3{font-size:16px;font-weight:700}
+.ref-group-head .cnt{font-family:var(--mono);font-size:12px;color:var(--text-3)}
+.ref-entries{
+  display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:10px;
+}
+.ref-card{
+  background:var(--panel);border:1px solid var(--border-soft);border-radius:10px;
+  padding:12px 14px;cursor:pointer;transition:all .15s ease;position:relative;
+  display:flex;flex-direction:column;gap:6px;min-width:0;
+}
+.ref-card:hover{border-color:#31405a;background:var(--panel-2);transform:translateY(-1px)}
+.ref-card .r-name{font-size:13.5px;font-weight:600;color:var(--text);line-height:1.5}
+.ref-card .r-cmd{
+  font-family:var(--mono);font-size:12.5px;color:var(--green);
+  white-space:pre-wrap;word-break:break-all;line-height:1.6;
+}
+.ref-card .r-cmd .prompt{color:rgba(74,222,128,.55);user-select:none}
+.ref-card .r-keys{display:flex;gap:5px;flex-wrap:wrap;align-items:center}
+.ref-card .r-desc{font-size:12.5px;color:var(--text-2);line-height:1.65}
+.ref-card .r-copy{
+  position:absolute;top:8px;right:10px;font-size:10.5px;color:var(--text-3);
+  opacity:0;transition:opacity .15s ease;font-family:var(--mono);
+}
+.ref-card:hover .r-copy{opacity:1}
+.ref-empty{
+  text-align:center;padding:80px 20px;color:var(--text-3);
+}
+.ref-empty .mono{font-size:14px;color:var(--amber)}
+mark{background:rgba(251,191,36,.3);color:#ffe9b8;border-radius:3px;padding:0 1px}
+
+/* toast */
+.toast{
+  position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(20px);
+  background:#0f1a12;border:1px solid #1f3526;color:var(--green);
+  font-size:13px;padding:9px 18px;border-radius:10px;
+  opacity:0;pointer-events:none;transition:all .25s ease;z-index:99;
+  font-family:var(--mono);box-shadow:0 8px 30px rgba(0,0,0,.5);
+}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+.footer-note{
+  margin-top:60px;padding-top:20px;border-top:1px solid var(--border-soft);
+  font-size:12px;color:var(--text-3);display:flex;gap:8px;flex-wrap:wrap;
+}
+.footer-note a{color:var(--blue);text-decoration:none}
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="brand">
+    <span class="logo">❯_</span>
+    <span class="brand-title">Pi 完全指南</span>
+    <span class="brand-sub">从安装到团队流水线</span>
+  </div>
+  <nav class="mode-switch" aria-label="模式切换">
+    <button class="mode-btn active" id="btn-learn" type="button">学习路径</button>
+    <button class="mode-btn" id="btn-ref" type="button">速查手册</button>
+  </nav>
+  <div class="searchbox">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#9aa3b2" stroke-width="2.4" stroke-linecap="round"><circle cx="11" cy="11" r="7"></circle><line x1="21" y1="21" x2="16.5" y2="16.5"></line></svg>
+    <input id="search" type="text" placeholder="搜索命令、快捷键、概念…" autocomplete="off" spellcheck="false">
+    <kbd>Ctrl K</kbd>
+  </div>
+  <button class="progress-pill" id="progress-pill" type="button" title="点击查看学习路径">学习进度 <b id="progress-num">0/0</b></button>
+</header>
+
+<main class="container">
+  <section id="learn-view" data-screen-label="学习路径">
+    <div class="view-grid">
+      <aside class="side" id="outline"></aside>
+      <div id="learn-content"></div>
+    </div>
+  </section>
+  <section id="ref-view" data-screen-label="速查手册" hidden>
+    <div class="view-grid">
+      <aside class="side" id="ref-nav"></aside>
+      <div id="ref-content"></div>
+    </div>
+  </section>
+  <div class="footer-note">
+    <span>内容整理自</span><a href="https://pi.dev/docs/latest/usage" target="_blank" rel="noopener">Pi 官方文档</a>
+    <span>·</span><span>点击任意命令 / 快捷键即可复制</span>
+    <span>·</span><span>快捷键：Ctrl+K 搜索，Esc 清除，1 / 2 切换模式</span>
+  </div>
+</main>
+
+<div class="toast" id="toast">已复制</div>
+
+<script>
+"use strict";
+/* ================================================================
+   数据：学习路径（忠实整理自《从安装到团队流水线：一篇讲透 Pi》）
+   块类型: p / list / tip / warn / cmds / keys / code / table / steps
+================================================================ */
+var STAGES = [
+{ id:"s1", num:"01", name:"入门", color:"#4ade80",
+  desc:"安装、编辑器键位与斜杠命令，完成第一次代码审查。",
+  units:[
+  { id:"u1", title:"安装与启动", tag:"core", blocks:[
+    {t:"p", x:"全局安装后，在仓库根目录直接启动；用 <strong>--name</strong> 给会话命名，便于稍后恢复。"},
+    {t:"cmds", items:[
+      {c:"npm install -g --ignore-scripts @earendil-works/pi-coding-agent", d:"全局安装"},
+      {c:"pi --version", d:"验证安装"},
+      {c:"pi --help", d:"查看命令行选项"},
+      {c:"pi", d:"启动交互会话"},
+      {c:'pi --name "review auth module"', d:"启动并命名会话"},
+      {c:"pi -c", d:"继续最近的会话"},
+      {c:"pi -r", d:"浏览并选择会话；选择器中 Ctrl + D 删除并确认"}
+    ]}
+  ]},
+  { id:"u2", title:"编辑器最常用的能力", tag:"core", blocks:[
+    {t:"keys", items:[
+      {k:"Shift+Enter", alt:"Windows Terminal：Ctrl + Enter", d:"多行输入；映射以 /hotkeys 为准"},
+      {k:"Ctrl+V", alt:"Windows：Alt + V，或拖入终端", d:"附加图片；需要模型支持图片输入"},
+      {k:"Ctrl+O", alt:"", d:"展开工具结果：完整输出、diff 或命令记录"}
+    ]},
+    {t:"tip", x:"在编辑器输入 <strong>/</strong> 打开命令补全；扩展可注册自定义命令，技能用 <strong>/skill:name</strong> 访问，提示模板通过 <strong>/模板名</strong> 展开。"}
+  ]},
+  { id:"u3", title:"斜杠命令：先记住这六个", tag:"core", blocks:[
+    {t:"cmds", items:[
+      {c:"/model", d:"切换模型；选择器中 Ctrl+S 保存启动默认值"},
+      {c:"/thinking", d:"切换思考等级；同样支持 Ctrl+S 保存"},
+      {c:"/resume", d:"从之前的会话中选择恢复"},
+      {c:"/session", d:"查看会话文件、ID、消息、令牌和成本"},
+      {c:"/compact", d:"手动压缩上下文，可附自定义说明"},
+      {c:"/hotkeys", d:"显示所有键盘快捷键"}
+    ], slash:true},
+    {t:"p", x:"完整 18 条命令见右侧「速查手册」模式，可搜索、可复制。"}
+  ]},
+  { id:"u4", title:"案例：完成第一次小型代码审查", tag:"case", blocks:[
+    {t:"p", x:"<strong>场景</strong>：接手一个模块，先理解职责和风险，再在确认问题后做最小修改。"},
+    {t:"steps", items:[
+      {x:"在仓库根目录启动并命名会话：", code:{lang:"bash", text:'pi --name "review auth module"'}},
+      {x:"用 @ 附加入口文件和测试，先提交只读任务：", code:{lang:"text", text:"@src/auth.ts @test/auth.test.ts 先只读分析。\n输出：模块职责、调用入口、错误边界、可能缺陷；\n不要修改文件。"}},
+      {x:"代理工作期间发现范围不对，输入引导消息并按 Enter，送入当前任务：", code:{lang:"text", text:"先不要修改；补查调用方和失败路径。"}},
+      {x:"结论确认后提交最小修改任务；代理仍在工作时按 Alt+Enter，排为后续任务：", code:{lang:"text", text:"根据已确认的问题做最小修改，并运行覆盖该路径的测试。"}},
+      {x:"用 Ctrl+O 展开工具结果和 diff，用 /session 查看会话状态。退出后执行 pi -c，可继续最近的会话。"}
+    ]}
+  ]}
+]},
+{ id:"s2", num:"02", name:"进阶", color:"#fbbf24",
+  desc:"让项目约定稳定生效，控制工具与上下文；在长会话中分支、回溯和交接。",
+  units:[
+  { id:"u5", title:"设置、项目信任与上下文合并", tag:"core", blocks:[
+    {t:"p", x:"配置是 JSON，<strong>项目设置覆盖全局设置</strong>；嵌套对象按字段合并，项目只需覆盖要改的键。可直接编辑文件，或用 /settings 配置常见选项。"},
+    {t:"table", head:["位置","作用域"], rows:[
+      ["~/.pi/agent/settings.json","全局（所有项目）"],
+      [".pi/settings.json","项目（当前目录）"]
+    ]},
+    {t:"tip", x:"大多数时候无需手写设置：默认模型和思考等级在 /model、/thinking 选择器中按 <strong>Ctrl + S</strong> 保存，主题在 /settings 里切换。只有要覆盖默认值时才编辑 JSON。"},
+    {t:"code", lang:"json", title:"最小全局配置", text:'{\n  "defaultProvider": "anthropic",\n  "defaultModel": "claude-sonnet-4-20250514",\n  "defaultThinkingLevel": "medium"\n}'}
+  ]},
+  { id:"u6", title:"/compact 与分支摘要", tag:"core", blocks:[
+    {t:"p", x:"<strong>/compact [说明]</strong> 立即压缩当前会话，可选说明用于突出要保留的内容："},
+    {t:"code", lang:"text", text:"/compact 保留 API 重设计决策；迁移脚本只是临时草稿。"},
+    {t:"p", x:"<strong>/tree</strong> 切换到其他分支时，Pi 会询问是否概括刚放弃的分支，并把摘要附加到新位置。三个选项依次是：不生成摘要、用默认提示概括、按自定义重点概括。"},
+    {t:"code", lang:"json", title:"branchSummary 配置", text:'{\n  "branchSummary": {\n    "reserveTokens": 16384,\n    "skipPrompt": false\n  }\n}'},
+    {t:"warn", x:"压缩和分支摘要都<strong>不删除原始条目</strong>，会话文件中保留完整记录，可以继续用 /tree 回溯。"}
+  ]},
+  { id:"u7", title:"用 /session 区分两类问题", tag:"core", blocks:[
+    {t:"p", x:"/session 显示会话文件、ID、消息数、令牌数和成本。"},
+    {t:"warn", x:"<strong>上下文溢出</strong>先看令牌占用与压缩设置；<strong>额度或速率限制</strong>属于提供商侧，压缩解决不了——应检查认证、计费状态和错误信息。"}
+  ]},
+  { id:"u8", title:"会话是一棵树：/tree、/fork 与 /clone", tag:"core", blocks:[
+    {t:"p", x:"会话保存为 JSONL，按工作目录隔离。每个条目带 id 和 parentId，当前位置是活动叶子节点，因此一次会话天然可以分支。"},
+    {t:"table", head:["特性","/tree","/fork","/clone"], rows:[
+      ["输出","同一会话文件","新会话文件","新会话文件"],
+      ["视图","完整会话树","用户消息选择器","当前活动分支"],
+      ["典型用途","原地探索备选方案","从更早的提示开始新会话","继续之前先复制当前工作"],
+      ["分支摘要","可选","无","无"]
+    ]},
+    {t:"list", items:[
+      "选择一条用户消息：叶子节点移到该消息的父节点，消息文本放回编辑器，编辑后重新提交即形成新分支。",
+      "选择助手、工具或压缩条目：叶子节点移到该条目，编辑器留空，可从该位置继续。",
+      "选择根用户消息：叶子节点重置为空对话，原始提示放入编辑器。"
+    ]},
+    {t:"tip", x:"想要备选方案待在一起，用 <strong>/tree</strong>；想要独立的会话文件，用 <strong>/fork</strong> 或 <strong>/clone</strong>。"},
+    {t:"p", x:"<strong>会话共享</strong>：/export 导出 HTML 或 JSONL；/import 从 JSONL 导入恢复；/copy 复制最后一条助手消息。权威记录是 JSONL——只需要别人看时传 HTML，需要别人接着做时传 JSONL。"}
+  ]},
+  { id:"u9", title:"案例：比较两个重构方案后继续长任务", tag:"case", blocks:[
+    {t:"p", x:"<strong>场景</strong>：同一个模块有两种重构方向，需要保留完整讨论过程，选定方案后再进入实现。"},
+    {t:"steps", items:[
+      {x:"命名当前会话，提交包含约束、验收标准和现状证据的方案 A 请求：", code:{lang:"text", text:"/name cache-refactor"}},
+      {x:"方案 A 完成后运行 /tree，选择最初的用户消息；Pi 把该消息放回编辑器，将方案约束改为方案 B 并重新提交，形成第二条分支。"},
+      {x:"方案 B 完成后再次运行 /tree，在同一棵树中对照两个分支，选择要继续的节点；切换时按需要生成分支摘要。"},
+      {x:"执行 /clone，把选中的活动分支复制到新的会话文件，在副本中实施修改；若要从更早的用户提示建立独立会话，则使用 /fork。"},
+      {x:"上下文接近上限时执行：", code:{lang:"text", text:"/compact 保留选定方案、接口约束、未完成项和测试结果；舍弃被否决方案的实现细节。"}},
+      {x:"用 /session 核对令牌占用与会话文件，用 /export cache-refactor.html 生成只读审阅材料；需要继续执行时保留原始 JSONL 会话。"}
+    ]}
+  ]}
+]},
+{ id:"s3", num:"03", name:"拓展", color:"#a78bfa",
+  desc:"把重复提示、专门流程、工具和界面能力沉淀为可复用资源，按需接入脚本。",
+  units:[
+  { id:"u10", title:"提示模板（Prompt Templates）", tag:"core", blocks:[
+    {t:"p", x:"提示模板是展开为完整提示的 Markdown 片段，在编辑器输入 <strong>/文件名</strong> 调用。"},
+    {t:"list", items:[
+      "全局：~/.pi/agent/prompts/*.md",
+      "项目：.pi/prompts/*.md（信任项目后加载）",
+      "其他来源：包、设置的 prompts 数组，以及可重复的 --prompt-template <path>"
+    ]},
+    {t:"code", lang:"markdown", title:"review.md", text:'---\ndescription: 审查暂存的改动\nargument-hint: "[关注点]"\n---\n审查暂存改动（`git diff --cached`）。重点检查：\n- Bug 与逻辑错误\n- 安全问题\n- 错误处理缺口'},
+    {t:"cmds", items:[
+      {c:"/review", d:"无参调用"},
+      {c:"/review 边界情况", d:"带参数调用"}
+    ], slash:true},
+    {t:"table", head:["语法","含义"], rows:[
+      ["$1、$2","按位置取参数"],
+      ["$@ 或 $ARGUMENTS","全部参数"],
+      ["${1:-默认值}","参数 1 为空时用默认值"],
+      ["${@:-默认值}","全部参数为空时用默认值"],
+      ["${@:N}","从第 N 个参数开始"],
+      ["${@:N:L}","从第 N 个起取 L 个"]
+    ]},
+    {t:"warn", x:"模板名取自文件名（review.md 即 /review）；description 省略时使用首个非空行；argument-hint 中 <尖括号> 必填、[方括号] 可选。<strong>prompts/ 的发现不递归</strong>，子目录中的模板需显式加入设置或包清单。"}
+  ]},
+  { id:"u11", title:"包（Packages）", tag:"core", blocks:[
+    {t:"p", x:"包把扩展、技能、提示模板和主题打包，通过 npm 或 git 分享。"},
+    {t:"cmds", items:[
+      {c:"pi list", d:"列出已安装的包"},
+      {c:"pi update --extensions", d:"只更新包；协调固定 git 引用"},
+      {c:"pi update --models", d:"只刷新模型目录"},
+      {c:"pi update --self", d:"只更新 pi"},
+      {c:"pi update --all", d:"更新 pi 和全部包"}
+    ]}
+  ]},
+  { id:"u12", title:"可选第三方扩展示例", tag:"core", blocks:[
+    {t:"cmds", items:[
+      {c:"pi install npm:pi-subagents", d:"子代理"},
+      {c:"pi install npm:pi-mcp-adapter", d:"MCP 支持"},
+      {c:"pi install npm:pi-web-access", d:"网页搜索"},
+      {c:"pi install npm:context-mode", d:"极致上下文节省"},
+      {c:"pi install npm:pi-hermes-memory", d:"记忆扩展"},
+      {c:"pi install npm:pi-auto-approval", d:"自动批准低风险权限，高风险仍需确认"},
+      {c:"pi install npm:pi-lean-ctx", d:"上下文压缩优化，节省 token"},
+      {c:"pi install npm:@ff-labs/pi-fff", d:"替换 find / grep，基于 Rust 的 FFF"}
+    ]}
+  ]},
+  { id:"u13", title:"案例：把团队代码审查沉淀为复用能力", tag:"case", blocks:[
+    {t:"p", x:"<strong>场景</strong>：团队反复执行同一套代码审查，规则逐渐从一段提示词发展为包含脚本、参考资料和强制保护的工作流。"},
+    {t:"steps", items:[
+      {x:"规则只有一段稳定提示时，先创建 .pi/prompts/review.md；成员在交互会话中用 /review 或 /review 安全边界 调用。"},
+      {x:"流程需要执行脚本、按需读取检查清单或处理多阶段步骤时，迁到 .pi/skills/code-review/SKILL.md，用 /skill:code-review <关注点> 显式调用。"},
+      {x:"规则必须拦截危险工具调用、保护路径或提供自定义 UI 时，增加 .pi/extensions/ 下的 TypeScript 扩展。提示模板和技能只能提供指令，不能替代运行时强制约束。"},
+      {x:"需要跨仓库分发时，按 prompts/、skills/、extensions/ 和 themes/ 组织资源，并在 package.json 的 pi 字段中声明入口。先临时试用：", code:{lang:"bash", text:"pi -e ./team-review"}},
+      {x:"检查源码和行为后，再安装到项目作用域：", code:{lang:"bash", text:"pi install ./team-review -l\npi config -l"}},
+      {x:"一次性审查可接入 Shell 管道，并限制为只读工具：", code:{lang:"bash", text:'git diff --cached | pi -p --tools read,grep,find,ls "按团队审查规则检查这批改动，按严重程度输出问题。"'}},
+      {x:"需要消费完整事件而不是最终文本时，改用 --mode json；需要由外部程序持续控制会话时，使用 --mode rpc。"}
+    ]}
+  ]}
+]}
+];
+
+/* ================================================================
+   数据：速查手册（9 大类）
+   条目: {n:名称, c:命令, k:快捷键, code:代码, d:说明, kw:关键词}
+================================================================ */
+var CATS = [
+{ id:"start", name:"安装与启动", color:"#4ade80", entries:[
+  {n:"全局安装", c:"npm install -g --ignore-scripts @earendil-works/pi-coding-agent", d:"通过 npm 全局安装 Pi 编码代理", kw:"install npm"},
+  {n:"验证安装", c:"pi --version", d:"查看版本号，确认安装成功", kw:"version"},
+  {n:"查看帮助", c:"pi --help", d:"列出全部命令行选项", kw:"help"},
+  {n:"启动会话", c:"pi", d:"在当前目录启动交互会话", kw:"启动"},
+  {n:"命名启动", c:'pi --name "review auth module"', d:"启动并命名会话，便于稍后恢复", kw:"name 命名"},
+  {n:"继续最近会话", c:"pi -c", d:"退出后接着最近一次会话继续", kw:"continue 继续"},
+  {n:"选择会话恢复", c:"pi -r", d:"浏览并选择一个会话；选择器中 Ctrl + D 删除并确认", kw:"resume 恢复 删除"},
+  {n:"管道一次性审查", c:'git diff --cached | pi -p --tools read,grep,find,ls "按团队审查规则检查这批改动，按严重程度输出问题。"', d:"接入 Shell 管道，并限制为只读工具", kw:"pipe 管道 只读 tools"},
+  {n:"程序消费事件", c:"pi -p --mode json", d:"消费完整事件流而非最终文本；--mode rpc 由外部程序持续控制会话", kw:"json rpc 模式"}
+]},
+{ id:"editor", name:"编辑器核心能力", color:"#4ade80", entries:[
+  {n:"多行输入", k:"Shift+Enter", d:"Windows Terminal 上为 Ctrl + Enter；映射以 /hotkeys 为准", kw:"换行 multiline"},
+  {n:"附加图片", k:"Ctrl+V", d:"粘贴或拖入终端；Windows 上为 Alt + V；需要模型支持图片输入", kw:"图片 image 粘贴"},
+  {n:"展开工具结果", k:"Ctrl+O", d:"查看完整输出、diff 或命令记录", kw:"expand diff 输出"},
+  {n:"排为后续任务", k:"Alt+Enter", d:"代理仍在工作时，把输入排为后续任务", kw:"queue 排队 后续"},
+  {n:"附加文件", c:"@src/auth.ts @test/auth.test.ts", d:"在输入中用 @ 引用文件，随提示一起提交", kw:"at 引用 文件"},
+  {n:"命令补全", k:"/", d:"输入 / 打开命令补全；技能用 /skill:name，模板用 /模板名", kw:"补全 slash 斜杠"}
+]},
+{ id:"slash", name:"Slash 命令", color:"#60a5fa", entries:[
+  {n:"/login、/logout", c:"/login", d:"管理 OAuth 或 API 密钥凭据", kw:"登录 凭据 auth"},
+  {n:"/model", c:"/model", d:"切换模型；选择器中的 Ctrl+S 保存启动默认值", kw:"模型"},
+  {n:"/thinking", c:"/thinking", d:"切换思考等级；选择器中的 Ctrl+S 保存启动默认值", kw:"思考"},
+  {n:"/scoped-models", c:"/scoped-models", d:"启用或停用 Ctrl+P 循环切换的模型", kw:"模型 循环"},
+  {n:"/settings", c:"/settings", d:"主题、消息投递、传输和其他偏好", kw:"设置 主题"},
+  {n:"/resume", c:"/resume", d:"从之前的会话中选择", kw:"恢复 会话"},
+  {n:"/new", c:"/new", d:"开始新会话", kw:"新会话"},
+  {n:"/name", c:"/name <name>", d:"设置会话显示名称", kw:"命名"},
+  {n:"/session", c:"/session", d:"显示会话文件、ID、消息、令牌和成本", kw:"状态 token 成本"},
+  {n:"/tree", c:"/tree", d:"跳转到会话中的任意位置并从那里继续", kw:"树 分支 跳转"},
+  {n:"/fork", c:"/fork", d:"从之前的一条用户消息创建新会话", kw:"分叉 新会话"},
+  {n:"/clone", c:"/clone", d:"将当前活动分支复制到新会话", kw:"复制 分支"},
+  {n:"/compact", c:"/compact [prompt]", d:"手动压缩上下文，可选附带自定义说明", kw:"压缩 上下文"},
+  {n:"/copy", c:"/copy", d:"将最后一条助手消息复制到剪贴板", kw:"复制 剪贴板"},
+  {n:"/export", c:"/export [file]", d:"将会话导出为 HTML 或 JSONL", kw:"导出"},
+  {n:"/import", c:"/import <file>", d:"从 JSONL 文件导入并恢复会话", kw:"导入"},
+  {n:"/reload", c:"/reload", d:"重新加载按键绑定、扩展、技能、提示、主题和上下文文件", kw:"重载"},
+  {n:"/hotkeys", c:"/hotkeys", d:"显示所有键盘快捷键", kw:"快捷键"}
+]},
+{ id:"config", name:"设置与配置", color:"#fbbf24", entries:[
+  {n:"全局设置文件", c:"~/.pi/agent/settings.json", d:"作用域为所有项目", kw:"settings 全局 配置"},
+  {n:"项目设置文件", c:".pi/settings.json", d:"覆盖全局设置；嵌套对象按字段合并，只需覆盖要改的键", kw:"settings 项目 配置 合并"},
+  {n:"最小全局配置", code:'{\n  "defaultProvider": "anthropic",\n  "defaultModel": "claude-sonnet-4-20250514",\n  "defaultThinkingLevel": "medium"\n}', d:"三个键都可在 /model、/thinking 选择器中按 Ctrl+S 保存，无需手写", kw:"默认模型 provider json"},
+  {n:"保存启动默认值", k:"Ctrl+S", d:"在 /model、/thinking 选择器中保存默认模型 / 思考等级", kw:"保存 默认"},
+  {n:"分支摘要配置", code:'{\n  "branchSummary": {\n    "reserveTokens": 16384,\n    "skipPrompt": false\n  }\n}', d:"/tree 切换分支时概括被放弃分支的行为；不删除原始条目", kw:"branchSummary 分支 摘要"},
+  {n:"压缩示例", c:"/compact 保留 API 重设计决策；迁移脚本只是临时草稿。", d:"可选说明用于突出要保留的内容", kw:"compact 压缩"},
+  {n:"排障分流", d:"上下文溢出 → 看 /session 令牌占用与压缩设置；额度 / 速率限制 → 提供商侧，检查认证、计费状态和错误信息", kw:"排障 溢出 限额 速率 debug"}
+]},
+{ id:"tree", name:"会话树与共享", color:"#fbbf24", entries:[
+  {n:"会话模型", d:"JSONL 存储，按工作目录隔离；每条目带 id 与 parentId，当前位置是活动叶子节点，天然可分支；会话版本 3，旧版加载时自动迁移", kw:"jsonl parentId 模型"},
+  {n:"/tree 选择行为", d:"选用户消息 → 放回编辑器，重提交成新分支；选助手/工具/压缩条目 → 从该位置继续；选根用户消息 → 重置为空对话并放回原始提示", kw:"tree 分支 选择"},
+  {n:"三者分工", d:"备选方案待在一起 → /tree（同文件）；独立会话文件 → /fork（从更早提示）或 /clone（复制当前分支）", kw:"tree fork clone 对比"},
+  {n:"会话文件位置", c:"~/.pi/agent/sessions/--<工作目录路径>--/<时间戳>_<UUID>.jsonl", d:"路径分隔符与盘符冒号替换为短横线", kw:"路径 sessions 文件"},
+  {n:"条目类型", d:"session、message、model_change、thinking_level_change、compaction、branch_summary、custom、custom_message、label、session_info", kw:"type 类型 jsonl"},
+  {n:"共享原则", d:"只需要别人看 → 传 HTML（/export）；需要别人接着做 → 传 JSONL（/export + /import）；/copy 复制最后一条助手消息", kw:"共享 export import 导出"}
+]},
+{ id:"prompt", name:"提示模板", color:"#a78bfa", entries:[
+  {n:"全局模板目录", c:"~/.pi/agent/prompts/*.md", d:"所有项目可用", kw:"prompts 全局"},
+  {n:"项目模板目录", c:".pi/prompts/*.md", d:"信任项目后加载；发现不递归，子目录需显式加入设置或包清单", kw:"prompts 项目 递归"},
+  {n:"调用模板", c:"/review 边界情况", d:"/文件名 调用；模板名取自文件名（review.md 即 /review）", kw:"调用 参数"},
+  {n:"位置参数", c:"$1  $2", d:"按位置取参数", kw:"参数"},
+  {n:"全部参数", c:"$@  $ARGUMENTS", d:"两种写法等价", kw:"参数 arguments"},
+  {n:"默认值", c:"${1:-默认值}", d:"参数 1 为空时用默认值；${@:-默认值} 同理作用于全部参数", kw:"默认 default"},
+  {n:"参数切片", c:"${@:N:L}", d:"从第 N 个参数起取 L 个；${@:N} 从第 N 个开始取到末尾", kw:"切片 slice"},
+  {n:"frontmatter", code:'---\ndescription: 审查暂存的改动\nargument-hint: "[关注点]"\n---', d:"description 省略时用首个非空行；<尖括号> 必填、[方括号] 可选", kw:"描述 hint 元信息"},
+  {n:"更多来源", c:"--prompt-template <path>", d:"包的 prompts、设置的 prompts 数组、可重复的命令行标志", kw:"来源 flag"}
+]},
+{ id:"pkg", name:"包与扩展", color:"#a78bfa", entries:[
+  {n:"列出已安装的包", c:"pi list", d:"显示当前安装的全部包", kw:"list 包"},
+  {n:"只更新包", c:"pi update --extensions", d:"协调固定 git 引用", kw:"update 更新"},
+  {n:"刷新模型目录", c:"pi update --models", d:"只更新模型数据", kw:"update models"},
+  {n:"只更新 pi", c:"pi update --self", d:"升级 pi 本体", kw:"update 升级"},
+  {n:"全部更新", c:"pi update --all", d:"更新 pi 和全部包", kw:"update"},
+  {n:"子代理", c:"pi install npm:pi-subagents", d:"第三方扩展：子代理", kw:"subagents 扩展"},
+  {n:"MCP 支持", c:"pi install npm:pi-mcp-adapter", d:"第三方扩展：接入 MCP", kw:"mcp 扩展"},
+  {n:"网页搜索", c:"pi install npm:pi-web-access", d:"第三方扩展：网页访问与搜索", kw:"web 搜索 扩展"},
+  {n:"极致上下文节省", c:"pi install npm:context-mode", d:"第三方扩展：省 token", kw:"context 扩展"},
+  {n:"记忆扩展", c:"pi install npm:pi-hermes-memory", d:"第三方扩展：记忆", kw:"memory 扩展"},
+  {n:"自动批准", c:"pi install npm:pi-auto-approval", d:"自动批准低风险权限，高风险仍需确认", kw:"approval 权限 扩展"},
+  {n:"上下文压缩优化", c:"pi install npm:pi-lean-ctx", d:"第三方扩展：节省 token", kw:"lean ctx 扩展"},
+  {n:"FFF 搜索", c:"pi install npm:@ff-labs/pi-fff", d:"替换 find / grep，基于 Rust", kw:"fff find grep 扩展"},
+  {n:"临时试用本地包", c:"pi -e ./team-review", d:"不安装，直接挂载本地包目录", kw:"本地 试用"},
+  {n:"安装到项目作用域", c:"pi install ./team-review -l", d:"检查源码和行为后再安装；配合 pi config -l 查看项目级配置", kw:"install local 项目"}
+]},
+{ id:"editops", name:"编辑器操作", color:"#60a5fa", entries:[
+  {n:"移到行首", k:"Home", d:"或 Ctrl+Home、Ctrl+A", kw:"行首"},
+  {n:"移到行尾", k:"End", d:"或 Ctrl+End、Ctrl+E", kw:"行尾"},
+  {n:"向后删一个词", k:"Ctrl+W", d:"或 Alt+Backspace", kw:"删除 词"},
+  {n:"向前删一个词", k:"Alt+D", d:"或 Alt+Delete", kw:"删除 词"},
+  {n:"删到行首", k:"Ctrl+U", d:"删除光标到行首的内容", kw:"删除"},
+  {n:"删到行尾", k:"Ctrl+K", d:"删除光标到行尾的内容", kw:"删除"},
+  {n:"撤销", k:"Ctrl+-", d:"Windows 为 Ctrl+Z，WSL 为 Alt+Z", kw:"undo 撤销"}
+]},
+{ id:"treenav", name:"树导航与过滤", color:"#60a5fa", entries:[
+  {n:"上移一条", k:"Up", d:"上移一条可见条目，到顶回绕到底部", kw:"导航"},
+  {n:"下移一条", k:"Down", d:"下移一条可见条目，到底回绕到顶部", kw:"导航"},
+  {n:"上翻一页", k:"PageUp", d:"Left 同效", kw:"翻页"},
+  {n:"下翻一页", k:"PageDown", d:"Right 同效", kw:"翻页"},
+  {n:"折叠分支段落", k:"Ctrl+Left", d:"或 Alt+Left；或跳到上一段起点", kw:"折叠"},
+  {n:"展开分支段落", k:"Ctrl+Right", d:"或 Alt+Right；或跳到下一段起点", kw:"展开"},
+  {n:"设置/清除标签", k:"Shift+L", d:"为所选节点设置或清除标签", kw:"标签 label"},
+  {n:"标签时间戳", k:"Shift+T", d:"切换标签时间戳显示", kw:"标签 时间戳"},
+  {n:"选择当前条目", k:"Enter", d:"确认选择", kw:"选择"},
+  {n:"取消", k:"Escape", d:"或 Ctrl+C；搜索时先清空搜索词", kw:"取消 esc"},
+  {n:"默认视图", k:"Ctrl+D", d:"回到默认视图", kw:"视图"},
+  {n:"隐藏工具结果", k:"Ctrl+T", d:"过滤：隐藏工具结果", kw:"过滤 工具"},
+  {n:"仅用户消息", k:"Ctrl+U", d:"过滤：只看用户消息", kw:"过滤 用户"},
+  {n:"仅已标记条目", k:"Ctrl+L", d:"过滤：只看已标记", kw:"过滤 标记"},
+  {n:"显示所有条目", k:"Ctrl+A", d:"清除过滤", kw:"过滤 全部"},
+  {n:"向前循环过滤", k:"Ctrl+O", d:"向前循环切换过滤器", kw:"过滤 循环"},
+  {n:"向后循环过滤", k:"Shift+Ctrl+O", d:"向后循环切换过滤器", kw:"过滤 循环"}
+]}
+];
+
+/* ================================================================ 渲染 */
+var $ = function(s){ return document.querySelector(s); };
+function h(tag, cls, html){ var e=document.createElement(tag); if(cls)e.className=cls; if(html!=null)e.innerHTML=html; return e; }
+
+var LS_KEY="pi-guide-progress-v1";
+var progress={}; try{ progress=JSON.parse(localStorage.getItem(LS_KEY)||"{}"); }catch(e){ progress={}; }
+function saveProgress(){ try{ localStorage.setItem(LS_KEY, JSON.stringify(progress)); }catch(e){} }
+
+var mode="learn", query="", activeCat="all";
+
+/* ---------- 复制 ---------- */
+var toastTimer=null;
+function toast(msg){
+  var t=$("#toast"); t.textContent=msg; t.classList.add("show");
+  clearTimeout(toastTimer); toastTimer=setTimeout(function(){ t.classList.remove("show"); },1600);
+}
+function copyText(text){
+  function done(){ toast("已复制  "+(text.length>42?text.slice(0,42)+"…":text)); }
+  if(navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(text).then(done, function(){ fallback(); });
+  } else fallback();
+  function fallback(){
+    var ta=document.createElement("textarea"); ta.value=text; ta.style.position="fixed"; ta.style.opacity="0";
+    document.body.appendChild(ta); ta.select();
+    try{ document.execCommand("copy"); done(); }catch(e){ toast("复制失败"); }
+    document.body.removeChild(ta);
+  }
+}
+
+/* ---------- 键帽 ---------- */
+function kbdChips(combo){
+  var wrap=h("span","kcombo");
+  combo.split("+").forEach(function(part,i){
+    if(i>0) wrap.appendChild(h("span",null,"+")).style.cssText="color:var(--text-3);font-size:11px";
+    var k=document.createElement("kbd"); k.textContent=part.trim(); wrap.appendChild(k);
+  });
+  return wrap;
+}
+
+/* ---------- 学习路径渲染 ---------- */
+function totalUnits(){ var n=0; STAGES.forEach(function(s){ n+=s.units.length; }); return n; }
+function doneUnits(){ var n=0; STAGES.forEach(function(s){ s.units.forEach(function(u){ if(progress[u.id])n++; }); }); return n; }
+function stageDone(s){ var n=0; s.units.forEach(function(u){ if(progress[u.id])n++; }); return n; }
+
+function renderOutline(){
+  var box=$("#outline"); box.innerHTML="";
+  STAGES.forEach(function(s){
+    var g=h("div","outline-stage");
+    var head=h("div","outline-stage-head");
+    var dot=h("span","stage-dot"); dot.style.background=s.color;
+    head.appendChild(dot);
+    head.appendChild(h("span",null,s.num+" · "+s.name));
+    var bar=h("span","stage-bar"); var fill=document.createElement("i");
+    var pct=s.units.length? stageDone(s)/s.units.length*100 : 0;
+    fill.style.width=pct+"%"; fill.style.background=s.color; bar.appendChild(fill);
+    head.appendChild(bar);
+    g.appendChild(head);
+    s.units.forEach(function(u){
+      var it=h("button","outline-item"+(progress[u.id]?" done":""));
+      it.type="button"; it.dataset.unit=u.id;
+      it.appendChild(h("span","tick","✓"));
+      it.appendChild(h("span",null,u.title.replace(/^案例：/,"案例 · ")));
+      it.addEventListener("click",function(){
+        var el=document.getElementById("unit-"+u.id);
+        if(el) el.scrollIntoView({behavior:"smooth",block:"start"});
+      });
+      g.appendChild(it);
+    });
+    box.appendChild(g);
+  });
+  var reset=h("button","outline-reset","重置学习进度"); reset.type="button";
+  reset.addEventListener("click",function(){
+    progress={}; saveProgress(); renderLearn(); updatePill();
+    toast("进度已重置");
+  });
+  box.appendChild(reset);
+}
+
+function renderBlock(b){
+  if(b.t==="p") return h("p",null,b.x);
+  if(b.t==="tip") return h("div","tip",h("span",null,b.x).outerHTML);
+  if(b.t==="warn") return h("div","warn",h("span",null,b.x).outerHTML);
+  if(b.t==="list"){
+    var ul=h("ul","blist");
+    b.items.forEach(function(x){ ul.appendChild(h("li",null,x)); });
+    return ul;
+  }
+  if(b.t==="cmds"){
+    var term=h("div","term");
+    var thead=h("div","term-head");
+    ["#f87171","#fbbf24","#4ade80"].forEach(function(c){
+      var d=h("span","term-dot"); d.style.background=c; thead.appendChild(d);
+    });
+    thead.appendChild(h("span","term-title", b.slash?"slash commands":"terminal"));
+    term.appendChild(thead);
+    var body=h("div","term-body");
+    b.items.forEach(function(it){
+      var line=h("div","term-line"+(it.d?" has-desc":""));
+      line.appendChild(h("span","prompt", b.slash?"❯":"$"));
+      var cmd=h("span","cmd-text"); cmd.textContent=it.c; line.appendChild(cmd);
+      if(it.d) line.appendChild(h("span","cmd-desc",it.d));
+      line.appendChild(h("span","copy-hint","复制"));
+      line.addEventListener("click",function(){ copyText(it.c); });
+      body.appendChild(line);
+    });
+    term.appendChild(body);
+    return term;
+  }
+  if(b.t==="keys"){
+    var box=h("div");
+    b.items.forEach(function(it){
+      var row=h("div","keys-row");
+      var left=kbdChips(it.k);
+      if(it.alt){ var alt=h("span","kalt",it.alt); left.appendChild(alt); }
+      row.appendChild(left);
+      row.appendChild(h("span","kdesc",it.d));
+      row.title="点击复制快捷键";
+      row.addEventListener("click",function(){ copyText(it.k); });
+      box.appendChild(row);
+    });
+    return box;
+  }
+  if(b.t==="code"){
+    var pre=h("pre","codeblock");
+    if(b.lang) pre.appendChild(h("span","lang",b.lang));
+    pre.appendChild(document.createTextNode(b.text));
+    pre.title="点击复制";
+    pre.addEventListener("click",function(){ copyText(b.text); });
+    return pre;
+  }
+  if(b.t==="table"){
+    var tbl=h("table","dtable");
+    var tr=h("tr"); b.head.forEach(function(x){ tr.appendChild(h("th",null,x)); });
+    var theadEl=document.createElement("thead"); theadEl.appendChild(tr); tbl.appendChild(theadEl);
+    var tb=document.createElement("tbody");
+    b.rows.forEach(function(r){
+      var row=h("tr");
+      r.forEach(function(c){ row.appendChild(h("td",null,c)); });
+      tb.appendChild(row);
+    });
+    tbl.appendChild(tb);
+    return tbl;
+  }
+  if(b.t==="steps"){
+    var ol=h("ol","steps");
+    b.items.forEach(function(it){
+      var li=document.createElement("li");
+      li.appendChild(h("div","step-text",it.x));
+      if(it.code) li.appendChild(renderBlock({t:"code", lang:it.code.lang, text:it.code.text}));
+      ol.appendChild(li);
+    });
+    return ol;
+  }
+  return h("div");
+}
+
+function renderLearn(){
+  var box=$("#learn-content"); box.innerHTML="";
+  STAGES.forEach(function(s){
+    var banner=h("div","stage-banner");
+    var num=h("span","stage-num",s.num);
+    num.style.color=s.color; num.style.borderColor=s.color+"55"; num.style.background=s.color+"14";
+    banner.appendChild(num);
+    banner.appendChild(h("h2",null,s.name));
+    banner.appendChild(h("p",null,s.desc));
+    box.appendChild(banner);
+
+    s.units.forEach(function(u){
+      var unit=h("article","unit"+(progress[u.id]?" done":""));
+      unit.id="unit-"+u.id;
+      var head=h("div","unit-head");
+      var chk=h("button","unit-check","✓"); chk.type="button"; chk.title="标记为已掌握";
+      chk.addEventListener("click",function(){
+        if(progress[u.id]) delete progress[u.id]; else progress[u.id]=1;
+        saveProgress(); renderLearn(); updatePill();
+        var el=document.getElementById("unit-"+u.id);
+        if(el) el.scrollIntoView({block:"nearest"});
+      });
+      head.appendChild(chk);
+      var title=h("div","unit-title",u.title);
+      head.appendChild(title);
+      var tag=h("span","unit-tag "+(u.tag==="case"?"tag-case":"tag-core"), u.tag==="case"?"案例":"核心");
+      head.appendChild(tag);
+      unit.appendChild(head);
+      var body=h("div","unit-body");
+      u.blocks.forEach(function(b){ body.appendChild(renderBlock(b)); });
+      unit.appendChild(body);
+      box.appendChild(unit);
+    });
+  });
+  renderOutline();
+}
+
+function updatePill(){
+  $("#progress-num").textContent=doneUnits()+"/"+totalUnits();
+}
+
+/* ---------- 速查手册渲染 ---------- */
+function entryText(e,cat){
+  return [e.n,e.c,e.k,e.code,e.d,e.kw,cat.name].filter(Boolean).join(" ").toLowerCase();
+}
+function hl(text,q){
+  if(!q) return document.createTextNode(text);
+  var frag=document.createDocumentFragment();
+  var lower=text.toLowerCase(), ql=q.toLowerCase(), i=0, idx;
+  while((idx=lower.indexOf(ql,i))!==-1){
+    frag.appendChild(document.createTextNode(text.slice(i,idx)));
+    var m=document.createElement("mark"); m.textContent=text.slice(idx,idx+ql.length);
+    frag.appendChild(m); i=idx+ql.length;
+  }
+  frag.appendChild(document.createTextNode(text.slice(i)));
+  return frag;
+}
+function matchQuery(e,cat){
+  if(!query) return true;
+  var q=query.toLowerCase().trim();
+  return q.split(/\s+/).every(function(w){ return entryText(e,cat).indexOf(w)!==-1; });
+}
+
+function renderRefNav(visible){
+  var nav=$("#ref-nav"); nav.innerHTML="";
+  var all=h("button","ref-nav-item"+(activeCat==="all"?" active":""));
+  all.type="button";
+  var allDot=h("span","cat-dot"); allDot.style.background="var(--text-2)"; all.appendChild(allDot);
+  all.appendChild(h("span",null,"全部"));
+  var total=0; CATS.forEach(function(c){ total+= (visible[c.id]||[]).length; });
+  all.appendChild(h("span","cnt",String(total)));
+  all.addEventListener("click",function(){ activeCat="all"; renderRef(); });
+  nav.appendChild(all);
+  CATS.forEach(function(c){
+    var list=visible[c.id]||[];
+    if(query && list.length===0) return;
+    var it=h("button","ref-nav-item"+(activeCat===c.id?" active":""));
+    it.type="button";
+    var dot=h("span","cat-dot"); dot.style.background=c.color; it.appendChild(dot);
+    it.appendChild(h("span",null,c.name));
+    it.appendChild(h("span","cnt",String(list.length)));
+    it.addEventListener("click",function(){
+      activeCat = activeCat===c.id ? "all" : c.id; renderRef();
+    });
+    nav.appendChild(it);
+  });
+}
+
+function renderRef(){
+  var content=$("#ref-content"); content.innerHTML="";
+  var visible={};
+  CATS.forEach(function(c){
+    visible[c.id]=c.entries.filter(function(e){ return matchQuery(e,c); });
+  });
+  renderRefNav(visible);
+
+  var any=false;
+  CATS.forEach(function(c){
+    if(activeCat!=="all" && activeCat!==c.id) return;
+    var list=visible[c.id];
+    if(list.length===0) return;
+    any=true;
+    var g=h("section","ref-group"); g.id="cat-"+c.id;
+    var gh=h("div","ref-group-head");
+    var dot=h("span","cat-dot"); dot.style.background=c.color; dot.style.alignSelf="center";
+    gh.appendChild(dot);
+    gh.appendChild(h("h3",null,c.name));
+    gh.appendChild(h("span","cnt",list.length+" 条"));
+    g.appendChild(gh);
+    var grid=h("div","ref-entries");
+    list.forEach(function(e){
+      var card=h("div","ref-card");
+      card.appendChild(h("span","r-copy","点击复制"));
+      var name=h("div","r-name"); name.appendChild(hl(e.n, query.trim().split(/\s+/)[0]||""));
+      card.appendChild(name);
+      if(e.k){
+        var ks=h("div","r-keys"); ks.appendChild(kbdChips(e.k)); card.appendChild(ks);
+      }
+      if(e.c){
+        var cmd=h("div","r-cmd");
+        var p=h("span","prompt", e.c.charAt(0)==="/" ? "❯ " : "$ ");
+        cmd.appendChild(p);
+        cmd.appendChild(hl(e.c, query.trim().split(/\s+/)[0]||""));
+        card.appendChild(cmd);
+      }
+      if(e.code){
+        var pre=h("pre","codeblock"); pre.style.margin="2px 0 0";
+        pre.appendChild(document.createTextNode(e.code));
+        pre.addEventListener("click",function(ev){ ev.stopPropagation(); copyText(e.code); });
+        card.appendChild(pre);
+      }
+      if(e.d){
+        var dd=h("div","r-desc"); dd.appendChild(hl(e.d, query.trim().split(/\s+/)[0]||""));
+        card.appendChild(dd);
+      }
+      card.addEventListener("click",function(){
+        copyText(e.c || e.k || e.code || e.d || e.n);
+      });
+      grid.appendChild(card);
+    });
+    g.appendChild(grid);
+    content.appendChild(g);
+  });
+
+  if(!any){
+    var empty=h("div","ref-empty");
+    empty.appendChild(h("p",null,"没有匹配的内容"));
+    var m=h("p"); m.appendChild(h("span","mono",'query: "'+query+'"'));
+    empty.appendChild(m);
+    var btn=h("button","outline-reset","清除搜索"); btn.type="button"; btn.style.width="auto"; btn.style.margin="16px auto 0"; btn.style.padding="6px 18px";
+    btn.addEventListener("click",function(){ setQuery(""); $("#search").focus(); });
+    empty.appendChild(btn);
+    content.appendChild(empty);
+  }
+}
+
+/* ---------- 模式切换与搜索 ---------- */
+function setMode(m){
+  mode=m;
+  $("#btn-learn").classList.toggle("active", m==="learn");
+  $("#btn-ref").classList.toggle("active", m==="ref");
+  $("#learn-view").hidden = m!=="learn";
+  $("#ref-view").hidden = m!=="ref";
+  syncHash();
+  window.scrollTo({top:0});
+}
+function setQuery(q){
+  query=q; $("#search").value=q;
+  if(mode!=="ref" && q){ setMode("ref"); }
+  if(mode==="ref") renderRef();
+  syncHash();
+}
+function syncHash(){
+  var hs = mode==="ref" ? "#ref" : "#learn";
+  if(mode==="ref" && query) hs += "?q="+encodeURIComponent(query);
+  try{ history.replaceState(null,"",hs); }catch(e){}
+}
+function parseHash(){
+  var hs=location.hash||"";
+  if(hs.indexOf("#ref")===0){
+    var qi=hs.indexOf("?q=");
+    if(qi!==-1){ query=decodeURIComponent(hs.slice(qi+3)); $("#search").value=query; }
+    setMode("ref"); renderRef();
+  }
+}
+
+$("#btn-learn").addEventListener("click",function(){ setMode("learn"); });
+$("#btn-ref").addEventListener("click",function(){ setMode("ref"); });
+$("#progress-pill").addEventListener("click",function(){ setMode("learn"); });
+$("#search").addEventListener("input",function(ev){ setQuery(ev.target.value); });
+$("#search").addEventListener("keydown",function(ev){
+  if(ev.key==="Escape"){ setQuery(""); ev.target.blur(); }
+});
+document.addEventListener("keydown",function(ev){
+  var typing=/^(INPUT|TEXTAREA)$/.test(document.activeElement && document.activeElement.tagName || "");
+  if((ev.ctrlKey||ev.metaKey) && ev.key.toLowerCase()==="k"){ ev.preventDefault(); $("#search").focus(); $("#search").select(); }
+  else if(ev.key==="/" && !typing){ ev.preventDefault(); $("#search").focus(); }
+  else if(ev.key==="1" && !typing){ setMode("learn"); }
+  else if(ev.key==="2" && !typing){ setMode("ref"); }
+});
+
+/* ---------- 学习模式滚动高亮 ---------- */
+var scrollTick=false;
+window.addEventListener("scroll",function(){
+  if(scrollTick||mode!=="learn") return;
+  scrollTick=true;
+  requestAnimationFrame(function(){
+    scrollTick=false;
+    var current=null;
+    document.querySelectorAll(".unit").forEach(function(u){
+      if(u.getBoundingClientRect().top<120) current=u.id.replace("unit-","");
+    });
+    document.querySelectorAll(".outline-item").forEach(function(it){
+      it.classList.toggle("current", it.dataset.unit===current);
+    });
+  });
+},{passive:true});
+
+/* ---------- 启动 ---------- */
+renderLearn();
+renderRef();
+updatePill();
+parseHash();
+</script>
+</body>
+</html>
