@@ -316,9 +316,36 @@ mark{background:rgba(251,191,36,.3);color:#ffe9b8;border-radius:3px;padding:0 1p
   font-size:12px;color:var(--text-3);display:flex;gap:8px;flex-wrap:wrap;
 }
 .footer-note a{color:var(--blue);text-decoration:none}
+
+/* ============ noscript 提示 ============ */
+.noscript-note{
+  max-width:720px;margin:80px auto;padding:24px 28px;
+  background:var(--panel);border:1px solid var(--border);border-radius:12px;
+  font-size:14px;color:var(--text-2);line-height:1.9;text-align:center;
+}
+
+/* ============ 打印（速查手册场景） ============ */
+@media print{
+  body{background:#fff;background-image:none;color:#111;font-size:12px}
+  .topbar,.side,.copy-hint,.r-copy,.progress-pill{display:none!important}
+  .container{max-width:none;padding:0}
+  .view-grid{display:block}
+  .unit,.ref-card,.term{break-inside:avoid;box-shadow:none;transform:none!important}
+  .unit,.ref-card{background:#fff;border-color:#ccc}
+  .ref-card .r-name,.ref-card .r-cmd,.term-line .cmd-text{color:#111}
+  .ref-card .r-desc,.unit-body{color:#333}
+  .term{background:#f6f6f6;border-color:#ccc}
+}
 </style>
 </head>
 <body>
+
+<noscript>
+  <div class="noscript-note">
+    本页面为纯前端交互页面，正文与速查手册均由 JavaScript 渲染。<br>
+    请在浏览器中启用 JavaScript 后刷新，即可查看完整内容。
+  </div>
+</noscript>
 
 <header class="topbar">
   <div class="brand">
@@ -399,7 +426,7 @@ var STAGES = [
       {c:"/compact", d:"手动压缩上下文，可附自定义说明"},
       {c:"/hotkeys", d:"显示所有键盘快捷键"}
     ], slash:true},
-    {t:"p", x:"完整 18 条命令见右侧「速查手册」模式，可搜索、可复制。"}
+    {t:"p", x:"完整 18 条命令见「速查手册」模式，可搜索、可复制。"}
   ]},
   { id:"u4", title:"案例：完成第一次小型代码审查", tag:"case", blocks:[
     {t:"p", x:"<strong>场景</strong>：接手一个模块，先理解职责和风险，再在确认问题后做最小修改。"},
@@ -486,7 +513,8 @@ var STAGES = [
       ["${@:N}","从第 N 个参数开始"],
       ["${@:N:L}","从第 N 个起取 L 个"]
     ]},
-    {t:"warn", x:"模板名取自文件名（review.md 即 /review）；description 省略时使用首个非空行；argument-hint 中 <尖括号> 必填、[方括号] 可选。<strong>prompts/ 的发现不递归</strong>，子目录中的模板需显式加入设置或包清单。"}
+    {t:"warn", x:"模板名取自文件名（review.md 即 /review）；description 省略时使用首个非空行；argument-hint 中 <尖括号> 必填、[方括号] 可选。<strong>prompts/ 的发现不递归</strong>，子目录中的模板需显式加入设置或包清单。"},
+    {t:"tip", x:"键盘行编辑与树导航的完整键位表见「速查手册」模式的「编辑器操作」「树导航与过滤」两类。"}
   ]},
   { id:"u11", title:"包（Packages）", tag:"core", blocks:[
     {t:"p", x:"包把扩展、技能、提示模板和主题打包，通过 npm 或 git 分享。"},
@@ -728,7 +756,7 @@ function renderBlock(b){
   if(b.t==="warn") return h("div","warn",h("span",null,b.x).outerHTML);
   if(b.t==="list"){
     var ul=h("ul","blist");
-    b.items.forEach(function(x){ ul.appendChild(h("li",null,x)); });
+    b.items.forEach(function(x){ var li=h("li"); li.textContent=x; ul.appendChild(li); });
     return ul;
   }
   if(b.t==="cmds"){
@@ -1013,7 +1041,10 @@ window.addEventListener("scroll",function(){
       if(u.getBoundingClientRect().top<120) current=u.id.replace("unit-","");
     });
     document.querySelectorAll(".outline-item").forEach(function(it){
-      it.classList.toggle("current", it.dataset.unit===current);
+      var isCurrent = it.dataset.unit===current;
+      it.classList.toggle("current", isCurrent);
+      if(isCurrent) it.setAttribute("aria-current","location");
+      else it.removeAttribute("aria-current");
     });
   });
 },{passive:true});

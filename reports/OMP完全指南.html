@@ -1,0 +1,1194 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OMP 完全指南 · 从模型角色到多智能体</title>
+<style>
+:root{
+  --bg:#0c0e12; --bg-soft:#10141a; --panel:#12161d; --panel-2:#171c26; --panel-3:#1c2230;
+  --border:#232b3a; --border-soft:#1b2230;
+  --text:#e8eaf0; --text-2:#9aa3b2; --text-3:#5c6577;
+  --green:#4ade80; --amber:#fbbf24; --purple:#a78bfa; --blue:#60a5fa; --red:#f87171;
+  --mono:ui-monospace,"Cascadia Code","JetBrains Mono","SF Mono",Consolas,"Courier New",monospace;
+  --sans:-apple-system,"SF Pro Text","PingFang SC","Microsoft YaHei","Noto Sans SC",sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  background:var(--bg);color:var(--text);font-family:var(--sans);
+  font-size:15px;line-height:1.8;
+  background-image:radial-gradient(1200px 500px at 70% -200px,rgba(74,222,128,.06),transparent 60%),
+                   radial-gradient(900px 420px at 10% -160px,rgba(96,165,250,.05),transparent 60%);
+  min-height:100vh;
+}
+::selection{background:rgba(74,222,128,.25)}
+code,kbd,pre,.mono{font-family:var(--mono)}
+
+/* ============ 顶栏 ============ */
+.topbar{
+  position:sticky;top:0;z-index:50;
+  display:flex;align-items:center;gap:18px;flex-wrap:wrap;
+  padding:12px 24px;
+  background:rgba(12,14,18,.86);backdrop-filter:blur(14px);
+  border-bottom:1px solid var(--border-soft);
+}
+.brand{display:flex;align-items:baseline;gap:12px;min-width:0}
+.logo{
+  font-family:var(--mono);font-weight:700;font-size:18px;color:var(--green);
+  background:linear-gradient(180deg,#141a12,#0e130e);
+  border:1px solid #1f3526;border-radius:8px;padding:3px 10px;line-height:1.4;
+  text-shadow:0 0 12px rgba(74,222,128,.5);
+}
+.brand-title{font-size:16px;font-weight:650;letter-spacing:.02em;white-space:nowrap}
+.brand-sub{font-size:12px;color:var(--text-3);white-space:nowrap}
+.mode-switch{
+  display:flex;background:var(--panel);border:1px solid var(--border);
+  border-radius:10px;padding:3px;gap:2px;
+}
+.mode-btn{
+  font-family:var(--sans);font-size:13.5px;color:var(--text-2);
+  background:transparent;border:none;border-radius:8px;padding:6px 16px;cursor:pointer;
+  transition:all .18s ease;white-space:nowrap;
+}
+.mode-btn:hover{color:var(--text)}
+.mode-btn.active{background:var(--panel-3);color:var(--text);box-shadow:inset 0 0 0 1px var(--border)}
+.searchbox{
+  margin-left:auto;display:flex;align-items:center;gap:8px;
+  background:var(--panel);border:1px solid var(--border);border-radius:10px;
+  padding:7px 12px;min-width:260px;flex:0 1 340px;
+  transition:border-color .18s ease;
+}
+.searchbox:focus-within{border-color:var(--green);box-shadow:0 0 0 3px rgba(74,222,128,.12)}
+.searchbox svg{flex:none;opacity:.55}
+.searchbox input{
+  flex:1;min-width:0;background:transparent;border:none;outline:none;
+  color:var(--text);font-size:13.5px;font-family:var(--sans);
+}
+.searchbox input::placeholder{color:var(--text-3)}
+.searchbox kbd{flex:none}
+.progress-pill{
+  font-family:var(--mono);font-size:12px;color:var(--text-2);
+  border:1px solid var(--border);border-radius:999px;padding:5px 12px;
+  background:var(--panel);white-space:nowrap;cursor:pointer;
+}
+.progress-pill b{color:var(--green);font-weight:600}
+
+/* ============ 布局 ============ */
+.container{max-width:1240px;margin:0 auto;padding:28px 24px 120px}
+.view-grid{display:grid;grid-template-columns:250px minmax(0,1fr);gap:32px;align-items:start}
+.view-grid>*{min-width:0}
+@media(max-width:920px){
+  .view-grid{grid-template-columns:1fr}.side{position:static!important}
+  .dtable{display:block;overflow-x:auto}
+}
+.side{position:sticky;top:76px}
+
+/* ============ 学习路径：大纲 ============ */
+.outline-stage{margin-bottom:20px}
+.outline-stage-head{
+  display:flex;align-items:center;gap:8px;margin-bottom:8px;
+  font-size:12px;font-weight:700;letter-spacing:.14em;color:var(--text-3);
+}
+.stage-dot{width:8px;height:8px;border-radius:50%;flex:none}
+.stage-bar{flex:1;height:3px;background:var(--panel-3);border-radius:2px;overflow:hidden}
+.stage-bar i{display:block;height:100%;border-radius:2px;transition:width .3s ease}
+.outline-item{
+  display:flex;align-items:center;gap:10px;width:100%;text-align:left;
+  padding:7px 10px;border-radius:8px;border:1px solid transparent;
+  background:transparent;color:var(--text-2);font-size:13.5px;cursor:pointer;
+  font-family:var(--sans);transition:all .15s ease;
+}
+.outline-item:hover{background:var(--panel);color:var(--text)}
+.outline-item.current{background:var(--panel-2);border-color:var(--border);color:var(--text)}
+.outline-item .tick{
+  flex:none;width:15px;height:15px;border-radius:50%;
+  border:1.5px solid var(--text-3);display:grid;place-items:center;
+  font-size:10px;color:transparent;transition:all .15s ease;
+}
+.outline-item.done .tick{background:var(--green);border-color:var(--green);color:#08130c}
+.outline-item.done{color:var(--text-3)}
+.outline-reset{
+  margin-top:8px;width:100%;font-size:12px;color:var(--text-3);
+  background:transparent;border:1px dashed var(--border);border-radius:8px;
+  padding:6px;cursor:pointer;font-family:var(--sans);
+}
+.outline-reset:hover{color:var(--red);border-color:var(--red)}
+
+/* ============ 学习路径：单元 ============ */
+.stage-banner{
+  display:flex;align-items:center;gap:14px;margin:44px 0 18px;
+}
+.stage-banner:first-child{margin-top:0}
+.stage-num{
+  font-family:var(--mono);font-size:12px;font-weight:700;letter-spacing:.12em;
+  padding:4px 10px;border-radius:6px;border:1px solid;
+}
+.stage-banner h2{font-size:22px;font-weight:700;letter-spacing:.01em}
+.stage-banner p{font-size:13px;color:var(--text-3);margin-left:auto;text-align:right}
+.unit{
+  background:var(--panel);border:1px solid var(--border-soft);border-radius:14px;
+  padding:22px 24px;margin-bottom:16px;scroll-margin-top:84px;
+  transition:border-color .2s ease;
+}
+.unit:hover{border-color:var(--border)}
+.unit-head{display:flex;align-items:flex-start;gap:14px;margin-bottom:6px}
+.unit-check{
+  flex:none;margin-top:5px;width:22px;height:22px;border-radius:50%;cursor:pointer;
+  border:2px solid var(--text-3);background:transparent;display:grid;place-items:center;
+  color:transparent;font-size:12px;transition:all .18s ease;
+}
+.unit-check:hover{border-color:var(--green)}
+.unit.done .unit-check{background:var(--green);border-color:var(--green);color:#08130c}
+.unit.done .unit-title{color:var(--text-3);text-decoration:line-through;text-decoration-color:var(--text-3)}
+.unit-title{font-size:17px;font-weight:650}
+.unit-tag{
+  flex:none;margin-top:3px;font-size:11px;font-weight:700;letter-spacing:.1em;
+  padding:2px 8px;border-radius:5px;
+}
+.tag-case{background:rgba(251,191,36,.12);color:var(--amber);border:1px solid rgba(251,191,36,.3)}
+.tag-core{background:rgba(74,222,128,.1);color:var(--green);border:1px solid rgba(74,222,128,.28)}
+.unit-body{color:var(--text-2);font-size:14.5px}
+.unit-body p{margin:8px 0}
+.unit-body strong{color:var(--text);font-weight:600}
+
+/* 块：提示 */
+.tip,.warn{
+  border-radius:10px;padding:10px 14px;margin:12px 0;font-size:13.5px;
+  display:flex;gap:10px;align-items:flex-start;line-height:1.7;
+}
+.tip{background:rgba(96,165,250,.07);border:1px solid rgba(96,165,250,.22);color:#b9d4f5}
+.warn{background:rgba(251,191,36,.07);border:1px solid rgba(251,191,36,.25);color:#f0dcab}
+.tip::before{content:"提示";flex:none;font-size:11px;font-weight:700;color:var(--blue);border:1px solid rgba(96,165,250,.4);border-radius:4px;padding:1px 6px;margin-top:3px}
+.warn::before{content:"注意";flex:none;font-size:11px;font-weight:700;color:var(--amber);border:1px solid rgba(251,191,36,.4);border-radius:4px;padding:1px 6px;margin-top:3px}
+
+/* 块：列表 */
+.blist{list-style:none;margin:10px 0}
+.blist li{position:relative;padding:3px 0 3px 20px}
+.blist li::before{content:"▸";position:absolute;left:0;color:var(--green)}
+
+/* 块：终端 */
+.term{
+  background:#0a0d13;border:1px solid var(--border);border-radius:10px;
+  overflow:hidden;margin:12px 0;
+}
+.term-head{
+  display:flex;align-items:center;gap:6px;padding:8px 12px;
+  border-bottom:1px solid var(--border-soft);background:rgba(255,255,255,.015);
+}
+.term-dot{width:10px;height:10px;border-radius:50%}
+.term-title{margin-left:6px;font-family:var(--mono);font-size:11px;color:var(--text-3);letter-spacing:.06em}
+.term-body{padding:6px 0;font-family:var(--mono);font-size:13px;line-height:1.9;overflow-x:auto}
+.term-line{
+  display:flex;align-items:baseline;gap:10px;padding:2px 14px;
+  cursor:pointer;transition:background .12s ease;position:relative;white-space:pre;
+}
+.term-line:hover{background:rgba(74,222,128,.05)}
+.term-line .prompt{color:var(--green);flex:none;user-select:none}
+.term-line .cmd-text{color:#d7e0ee}
+.term-line .cmd-desc{
+  color:var(--text-3);font-family:var(--sans);font-size:12.5px;
+  white-space:normal;margin-left:auto;text-align:right;padding-left:16px;
+}
+.copy-hint{
+  position:absolute;right:10px;top:50%;transform:translateY(-50%);
+  font-family:var(--sans);font-size:11px;color:var(--green);
+  background:#0f1a12;border:1px solid #1f3526;border-radius:5px;padding:1px 7px;
+  opacity:0;pointer-events:none;transition:opacity .15s ease;
+}
+.term-line:hover .copy-hint{opacity:1}
+.term-line.has-desc:hover .copy-hint{opacity:0}
+
+/* 块：键帽 */
+.keys-row{
+  display:flex;align-items:center;gap:12px;padding:9px 4px;
+  border-bottom:1px dashed var(--border-soft);cursor:pointer;border-radius:6px;
+  transition:background .12s ease;
+}
+.keys-row:last-child{border-bottom:none}
+.keys-row:hover{background:rgba(255,255,255,.02)}
+.keys-row .kcombo{display:flex;align-items:center;gap:5px;flex:none;min-width:210px;flex-wrap:wrap}
+kbd{
+  font-family:var(--mono);font-size:12.5px;color:#dbe2f0;
+  background:var(--panel-3);border:1px solid #2c3548;border-bottom-width:3px;
+  border-radius:6px;padding:2px 8px;line-height:1.5;white-space:nowrap;
+}
+.keys-row .kalt{font-size:11.5px;color:var(--text-3)}
+.keys-row .kdesc{color:var(--text-2);font-size:13.5px}
+
+/* 块：代码 */
+.codeblock{
+  background:#0a0d13;border:1px solid var(--border);border-radius:10px;
+  padding:14px 16px;margin:12px 0;font-family:var(--mono);font-size:13px;
+  line-height:1.75;overflow-x:auto;white-space:pre;color:#c9d4e6;cursor:pointer;
+  position:relative;transition:border-color .15s ease;
+}
+.codeblock:hover{border-color:#31405a}
+.codeblock .lang{
+  position:absolute;top:8px;right:12px;font-size:10.5px;color:var(--text-3);
+  letter-spacing:.1em;text-transform:uppercase;
+}
+
+/* 块：表格 */
+.dtable{width:100%;border-collapse:collapse;margin:12px 0;font-size:13.5px}
+.dtable th{
+  text-align:left;font-size:12px;letter-spacing:.08em;color:var(--text-3);
+  font-weight:600;padding:8px 12px;border-bottom:1px solid var(--border);
+}
+.dtable td{padding:9px 12px;border-bottom:1px solid var(--border-soft);color:var(--text-2);vertical-align:top}
+.dtable td:first-child{color:var(--text);font-family:var(--mono);font-size:12.5px;white-space:nowrap}
+.dtable tr:last-child td{border-bottom:none}
+
+/* 块：案例步骤 */
+.steps{list-style:none;counter-reset:step;margin:14px 0 4px}
+.steps li{
+  counter-increment:step;position:relative;padding:0 0 22px 44px;
+}
+.steps li::before{
+  content:counter(step);position:absolute;left:0;top:1px;
+  width:26px;height:26px;border-radius:50%;
+  background:var(--panel-3);border:1px solid var(--border);
+  color:var(--text);font-family:var(--mono);font-size:12.5px;font-weight:600;
+  display:grid;place-items:center;
+}
+.steps li::after{
+  content:"";position:absolute;left:13px;top:30px;bottom:2px;width:1px;
+  background:var(--border);
+}
+.steps li:last-child::after{display:none}
+.steps li:last-child{padding-bottom:4px}
+.step-text{color:var(--text);font-size:14.5px;padding-top:2px}
+
+/* ============ 速查手册 ============ */
+.ref-nav-item{
+  display:flex;align-items:center;gap:9px;width:100%;text-align:left;
+  padding:8px 11px;border-radius:8px;border:1px solid transparent;
+  background:transparent;color:var(--text-2);font-size:13.5px;cursor:pointer;
+  font-family:var(--sans);transition:all .15s ease;
+}
+.ref-nav-item:hover{background:var(--panel);color:var(--text)}
+.ref-nav-item.active{background:var(--panel-2);border-color:var(--border);color:var(--text)}
+.ref-nav-item .cat-dot{width:7px;height:7px;border-radius:2px;flex:none}
+.ref-nav-item .cnt{margin-left:auto;font-family:var(--mono);font-size:11.5px;color:var(--text-3)}
+.ref-group{margin-bottom:36px;scroll-margin-top:84px}
+.ref-group-head{
+  display:flex;align-items:baseline;gap:10px;margin-bottom:12px;
+  padding-bottom:8px;border-bottom:1px solid var(--border);
+}
+.ref-group-head h3{font-size:16px;font-weight:700}
+.ref-group-head .cnt{font-family:var(--mono);font-size:12px;color:var(--text-3)}
+.ref-entries{
+  display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:10px;
+}
+.ref-card{
+  background:var(--panel);border:1px solid var(--border-soft);border-radius:10px;
+  padding:12px 14px;cursor:pointer;transition:all .15s ease;position:relative;
+  display:flex;flex-direction:column;gap:6px;min-width:0;
+}
+.ref-card:hover{border-color:#31405a;background:var(--panel-2);transform:translateY(-1px)}
+.ref-card .r-name{font-size:13.5px;font-weight:600;color:var(--text);line-height:1.5}
+.ref-card .r-cmd{
+  font-family:var(--mono);font-size:12.5px;color:var(--green);
+  white-space:pre-wrap;word-break:break-all;line-height:1.6;
+}
+.ref-card .r-cmd .prompt{color:rgba(74,222,128,.55);user-select:none}
+.ref-card .r-keys{display:flex;gap:5px;flex-wrap:wrap;align-items:center}
+.ref-card .r-desc{font-size:12.5px;color:var(--text-2);line-height:1.65}
+.ref-card .r-copy{
+  position:absolute;top:8px;right:10px;font-size:10.5px;color:var(--text-3);
+  opacity:0;transition:opacity .15s ease;font-family:var(--mono);
+}
+.ref-card:hover .r-copy{opacity:1}
+.ref-empty{
+  text-align:center;padding:80px 20px;color:var(--text-3);
+}
+.ref-empty .mono{font-size:14px;color:var(--amber)}
+mark{background:rgba(251,191,36,.3);color:#ffe9b8;border-radius:3px;padding:0 1px}
+
+/* toast */
+.toast{
+  position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(20px);
+  background:#0f1a12;border:1px solid #1f3526;color:var(--green);
+  font-size:13px;padding:9px 18px;border-radius:10px;
+  opacity:0;pointer-events:none;transition:all .25s ease;z-index:99;
+  font-family:var(--mono);box-shadow:0 8px 30px rgba(0,0,0,.5);
+}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+.footer-note{
+  margin-top:60px;padding-top:20px;border-top:1px solid var(--border-soft);
+  font-size:12px;color:var(--text-3);display:flex;gap:8px;flex-wrap:wrap;
+}
+.footer-note a{color:var(--blue);text-decoration:none}
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="brand">
+    <span class="logo">❯_</span>
+    <span class="brand-title">OMP 完全指南</span>
+    <span class="brand-sub">从模型角色到多智能体</span>
+  </div>
+  <nav class="mode-switch" aria-label="模式切换">
+    <button class="mode-btn active" id="btn-learn" type="button">学习路径</button>
+    <button class="mode-btn" id="btn-ref" type="button">速查手册</button>
+  </nav>
+  <div class="searchbox">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#9aa3b2" stroke-width="2.4" stroke-linecap="round"><circle cx="11" cy="11" r="7"></circle><line x1="21" y1="21" x2="16.5" y2="16.5"></line></svg>
+    <input id="search" type="text" placeholder="搜索命令、快捷键、概念…" autocomplete="off" spellcheck="false">
+    <kbd>Ctrl K</kbd>
+  </div>
+  <button class="progress-pill" id="progress-pill" type="button" title="点击查看学习路径">学习进度 <b id="progress-num">0/0</b></button>
+</header>
+
+<main class="container">
+  <section id="learn-view" data-screen-label="学习路径">
+    <div class="view-grid">
+      <aside class="side" id="outline"></aside>
+      <div id="learn-content"></div>
+    </div>
+  </section>
+  <section id="ref-view" data-screen-label="速查手册" hidden>
+    <div class="view-grid">
+      <aside class="side" id="ref-nav"></aside>
+      <div id="ref-content"></div>
+    </div>
+  </section>
+  <div class="footer-note">
+    <span>内容整理自</span><span>《从模型角色到多智能体：一篇讲透 OMP》</span>
+    <span>·</span><span>点击任意命令 / 快捷键即可复制</span>
+    <span>·</span><span>快捷键：Ctrl+K 搜索，Esc 清除，1 / 2 切换模式</span>
+  </div>
+</main>
+
+<div class="toast" id="toast" role="status" aria-live="polite">已复制</div>
+
+<script>
+"use strict";
+/* ================================================================
+   数据：学习路径（忠实整理自《从模型角色到多智能体：一篇讲透 OMP》）
+   块类型: p / list / tip / warn / cmds / keys / code / table / steps
+================================================================ */
+var STAGES = [
+{ id:"s1", num:"01", name:"入门", color:"#4ade80",
+  desc:"安装、编辑器键位、模型角色与会话树，跑通并维护第一次会话。",
+  units:[
+  { id:"u1", title:"安装与启动", tag:"core", blocks:[
+    {t:"p", x:"已装 Bun 用方式 A；否则用方式 B 自动选择 Bun。安装后在项目目录直接启动 <strong>omp</strong>。"},
+    {t:"cmds", items:[
+      {c:"bun install -g @oh-my-pi/pi-coding-agent", d:"方式 A：已经安装 Bun"},
+      {c:"curl -fsSL https://raw.githubusercontent.com/can1357/oh-my-pi/main/scripts/install.sh | sh", d:"方式 B：自动选择 Bun"},
+      {c:"omp --version", d:"验证安装"},
+      {c:"omp", d:"启动交互会话，首次运行用 /login 登录"},
+      {c:"omp -c", d:"继续当前项目最近的会话"},
+      {c:"omp -r", d:"选择历史会话、查看当前项目会话列表"}
+    ]}
+  ]},
+  { id:"u2", title:"编辑器常用键位", tag:"core", blocks:[
+    {t:"keys", items:[
+      {k:"Shift+Tab", alt:"", d:"循环切换思考等级"},
+      {k:"Ctrl+T", alt:"", d:"显示或隐藏思考块；只改可见性，不改推理强度"},
+      {k:"Ctrl+O", alt:"", d:"展开或折叠工具输出"},
+      {k:"Alt+R", alt:"", d:"重试上次失败的助手回合"},
+      {k:"Alt+Up", alt:"或 Shift+Up", d:"把最近排队的消息移回编辑器"},
+      {k:"Alt+Shift+C", alt:"", d:"复制整个提示"},
+      {k:"Alt+Shift+P", alt:"", d:"切换计划模式"},
+      {k:"Ctrl+R", alt:"", d:"搜索提示历史"},
+      {k:"Shift+Enter", alt:"或 Ctrl+J", d:"插入换行；Windows Terminal 优先用 Alt+Enter"},
+      {k:"Alt+A", alt:"或 Ctrl+S", d:"打开智能体中心"}
+    ]},
+    {t:"tip", x:"显示为「未绑定」的动作需先分配组合键。运行 <strong>/hotkeys</strong> 查看当前版本的权威映射。"}
+  ]},
+  { id:"u3", title:"配置模型角色", tag:"core", blocks:[
+    {t:"p", x:"<strong>模型名称会变，角色相对稳定。</strong>模型角色把不同类型的任务映射到不同模型。不配置也能运行；需要稳定控制质量、延迟、成本或服务商时再固定角色。"},
+    {t:"code", lang:"yaml", title:"modelRoles", text:"modelRoles:\n  default: anthropic/claude-sonnet-4-5\n  smol: anthropic/claude-haiku-4-5\n  slow: anthropic/claude-opus-4-6:high\n  plan: openai/gpt-5.3-codex:high\n  commit: anthropic/claude-haiku-4-5"},
+    {t:"table", head:["角色","任务"], rows:[
+      ["default","常规实现、代码问答、主会话默认"],
+      ["smol","分类、机械修改、短摘要"],
+      ["slow","复杂故障、架构权衡、高风险 Review"],
+      ["plan","多文件任务的只读规划"],
+      ["commit","提交信息等短而稳定的输出"]
+    ]}
+  ]},
+  { id:"u4", title:"会话是一棵树", tag:"core", blocks:[
+    {t:"p", x:"会话按工作目录归类，以 JSONL 保存。每个回合都记录父节点，因此可以从任意历史回合继续，形成多条互不覆盖的分支。异常退出通常只丢失尚未完成的末尾响应。"},
+    {t:"table", head:["目标","操作","结果"], rows:[
+      ["开始一个无关的新任务","/new","创建新会话"],
+      ["继续其他历史会话","/resume","选择并打开已有会话"],
+      ["浏览或比较同一问题的多种方案","/tree","在当前会话文件内切换或创建分支"],
+      ["从较早回合创建替代延续","/branch","按设置的分支行为创建替代延续"],
+      ["为大型或高风险实验建立隔离副本","/fork","将当前会话克隆为独立文件"],
+      ["重命名会话","/rename <title>","设置容易识别的名称"]
+    ]},
+    {t:"tip", x:"<strong>只需要比较思路 → /tree；需要明确的检查点或完全隔离的实验 → /fork。</strong>/tree 重新提交较早用户消息时会在原路径旁创建新分支，原路径保留。"}
+  ]},
+  { id:"u5", title:"维护长会话", tag:"core", blocks:[
+    {t:"table", head:["需求","操作","作用"], rows:[
+      ["同一任务的历史过长","/compact [focus]","压缩旧上下文后继续当前会话"],
+      ["阶段结束，需要结构化状态记录","/handoff [focus]","生成交接内容并就地压缩当前会话"],
+      ["查看上下文占用","/context","判断下一轮内容是否超出上下文窗口"],
+      ["查看额度和速率限制","/usage","区分上下文问题、额度问题和速率限制"]
+    ]},
+    {t:"p", x:"/compact 与 /handoff 的详细行为见进阶部分「上下文、压缩与交接」。"}
+  ]}
+]},
+{ id:"s2", num:"02", name:"进阶", color:"#fbbf24",
+  desc:"控制上下文、记忆与成本；掌握五种工作模式、Prewalk、Vibe、子智能体与顾问。",
+  units:[
+  { id:"u6", title:"上下文、压缩与交接", tag:"core", blocks:[
+    {t:"table", head:["情况","命令","结果"], rows:[
+      ["会话健康，但需要更多空间或想强调某些决策","/compact [focus]","旧上下文变摘要/归档，出现分界线"],
+      ["下一阶段需要目标、决策、进展、下一步的结构化记录","/handoff [focus]","生成交接文档并就地替换旧活跃上下文"],
+      ["大量命令/文件/生成代码/图像/思考块挤占对话","/shake [elide|images|thinking]","用占位符替换重内容；elide 会存工件可恢复"]
+    ]},
+    {t:"p", x:"<strong>/compact 一次性方法</strong>：soft（模型摘要）、remote（服务商原生 OpenAI 兼容压缩，回退 soft）、snapcompact（本地图像归档，不接受焦点文本）。手动 /compact 在自动压缩禁用时仍有效；有响应运行时先中止该响应。"},
+    {t:"warn", x:"<strong>/handoff 尽管叫交接，当前版本就地压缩当前会话</strong>：不会开启后续会话，默认也不保存 Markdown 文件（compaction.handoffSaveToDisk: true 才把自动交接存盘）。运行前等当前响应完成或中止它。"},
+    {t:"p", x:"<strong>/shake</strong> 默认 elide：被移除区域存为工件，占位符带 artifact://… 恢复引用。/shake images、/shake thinking 不创建恢复工件。Nothing to shake 是成功空操作。"}
+  ]},
+  { id:"u7", title:"记忆：选择一个后端", tag:"core", blocks:[
+    {t:"p", x:"记忆让 omp 无需反复重述仓库约定、架构决策、审查偏好就能接续工作。<strong>它与压缩是两回事：压缩只缩短单个会话，记忆影响之后的会话。</strong>记忆默认关闭：/settings → Memory 挑一个后端。"},
+    {t:"table", head:["后端","适用场景","存储与默认作用域","重要取舍"], rows:[
+      ["off（默认）","不需要跨会话知识","无记忆存储","关闭记忆不影响已有会话记录"],
+      ["local","定期把已持久化会话提炼成项目指导","本机文件，按工作目录隔离","批式摘要流水线，不可搜索；无法查阅或遗忘单条事实"],
+      ["mnemopi","提示词驱动的「记住、回忆、遗忘」","本地 SQLite，默认 per-project","默认 smol LLM 抽取；llmMode: none 可避免"],
+      ["hindsight","远程记忆库、共享基础设施、心智模型","Hindsight 服务器，默认 per-project-tagged","autoRetain 默认开启，对话文本离开本机"]
+    ]},
+    {t:"cmds", items:[
+      {c:"omp config set memory.backend local", d:"或 mnemopi / hindsight"},
+      {c:"omp config get memory.backend", d:"查看当前后端"}
+    ]},
+    {t:"p", x:"<strong>Hindsight 连接、记忆库与保留设置</strong>（完整键表，值为默认）："},
+    {t:"table", head:["设置","默认值","用途"], rows:[
+      ["hindsight.apiUrl","http://localhost:8888","云端或自托管服务器 URL"],
+      ["hindsight.apiToken","未设置","认证服务器的 Bearer token"],
+      ["hindsight.bankId","omp","记忆库基 id；per-project 模式追加项目名"],
+      ["hindsight.bankIdPrefix","未设置","记忆库基 id 前的可选前缀"],
+      ["hindsight.scoping","per-project-tagged","global / per-project / per-project-tagged"],
+      ["hindsight.bankMission","未设置","创建记忆库时应用的可选任务说明"],
+      ["hindsight.retainMission","未设置","保留用的可选指令"],
+      ["hindsight.autoRecall","true","首次模型回合之前召回"],
+      ["hindsight.autoRetain","true","按节奏及会话边界保留记录文本；false 仅提示词驱动写入"],
+      ["hindsight.retainMode","full-session","full-session upsert 一个会话文档；last-turn 按回合界定分块"],
+      ["hindsight.retainEveryNTurns","3","自动保留之间的用户回合数"],
+      ["hindsight.retainOverlapTurns","2","last-turn 模式下分块之间的重叠"],
+      ["hindsight.retainContext","omp","随保留数据发送的上下文标签"]
+    ]},
+    {t:"tip", x:"/settings 写入全局配置并在保存时切换后端；shell/YAML 改动对新启动进程生效。只想针对一个仓库时，把相同键放进 <strong>&lt;repo&gt;/.omp/config.yml</strong>（项目覆盖全局）。"}
+  ]},
+  { id:"u8", title:"记忆：隐私、作用域与控制", tag:"core", blocks:[
+    {t:"list", items:[
+      "Off 只关记忆处理，不禁用普通会话持久化；记忆命令不删除 ~/.omp/agent/sessions/ 下的文件。",
+      "Local 抽取阶段使用你配置的模型角色，过去的会话文本仍可能发给该服务商；输出过滤常见 token 与密钥模式，但不要故意让 omp 记住机密。",
+      "Mnemopi 本地嵌入可能下载嵌入模型；默认 llmMode: smol 用在线模型做抽取，不想要任何 LLM 处理就用 llmMode: none。",
+      "Hindsight autoRetain: true（默认）时每三个用户回合及会话边界发送用户和助手文本；召回与合成查询也发往该服务器。",
+      "关闭某个后端不删除它的存储——切换可逆，但要删除时必须另外清理。"
+    ]},
+    {t:"table", head:["作用域","Mnemopi","Hindsight"], rows:[
+      ["global","一个本地记忆库所有项目可见","一个远程记忆库所有项目可见"],
+      ["per-project","按绝对工作目录派生隔离库（默认）","按仓库名隔离；worktree 共享主检出名称"],
+      ["per-project-tagged","写项目库、召回合并共享全局库","带项目标签入共享库、召回合并全局（默认）"]
+    ]},
+    {t:"cmds", items:[
+      {c:"/memory view", d:"查看当前注入载荷；空警告表示后端关闭/不可用/尚未召回"},
+      {c:"/memory stats", d:"后端统计（/memory diagnose 做专属诊断）"},
+      {c:"/memory enqueue", d:"请求更强的维护/保留动作（别名 /memory rebuild）"},
+      {c:"/memory clear", d:"清除后端能清的内容；Hindsight 远程库不会被删除"}
+    ], slash:true},
+    {t:"warn", x:"在累积敏感数据前先选定作用域（客户工作等硬边界场景优先 per-project）。<strong>召回或摘要出来的记忆是背景上下文，不是指令</strong>——与当前提示词或仓库状态冲突时，以后者为准。local 生成产物是生成文件，编辑会被后续整合覆盖——过期就清空并排入重建。"}
+  ]},
+  { id:"u9", title:"工作模式：/plan 与 /goal", tag:"core", blocks:[
+    {t:"p", x:"<strong>/plan</strong> 把下一轮交给独立的 plan 角色模型，并过滤写入类工具。适合多文件修改、执行顺序不明显的重构和高风险设计。"},
+    {t:"code", lang:"text", text:"/plan 把 src/importer.ts 改成流式处理，并迁移所有调用方"},
+    {t:"list", items:[
+      "批准并执行：清除计划讨论，只交付最终计划；",
+      "批准并保留上下文：执行者看到完整讨论；",
+      "批准并压缩上下文：把讨论总结后继续。"
+    ]},
+    {t:"warn", x:"单文件小改动不值得额外走计划轮次。<strong>计划的价值来自降低执行风险，不来自形式上的「先写一份计划」。</strong>"},
+    {t:"p", x:"<strong>/goal</strong> 适合跨多轮、下一步可推导、但总工作量未知的任务，例如大规模迁移或持续修复测试。"},
+    {t:"cmds", items:[
+      {c:"/goal 将导入器改造成流式处理，更新所有调用方，并用现有测试证明兼容", d:"设定验收目标"},
+      {c:"/goal budget 200000", d:"目标模式应有预算"}
+    ], slash:true},
+    {t:"warn", x:"<strong>预算耗尽表示「停止扩张并汇报现状」，不等于任务完成。</strong>模型只有在能把每项交付映射到文件或命令证据时才应调用完成。子命令：/goal set/show/pause/resume/drop、/goal budget <N|off>。"}
+  ]},
+  { id:"u10", title:"工作模式：/loop、/background、/force、/fast", tag:"core", blocks:[
+    {t:"code", lang:"text", text:"/loop 10\n修复测试套件中下一个失败用例，并在每轮结束后重新运行相关测试"},
+    {t:"list", items:[
+      "/loop：无限循环，下一条提示成为循环提示；",
+      "/loop <prompt>：以该提示循环；/loop <N> [prompt]：首回合后自动重放 N 次；",
+      "/loop <duration> [prompt]：90s、10 min、1h30m，到墙钟截止停止；",
+      "迭代中按 esc 中止当前回合，Loop 保持启用；迭代间按 esc 暂停 Loop 并丢弃已捕获提示；再运行 /loop 完全禁用；",
+      "loop.mode 默认 prompt（同一会话延续），compact 每次重放前压缩，reset 每次重放前新会话。"
+    ]},
+    {t:"p", x:"<strong>/loop 没有目标语义</strong>，不会判断整体工作是否完成。适合机械迭代，不适合开放式交付。"},
+    {t:"p", x:"<strong>/background</strong>（或 /bg）让运行中的会话脱离 TUI 继续运行，通过 omp -c 重新接入。常与有明确边界的 /loop 或长时间任务配合。"},
+    {t:"warn", x:"<strong>分离不等于验证。</strong>回来后仍要检查产物、退出状态和测试结果。"},
+    {t:"p", x:"<strong>/force &lt;tool&gt; [prompt]</strong> 只在下一轮锁定指定工具一次（/force read 或 /force:read 等价），用于模型持续选错工具的情况。<strong>/fast</strong> 对支持的 OpenAI 模型切换优先服务层，以更高费用换更低延迟；/fast on/off/status，按模型家族独立记忆。"},
+    {t:"warn", x:"<strong>/force 不能修复模糊需求，/fast 不能修复糟糕的模型路由。</strong>"}
+  ]},
+  { id:"u11", title:"一张选择表与组合规则", tag:"core", blocks:[
+    {t:"table", head:["需求","选择"], rows:[
+      ["多文件任务，先论证再动手","/plan"],
+      ["长任务，Agent 应自行根据证据判断完成","/goal + token 预算"],
+      ["同一动作重复 N 次或持续一段时间","/loop"],
+      ["任务继续跑，人暂时离开","/background"],
+      ["下一轮必须调用某个工具","/force"],
+      ["同一任务上下文过长","/compact"],
+      ["当前阶段结束，需要结构化状态记录","/handoff [focus]（就地压缩当前会话）"],
+      ["换了一个无关任务","/new"]
+    ]},
+    {t:"table", head:["组合","结果"], rows:[
+      ["Loop + Fast","每个重复回合都使用 Fast"],
+      ["Loop + Force","只有接下来第一次模型调用被强制"],
+      ["Loop + 活跃 Goal","Loop 被禁用前优先于 Goal 的自动延续"],
+      ["Loop + Plan/Prewalk/Goal/Vibe","单一模式段显示优先级更高的工作状态——只是显示优先级，不证明 Loop 已关"],
+      ["loop.mode: reset + Vibe","该组合被拒绝：先退出 Vibe"],
+      ["Force + Plan","Force 只能选择 Plan 只读环境中的活跃工具"],
+      ["多个启动 --mode","启动模式互斥，只传一个"]
+    ]}
+  ]},
+  { id:"u12", title:"Prewalk：规划与实现交接", tag:"core", blocks:[
+    {t:"p", x:"Prewalk 在同一会话中先用较强模型理解仓库、识别风险并整理 todo，再把后续实现交给更快或更便宜的目标模型。对话、上下文、todo 和已有改动保持不变。"},
+    {t:"table", head:["工作形态","建议"], rows:[
+      ["前期调查复杂，后续是批量修改、例行测试或机械编辑","使用 Prewalk"],
+      ["需要持续设计、细致调试，或涉及安全和隐藏约束","让能力足够的模型完成全程"],
+      ["修改很小且路径明确","直接使用一个快速模型"]
+    ]},
+    {t:"cmds", items:[
+      {c:"omp --model @slow --prewalk-into @smol", d:"强模型规划，快速模型实现"},
+      {c:"omp --prewalk", d:"本次会话启用，目标为 @smol"},
+      {c:"omp config set prewalk.enabled true", d:"每次新会话启用"},
+      {c:"omp --no-prewalk", d:"本次会话不交接"}
+    ]},
+    {t:"p", x:"todo 可用且第一次文件编辑完成后才交接；第一次编辑仍由起始模型完成。状态栏 <strong>Armed</strong> 表示等待交接，<strong>Switched</strong> 表示已切换，<strong>Nothing to switch</strong> 表示目标与当前模型相同。恢复已有会话时需显式传入 --prewalk。"},
+    {t:"tip", x:"Prewalk 每次只交接一次；会话内运行不带参数的 /prewalk 可重新布防。Prewalk 只影响主会话，子智能体需单独配置。"}
+  ]},
+  { id:"u13", title:"Vibe：协调多个工作者", tag:"core", blocks:[
+    {t:"p", x:"Vibe 适合能拆成独立工作流的任务：前后端并行修改、迁移与审查分工、按文件划分的大规模清理。主会话负责拆分和验收，工作者负责搜索、编辑、运行命令和构建。"},
+    {t:"code", lang:"text", text:"/vibe 把这个版本拆分成彼此独立的工作流。让一个 fast 工作者更新那些机械性的调用点，再让一个 good 工作者审查迁移和兼容性风险。报告完成之前先验证两者。"},
+    {t:"table", head:["工作者","适用任务"], rows:[
+      ["fast","批量重命名、直接测试、样板代码、数据收集等机械工作"],
+      ["good","设计、调试、审查、有风险或跨多文件的改动"]
+    ]},
+    {t:"list", items:[
+      "为每个工作者写清范围、文件、限制和验收标准——工作者不会继承主会话的对话；",
+      "fast 遇到架构决策或持续卡住时，把决策或审查交给 good；",
+      "主会话核验各工作者的改动和测试结果后再报告完成；",
+      "再次运行 /vibe 退出：停止剩余工作者，恢复进入前的工具。"
+    ]},
+    {t:"code", lang:"yaml", title:"工作者模型", text:"modelRoles:\n  fast_worker: openai/gpt-5-mini\n  good_worker: anthropic/claude-sonnet-4-5:high\n\ntask:\n  agentModelOverrides:\n    sonic: \"@fast_worker\"\n    task: \"@good_worker\""},
+    {t:"warn", x:"启用前保存重要工作，划分互不重叠的文件范围，排除凭据和敏感路径，限制不应使用的工具。<strong>不要让多个工作者同时操作同一个 Git 状态。</strong>"}
+  ]},
+  { id:"u14", title:"子智能体、委托与顾问", tag:"core", blocks:[
+    {t:"p", x:"子智能体适合可独立推进的研究、实现和审查任务。用自然语言委托（名称区分大小写），运行 <strong>/agents</strong> 查看可用专家及状态。小型串行修改或每步都依赖上一步的工作应留在主会话。"},
+    {t:"table", head:["专家","用途"], rows:[
+      ["scout","只读探索仓库并汇总发现"],
+      ["designer","UI/UX、无障碍和视觉实现"],
+      ["reviewer","正确性与质量审查"],
+      ["security-reviewer","只读安全分析"],
+      ["librarian","核实外部库和 API"],
+      ["task","通用多步骤任务"],
+      ["sonic","机械编辑或数据采集"]
+    ]},
+    {t:"keys", items:[
+      {k:"J / K", alt:"或方向键", d:"智能体中心：选择工作者"},
+      {k:"Enter", alt:"", d:"智能体中心：查看记录"},
+      {k:"R", alt:"", d:"智能体中心：恢复停驻的工作者"},
+      {k:"X", alt:"", d:"智能体中心：终止并释放实例"},
+      {k:"Esc", alt:"", d:"智能体中心：关闭界面"}
+    ]},
+    {t:"code", lang:"markdown", title:".omp/agents/release-auditor.md", text:"---\nname: release-auditor\ndescription: Check release readiness and report concrete blockers.\ntools: read, grep, glob, bash\nmodel: \"@slow\"\nprewalk: false\nadvisor: \"@advisor\"\n---\n\nInspect the assigned release scope. Report evidence and blockers; do not edit files."},
+    {t:"p", x:"<strong>顾问（Advisor）</strong>用独立模型在主会话进行期间检查遗漏需求、风险、验证不足和不必要的复杂度。会话中用 /advisor、/advisor on/off、/advisor status、/advisor configure 控制；项目专属审查规则写入 .omp/WATCHDOG.md，阵容声明写入 WATCHDOG.yml。"},
+    {t:"table", head:["严重程度","含义"], rows:[
+      ["nit","清理、简化或低风险边界问题"],
+      ["concern","实质风险、遗漏约束或可能走偏"],
+      ["blocker","继续执行很可能浪费工作或产生错误结果（只有它能打断工作）"]
+    ]},
+    {t:"warn", x:"启用顾问会把提示、主智能体输出、推理和工具结果发送给顾问模型服务商——只选择获准处理当前仓库内容的模型和服务商。顾问建议不会自动执行；每个子智能体也都单独消耗模型用量。"}
+  ]},
+  { id:"u15", title:"案例：推进一次多文件重构", tag:"case", blocks:[
+    {t:"p", x:"<strong>场景</strong>：导入器需要改成流式处理，调用方较多，部分工作可以并行，但最终必须由主会话统一验证。"},
+    {t:"steps", items:[
+      {x:"新建干净会话并先做只读规划：", code:{lang:"text", text:"/new\n/plan 把 src/importer.ts 改成流式处理。列出所有调用方、兼容性约束、迁移顺序和验证命令；不要修改文件。"}},
+      {x:"审阅计划后，设置有边界的持续目标：", code:{lang:"text", text:"/goal 将导入器改造成流式处理，更新所有调用方，并用现有测试证明兼容\n/goal budget 200000"}},
+      {x:"开始实现前用 /context 记录窗口余量。输出过重先 /shake；历史已经很长则：", code:{lang:"text", text:"/compact 保留接口约束、迁移进度、未完成项和测试结果"}},
+      {x:"只有在调用方之间确实互不重叠时才启用 /vibe，为每个工作者写明目录归属、不得修改的接口、交付物和验证命令。共享检出时避免多个工作者编辑同一文件；需要更强隔离时先配置 Tasks → Isolation。"},
+      {x:"用 /agents 查看工作者状态，读取每个工作者的改动和报告。不要把 idle 或 completed 当成组合行为已验证；由主会话运行相关测试和实际 smoke test。"},
+      {x:"阶段完成后让会话留下可恢复的交接状态：", code:{lang:"text", text:"/handoff 保留已完成迁移、剩余调用方、测试结果和下一步"}}
+    ]}
+  ]}
+]},
+{ id:"s3", num:"03", name:"拓展", color:"#a78bfa",
+  desc:"审查、安全扫描、发布前最小流程与可复用的日常工作流。",
+  units:[
+  { id:"u16", title:"审查改动：/review", tag:"core", blocks:[
+    {t:"p", x:"合并 PR、完成高风险重构或准备提交前运行 /review。<strong>它只检查选定差异引入的问题，不修改文件。</strong>未跟踪文件不在 Git diff 中，需要先暂存。审查 GitHub PR 可直接提供完整 PR URL（需安装并登录 gh）。"},
+    {t:"code", lang:"text", text:"/review focus on partial writes, retries, and idempotency"},
+    {t:"list", items:[
+      "确认审查范围，写明具体风险；",
+      "逐条核对发现项引用的代码和触发条件；",
+      "修复成立的问题，运行相关测试，再次审查。"
+    ]},
+    {t:"table", head:["优先级","处理建议"], rows:[
+      ["P0","立即停止发布或运行"],
+      ["P1","合并前修复"],
+      ["P2","核对边界条件并安排修复"],
+      ["P3","按价值决定是否处理"]
+    ]},
+    {t:"warn", x:"<strong>置信度表示发现项成立的可能性，不表示严重程度。</strong>审查结论为「正确」只表示本次差异中没有确认的阻断问题，不能证明代码没有缺陷。"}
+  ]},
+  { id:"u17", title:"安全扫描：/security", tag:"core", blocks:[
+    {t:"p", x:"/security 用于认证、授权、解析器、网络边界和发布前的漏洞检查。<strong>它不是通用代码审查，也不能证明仓库不存在漏洞。</strong>默认关闭，会把相关仓库内容发送给模型服务商；--path 只限制审查范围，不构成保密边界。"},
+    {t:"cmds", items:[
+      {c:"omp config set security.enabled true", d:"开启功能（或 /settings → Tools → Security）"},
+      {c:"/security plan --path src/auth --exclude src/auth/fixtures --knowledge-base SECURITY.md", d:"创建窄范围计划"},
+      {c:"/security scan secplan_…", d:"用返回的计划 ID 启动扫描"},
+      {c:"/security status", d:"等待状态进入 completed"},
+      {c:"/security show <scan-id>", d:"查看结果"},
+      {c:"/security validate <scan-id> <finding-id>", d:"校验重要发现项（仍需人工判断）"},
+      {c:"/security compare <before> <after>", d:"修复后重新扫描并对比"}
+    ], slash:true},
+    {t:"warn", x:"计划会固定仓库快照、范围、模型、账户和知识库文件。代码、范围或凭据变化后旧计划失效——重新创建，不要复用旧 ID。<strong>partial 或 failed 不能证明问题已经解决。</strong>非 open 的处置状态必须填写理由。"}
+  ]},
+  { id:"u18", title:"发布前的最小流程", tag:"core", blocks:[
+    {t:"code", lang:"text", text:"/review\n→ 修复成立的发现项并运行相关测试\n→ 高风险改动再执行 /security plan 和 /security scan\n→ 需要跨文件改名时先让 LSP 展示引用和预览\n→ git add 指定文件\n→ omp commit --dry-run\n→ 确认后运行 omp commit"},
+    {t:"p", x:"每次代码或扫描范围发生变化后，重新运行与改动相匹配的验证。"},
+    {t:"warn", x:"<strong>安全扫描、代码审查和提交预览都不能替代测试。</strong>"}
+  ]},
+  { id:"u19", title:"可复用的日常工作流", tag:"core", blocks:[
+    {t:"code", lang:"text", title:"小任务", text:"/new\n→ 一次说清目标、边界和验证方式\n→ 实现\n→ 运行最小但能覆盖变更的验证\n→ /handoff 或结束会话"},
+    {t:"code", lang:"text", title:"多文件重构", text:"/new\n→ /plan：只读分析范围、调用方和迁移顺序\n→ 独立 Review 计划\n→ 批准并压缩上下文\n→ 分阶段实现\n→ /context：观察窗口占用\n→ 相关测试与实际 smoke test\n→ 独立结果 Review\n→ /handoff：记录当前状态与剩余工作"},
+    {t:"code", lang:"text", title:"对比两个方案", text:"/tree：给当前节点打标签\n→ /fork：建立方案 A\n→ 从同一节点再 /fork：建立方案 B\n→ 使用相同验收条件比较\n→ 保留证据更强的方案，放弃另一条会话"},
+    {t:"code", lang:"text", title:"长时间自主任务", text:"/goal <完整目标与验收标准>\n→ /goal budget <上限>\n→ 必要时 /background\n→ 返回后检查目标状态、文件、测试和日志"}
+  ]}
+]}
+];
+
+/* ================================================================
+   数据：速查手册（10 大类）
+   条目: {n:名称, c:命令, k:快捷键, code:代码, d:说明, kw:关键词}
+================================================================ */
+var CATS = [
+{ id:"start", name:"安装与启动", color:"#4ade80", entries:[
+  {n:"Bun 全局安装", c:"bun install -g @oh-my-pi/pi-coding-agent", d:"方式 A：已经安装 Bun 时使用", kw:"install bun 安装"},
+  {n:"脚本安装", c:"curl -fsSL https://raw.githubusercontent.com/can1357/oh-my-pi/main/scripts/install.sh | sh", d:"方式 B：自动选择 Bun", kw:"install curl 安装"},
+  {n:"验证安装", c:"omp --version", d:"查看版本号", kw:"version"},
+  {n:"启动会话", c:"omp", d:"首次运行后用 /login 登录", kw:"启动 login 登录"},
+  {n:"继续最近会话", c:"omp -c", d:"继续当前项目最近的会话", kw:"continue 继续"},
+  {n:"选择历史会话", c:"omp -r", d:"浏览并选择当前项目的历史会话", kw:"resume 恢复"},
+  {n:"查看快捷键", c:"/hotkeys", d:"当前版本的权威键位映射；未绑定动作需先分配组合键", kw:"hotkeys 快捷键"}
+]},
+{ id:"editor", name:"编辑器键位", color:"#60a5fa", entries:[
+  {n:"切换思考等级", k:"Shift+Tab", d:"循环切换思考等级", kw:"思考 thinking"},
+  {n:"显示/隐藏思考块", k:"Ctrl+T", d:"只改可见性，不改推理强度", kw:"思考 thinking 块"},
+  {n:"展开/折叠工具输出", k:"Ctrl+O", d:"查看完整工具输出", kw:"expand 输出"},
+  {n:"重试失败回合", k:"Alt+R", d:"重试上次失败的助手回合", kw:"retry 重试"},
+  {n:"移回排队消息", k:"Alt+Up", d:"或 Shift+Up；把最近排队的消息移回编辑器", kw:"queue 排队"},
+  {n:"复制整个提示", k:"Alt+Shift+C", d:"复制当前提示全文", kw:"copy 复制"},
+  {n:"切换计划模式", k:"Alt+Shift+P", d:"进入或退出计划模式", kw:"plan 计划"},
+  {n:"搜索提示历史", k:"Ctrl+R", d:"在历史提示中搜索", kw:"history 历史 搜索"},
+  {n:"移到行首", k:"Home", d:"或 Ctrl+A", kw:"行首"},
+  {n:"移到行尾", k:"End", d:"或 Ctrl+E", kw:"行尾"},
+  {n:"删到行首", k:"Ctrl+U", d:"删除光标到行首", kw:"删除"},
+  {n:"删到行尾", k:"Ctrl+K", d:"删除光标到行尾", kw:"删除"},
+  {n:"插入换行", k:"Shift+Enter", d:"或 Ctrl+J；Alt+Enter 是内置回退，Windows Terminal 优先 Alt+Enter", kw:"换行 multiline"},
+  {n:"打开智能体中心", k:"Alt+A", d:"或 Ctrl+S；管理工作者与子智能体", kw:"agents 智能体"}
+]},
+{ id:"roles", name:"模型角色", color:"#4ade80", entries:[
+  {n:"角色配置", code:"modelRoles:\n  default: anthropic/claude-sonnet-4-5\n  smol: anthropic/claude-haiku-4-5\n  slow: anthropic/claude-opus-4-6:high\n  plan: openai/gpt-5.3-codex:high\n  commit: anthropic/claude-haiku-4-5", d:"模型名称会变，角色相对稳定；不配置也能运行", kw:"modelRoles 角色 模型 配置"},
+  {n:"default", d:"常规实现、代码问答、主会话默认", kw:"角色 default"},
+  {n:"smol", d:"分类、机械修改、短摘要", kw:"角色 smol"},
+  {n:"slow", d:"复杂故障、架构权衡、高风险 Review", kw:"角色 slow"},
+  {n:"plan", d:"多文件任务的只读规划", kw:"角色 plan 规划"},
+  {n:"commit", d:"提交信息等短而稳定的输出", kw:"角色 commit 提交"}
+]},
+{ id:"session", name:"会话管理", color:"#60a5fa", entries:[
+  {n:"/new", c:"/new", d:"开始一个无关的新任务", kw:"新会话"},
+  {n:"/resume", c:"/resume", d:"选择并打开已有会话", kw:"恢复"},
+  {n:"/tree", c:"/tree", d:"在当前会话文件内切换或创建分支；比较多种方案", kw:"树 分支"},
+  {n:"/branch", c:"/branch", d:"从较早回合创建替代延续", kw:"分支"},
+  {n:"/fork", c:"/fork", d:"将当前会话克隆为独立文件；高风险实验的隔离副本", kw:"分叉 隔离"},
+  {n:"/rename", c:"/rename <title>", d:"设置容易识别的会话名称", kw:"重命名"},
+  {n:"选择规则", d:"比较思路 → /tree；明确的检查点或完全隔离的实验 → /fork", kw:"tree fork 对比 选择"},
+  {n:"会话存储", d:"按工作目录归类的 JSONL；每回合记录父节点，可从任意历史回合继续形成分支；异常退出通常只丢失未完成的末尾响应", kw:"jsonl 存储 分支"}
+]},
+{ id:"context", name:"上下文维护", color:"#fbbf24", entries:[
+  {n:"/compact", c:"/compact [focus]", d:"压缩旧上下文后继续；自动压缩禁用时仍有效；有响应运行时先中止", kw:"压缩 compact"},
+  {n:"soft 压缩", c:"/compact soft [focus]", d:"模型摘要式一次性压缩", kw:"compact soft"},
+  {n:"remote 压缩", c:"/compact remote [focus]", d:"服务商原生 OpenAI 兼容压缩，回退 soft", kw:"compact remote"},
+  {n:"snapcompact", c:"/compact snapcompact", d:"本地图像归档，不接受焦点文本", kw:"compact 图像"},
+  {n:"/handoff", c:"/handoff [focus]", d:"就地压缩当前会话；不开后续会话，默认不存盘（handoffSaveToDisk: true 才存）", kw:"交接 handoff"},
+  {n:"/shake", c:"/shake [elide|images|thinking]", d:"占位符替换重内容；elide 存 artifact:// 工件可恢复；Nothing to shake 是成功空操作", kw:"shake 工件 elide"},
+  {n:"/context", c:"/context", d:"查看上下文占用，判断下一轮是否超出窗口", kw:"上下文 占用"},
+  {n:"/usage", c:"/usage", d:"查看额度和速率限制，区分上下文问题与额度问题", kw:"额度 速率 usage"}
+]},
+{ id:"memory", name:"记忆", color:"#fbbf24", entries:[
+  {n:"设置后端", c:"omp config set memory.backend local", d:"或 mnemopi / hindsight；默认 off；/settings → Memory 保存时切换", kw:"memory backend 后端"},
+  {n:"查看后端", c:"omp config get memory.backend", d:"shell/YAML 改动对新启动进程生效；<repo>/.omp/config.yml 项目覆盖全局", kw:"memory config"},
+  {n:"local 后端", d:"批式摘要流水线，把已持久化会话提炼成项目指导；不可搜索，无法遗忘单条事实；跳过最近 12 小时活跃会话", kw:"local 后端 摘要"},
+  {n:"mnemopi 后端", d:"本地 SQLite，提示词驱动的记住/回忆/遗忘；默认 llmMode: smol 在线抽取；事实表只读", kw:"mnemopi sqlite"},
+  {n:"hindsight 后端", d:"远程记忆库；autoRetain 默认开启，对话文本离开本机；内置 URL http://localhost:8888；token 用 HINDSIGHT_API_TOKEN 环境变量", kw:"hindsight 远程"},
+  {n:"hindsight 设置表", code:"hindsight:\n  apiUrl: http://localhost:8888\n  apiToken: <Bearer token>\n  bankId: omp\n  bankIdPrefix: <可选前缀>\n  scoping: per-project-tagged\n  bankMission: <可选>\n  retainMission: <可选>\n  autoRecall: true\n  autoRetain: true\n  retainMode: full-session\n  retainEveryNTurns: 3\n  retainOverlapTurns: 2\n  retainContext: omp", d:"共 13 键；bankId 在 per-project 模式追加项目名；autoRetain: false 仅提示词驱动写入；retainMode: last-turn 按回合分块", kw:"hindsight apiUrl token bankId scoping retain 设置 配置"},
+  {n:"mnemopi 隐私配置", code:"memory:\n  backend: mnemopi\nmnemopi:\n  scoping: per-project\n  noEmbeddings: true\n  llmMode: none", d:"仅全文搜索、不做 LLM 抽取", kw:"mnemopi 隐私 none"},
+  {n:"/memory view", c:"/memory view", d:"查看当前注入载荷；空警告表示后端关闭/不可用/尚未召回", kw:"memory view"},
+  {n:"/memory stats", c:"/memory stats", d:"后端统计；/memory diagnose 做后端专属诊断", kw:"memory stats diagnose"},
+  {n:"/memory enqueue", c:"/memory enqueue", d:"别名 /memory rebuild；Local 标记下次启动整合，不立即重建", kw:"memory rebuild 重建"},
+  {n:"/memory clear", c:"/memory clear", d:"别名 /memory reset；Mnemopi 删当前作用域 SQLite；Hindsight 远程库不受影响", kw:"memory clear reset 清除"},
+  {n:"心智模型", c:"/memory mm list/show/refresh/history/seed/delete/reload", d:"Hindsight 心智模型管理（仅 TUI）", kw:"mm hindsight 心智"},
+  {n:"使用记忆", c:"请记住这个仓库使用 pnpm 和 Node 22。", d:"Mnemopi/Hindsight 用普通提示词即可记住、回忆、遗忘；描述匹配多条时先让 omp 展示候选", kw:"记住 回忆 遗忘"},
+  {n:"作用域", d:"global / per-project / per-project-tagged；硬边界场景优先 per-project；切换后需另外清理旧数据", kw:"scoping 作用域 隔离"},
+  {n:"排障", d:"local 空 → 只处理已持久化主会话；mnemopi 不召回 → /memory diagnose 或 llmMode: none 隔离；跨项目串味 → 检查 scoping", kw:"排障 debug 记忆"}
+]},
+{ id:"modes", name:"工作模式", color:"#a78bfa", entries:[
+  {n:"/plan", c:"/plan 把 src/importer.ts 改成流式处理，并迁移所有调用方", d:"只读规划，过滤写入工具；批准后执行 / 保留上下文 / 压缩上下文", kw:"plan 计划"},
+  {n:"/goal", c:"/goal <完整目标与验收标准>", d:"围绕验收目标持续推进；子命令 set/show/pause/resume/drop", kw:"goal 目标"},
+  {n:"/goal budget", c:"/goal budget 200000", d:"预算耗尽 = 停止扩张并汇报，不等于任务完成；off 关闭", kw:"goal budget 预算"},
+  {n:"/loop", c:"/loop 10", d:"N 次或时长（90s、10 min、1h30m）；无目标语义；迭代中 esc 中止回合，迭代间 esc 暂停", kw:"loop 循环"},
+  {n:"loop.mode", c:"loop.mode: prompt | compact | reset", d:"同会话延续 / 每次重放前压缩 / 每次新会话；默认 prompt", kw:"loop mode"},
+  {n:"/background", c:"/background", d:"别名 /bg；脱离 TUI 继续运行，omp -c 重新接入；分离不等于验证", kw:"background bg 后台"},
+  {n:"/force", c:"/force read", d:"或 /force:read；只在下一轮锁定工具一次，之后恢复正常", kw:"force 强制 工具"},
+  {n:"/fast", c:"/fast on", d:"OpenAI 优先服务层，高费用换低延迟；on/off/status，按模型家族记忆", kw:"fast 优先 延迟"},
+  {n:"启用 Prewalk", c:"omp --prewalk", d:"本次会话启用，目标 @smol；恢复已有会话需显式传入", kw:"prewalk"},
+  {n:"指定 Prewalk 目标", c:"omp --model @slow --prewalk-into @smol", d:"强模型规划，快速模型实现；--no-prewalk 不交接", kw:"prewalk into"},
+  {n:"Prewalk 持久化", c:"omp config set prewalk.enabled true", d:"每次新会话启用；会话内 /prewalk 重新布防", kw:"prewalk config"},
+  {n:"Prewalk 状态", d:"Armed 等待交接 / Switched 已切换 / Nothing to switch 目标相同；todo 可用且首次编辑完成后才交接", kw:"prewalk armed switched"},
+  {n:"组合规则", d:"Loop+Force 只有第一次强制；Loop+Plan/Prewalk/Goal/Vibe 只是显示优先级≠Loop 已关；reset+Vibe 被拒绝；Force+Plan 只能选只读工具；多个 --mode 互斥", kw:"组合 loop force plan"}
+]},
+{ id:"agents", name:"多智能体与顾问", color:"#a78bfa", entries:[
+  {n:"/vibe", c:"/vibe <任务说明>", d:"拆分独立工作流；fast 做机械工作，good 做设计/审查；再运行一次退出", kw:"vibe 工作者"},
+  {n:"工作者配置", code:"modelRoles:\n  fast_worker: openai/gpt-5-mini\n  good_worker: anthropic/claude-sonnet-4-5:high\ntask:\n  agentModelOverrides:\n    sonic: \"@fast_worker\"\n    task: \"@good_worker\"", d:"工作者不继承主会话对话；不要让多个工作者同时操作同一个 Git 状态", kw:"vibe worker 配置"},
+  {n:"/agents", c:"/agents", d:"查看可用专家及状态；专家：scout / designer / reviewer / security-reviewer / librarian / task / sonic", kw:"agents 专家"},
+  {n:"/jobs", c:"/jobs", d:"查看后台任务摘要", kw:"jobs 后台"},
+  {n:"智能体中心", k:"Alt+A", d:"或 Ctrl+S；j/k 选择，enter 查看记录，r 恢复停驻，x 终止，esc 关闭", kw:"智能体中心 hub"},
+  {n:"隔离工作区", d:"/settings → Tasks → Isolation 选 Auto；要求 Git 仓库，改动以补丁应用到主检出；计划模式下不可用", kw:"isolation 隔离 worktree"},
+  {n:"自定义智能体", code:"---\nname: release-auditor\ndescription: Check release readiness.\ntools: read, grep, glob, bash\nmodel: \"@slow\"\nprewalk: false\nadvisor: \"@advisor\"\n---\n\nInspect the assigned release scope. Report evidence and blockers; do not edit files.", d:"用户作用域 ~/.omp/agent/agents/*.md；项目作用域 .omp/agents/*.md", kw:"自定义 agent md"},
+  {n:"/advisor", c:"/advisor on", d:"切换所有顾问；off 停用；status 看用量；configure 编辑 WATCHDOG.yml", kw:"advisor 顾问"},
+  {n:"顾问配置", code:"modelRoles:\n  advisor: anthropic/claude-sonnet-4-5:medium\n\nadvisor:\n  enabled: true", d:"适合耗时较长、高风险或仓库不熟悉的任务", kw:"advisor 配置"},
+  {n:"顾问严重程度", d:"nit 清理简化 / concern 实质风险 / blocker 继续执行很可能浪费工作（只有 blocker 可打断）", kw:"nit concern blocker"},
+  {n:"WATCHDOG", c:".omp/WATCHDOG.md", d:"项目专属架构边界、危险 API、失败模式；通用规则写 ~/.omp/agent/WATCHDOG.md；阵容写 WATCHDOG.yml", kw:"watchdog 规则"}
+]},
+{ id:"review", name:"审查与安全", color:"#f87171", entries:[
+  {n:"/review", c:"/review focus on partial writes, retries, and idempotency", d:"只读，不修改文件；未跟踪文件需先暂存；可直接给 PR URL（需 gh）", kw:"review 审查"},
+  {n:"优先级", d:"P0 立即停止 / P1 合并前修复 / P2 核对边界并安排 / P3 按价值决定；置信度 ≠ 严重程度", kw:"P0 P1 P2 P3 优先级"},
+  {n:"开启安全扫描", c:"omp config set security.enabled true", d:"或 /settings → Tools → Security；会把仓库内容发给服务商", kw:"security 开启"},
+  {n:"创建计划", c:"/security plan --path src/auth --exclude src/auth/fixtures --knowledge-base SECURITY.md", d:"计划固定快照、范围、模型、账户；变化后需重建，不要复用旧 ID", kw:"security plan 计划"},
+  {n:"其他计划形式", c:"/security plan --diff <base> <head>", d:"或裸 /security plan 扫全仓库、--working-tree 扫工作区", kw:"security plan diff"},
+  {n:"启动扫描", c:"/security scan secplan_…", d:"按不可变计划启动", kw:"security scan"},
+  {n:"查看进度", c:"/security status [operation-id]", d:"状态：queued → preparing → reviewing → publishing → completed；partial/cancelled/failed 也是终止态", kw:"security status 状态"},
+  {n:"取消扫描", c:"/security cancel <operation-id>", d:"取消请求成功后仍要等状态变为 cancelled", kw:"security cancel"},
+  {n:"查看结果", c:"/security show <scan-id>", d:"/security scans 列出全部；本地输出 scan.json、findings.json、report.md、results.sarif", kw:"security show 结果"},
+  {n:"校验发现项", c:"/security validate <scan-id> <finding-id>", d:"模型校验仍需人工判断", kw:"security validate"},
+  {n:"处置", c:"/security disposition …", d:"open / false_positive / accepted_risk / fixed / wont_fix；非 open 必须填理由", kw:"security disposition"},
+  {n:"对比扫描", c:"/security compare <before> <after>", d:"修复后新建计划重扫再对比；partial/failed 不能证明已解决", kw:"security compare"},
+  {n:"导入导出", c:"/security import", d:"导入 SARIF；/security export 导出 bundle、SARIF、报告", kw:"security sarif 导出"},
+  {n:"拆分提交", c:"omp commit --dry-run", d:"审阅拆分计划后运行 omp commit；以 Git 暂存区为主要边界", kw:"commit 提交"}
+]},
+{ id:"lookup", name:"入口与查找", color:"#60a5fa", entries:[
+  {n:"命令补全", k:"/", d:"输入 / 打开实时补全；OMP 没有顶层 /help", kw:"补全 slash help"},
+  {n:"/model", c:"/model", d:"查看和切换模型", kw:"模型"},
+  {n:"/extensions", c:"/extensions", d:"管理扩展、技能、插件和 MCP", kw:"extensions 扩展 技能"},
+  {n:"/mcp help", c:"/mcp help", d:"MCP 专用语法；另有 /ssh help、/marketplace help", kw:"mcp ssh marketplace"},
+  {n:"/settings", c:"/settings", d:"记忆后端、Tools → Security、Tasks → Isolation 等图形化设置", kw:"settings 设置"},
+  {n:"版本提示", d:"命令和参数随版本变化；优先实时补全、内联参数提示和族级帮助，不维护静态命令字典", kw:"版本 变化"}
+]}
+];
+
+/* ================================================================ 渲染 */
+var $ = function(s){ return document.querySelector(s); };
+function h(tag, cls, html){ var e=document.createElement(tag); if(cls)e.className=cls; if(html!=null)e.innerHTML=html; return e; }
+/* 内联安全渲染：只放行 <strong>/</strong>，其余尖括号一律转义，防止 <title> 等占位符被 innerHTML 吞掉 */
+function inline(s){
+  return String(s)
+    .replace(/&lt;/g,"<").replace(/&gt;/g,">")
+    .replace(/<(?!\/?strong>)/g,"&lt;");
+}
+
+var LS_KEY="omp-guide-progress-v1";
+var progress={}; try{ progress=JSON.parse(localStorage.getItem(LS_KEY)||"{}"); }catch(e){ progress={}; }
+function saveProgress(){ try{ localStorage.setItem(LS_KEY, JSON.stringify(progress)); }catch(e){} }
+
+var mode="learn", query="", activeCat="all";
+
+/* ---------- 复制 ---------- */
+var toastTimer=null;
+function toast(msg){
+  var t=$("#toast"); t.textContent=msg; t.classList.add("show");
+  clearTimeout(toastTimer); toastTimer=setTimeout(function(){ t.classList.remove("show"); },1600);
+}
+function copyText(text){
+  function done(){ toast("已复制  "+(text.length>42?text.slice(0,42)+"…":text)); }
+  if(navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(text).then(done, function(){ fallback(); });
+  } else fallback();
+  function fallback(){
+    var ta=document.createElement("textarea"); ta.value=text; ta.style.position="fixed"; ta.style.opacity="0";
+    document.body.appendChild(ta); ta.select();
+    try{ document.execCommand("copy"); done(); }catch(e){ toast("复制失败"); }
+    document.body.removeChild(ta);
+  }
+}
+
+/* ---------- 键帽 ---------- */
+function kbdChips(combo){
+  var wrap=h("span","kcombo");
+  combo.split("+").forEach(function(part,i){
+    if(i>0) wrap.appendChild(h("span",null,"+")).style.cssText="color:var(--text-3);font-size:11px";
+    var k=document.createElement("kbd"); k.textContent=part.trim(); wrap.appendChild(k);
+  });
+  return wrap;
+}
+
+/* ---------- 学习路径渲染 ---------- */
+function totalUnits(){ var n=0; STAGES.forEach(function(s){ n+=s.units.length; }); return n; }
+function doneUnits(){ var n=0; STAGES.forEach(function(s){ s.units.forEach(function(u){ if(progress[u.id])n++; }); }); return n; }
+function stageDone(s){ var n=0; s.units.forEach(function(u){ if(progress[u.id])n++; }); return n; }
+
+function renderOutline(){
+  var box=$("#outline"); box.innerHTML="";
+  STAGES.forEach(function(s){
+    var g=h("div","outline-stage");
+    var head=h("div","outline-stage-head");
+    var dot=h("span","stage-dot"); dot.style.background=s.color;
+    head.appendChild(dot);
+    head.appendChild(h("span",null,s.num+" · "+s.name));
+    var bar=h("span","stage-bar"); var fill=document.createElement("i");
+    var pct=s.units.length? stageDone(s)/s.units.length*100 : 0;
+    fill.style.width=pct+"%"; fill.style.background=s.color; bar.appendChild(fill);
+    head.appendChild(bar);
+    g.appendChild(head);
+    s.units.forEach(function(u){
+      var it=h("button","outline-item"+(progress[u.id]?" done":""));
+      it.type="button"; it.dataset.unit=u.id;
+      it.appendChild(h("span","tick","✓"));
+      it.appendChild(h("span",null,u.title.replace(/^案例：/,"案例 · ")));
+      it.addEventListener("click",function(){
+        var el=document.getElementById("unit-"+u.id);
+        if(el) el.scrollIntoView({behavior:"smooth",block:"start"});
+      });
+      g.appendChild(it);
+    });
+    box.appendChild(g);
+  });
+  var reset=h("button","outline-reset","重置学习进度"); reset.type="button";
+  reset.addEventListener("click",function(){
+    progress={}; saveProgress(); renderLearn(); updatePill();
+    toast("进度已重置");
+  });
+  box.appendChild(reset);
+}
+
+function renderBlock(b){
+  if(b.t==="p") return h("p",null,inline(b.x));
+  if(b.t==="tip") return h("div","tip",h("span",null,inline(b.x)).outerHTML);
+  if(b.t==="warn") return h("div","warn",h("span",null,inline(b.x)).outerHTML);
+  if(b.t==="list"){
+    var ul=h("ul","blist");
+    b.items.forEach(function(x){ ul.appendChild(h("li",null,inline(x))); });
+    return ul;
+  }
+  if(b.t==="cmds"){
+    var term=h("div","term");
+    var thead=h("div","term-head");
+    ["#f87171","#fbbf24","#4ade80"].forEach(function(c){
+      var d=h("span","term-dot"); d.style.background=c; thead.appendChild(d);
+    });
+    thead.appendChild(h("span","term-title", b.slash?"slash commands":"terminal"));
+    term.appendChild(thead);
+    var body=h("div","term-body");
+    b.items.forEach(function(it){
+      var line=h("div","term-line"+(it.d?" has-desc":""));
+      line.appendChild(h("span","prompt", b.slash?"❯":"$"));
+      var cmd=h("span","cmd-text"); cmd.textContent=it.c; line.appendChild(cmd);
+      if(it.d) line.appendChild(h("span","cmd-desc",inline(it.d)));
+      line.appendChild(h("span","copy-hint","复制"));
+      line.addEventListener("click",function(){ copyText(it.c); });
+      body.appendChild(line);
+    });
+    term.appendChild(body);
+    return term;
+  }
+  if(b.t==="keys"){
+    var box=h("div");
+    b.items.forEach(function(it){
+      var row=h("div","keys-row");
+      var left=kbdChips(it.k);
+      if(it.alt){ var alt=h("span","kalt",inline(it.alt)); left.appendChild(alt); }
+      row.appendChild(left);
+      row.appendChild(h("span","kdesc",inline(it.d)));
+      row.title="点击复制快捷键";
+      row.addEventListener("click",function(){ copyText(it.k); });
+      box.appendChild(row);
+    });
+    return box;
+  }
+  if(b.t==="code"){
+    var wrap=h("div");
+    if(b.title) wrap.appendChild(h("p",null,"<strong style='font-size:12.5px;color:var(--text-3)'>"+inline(b.title)+"</strong>"));
+    var pre=h("pre","codeblock");
+    if(b.lang) pre.appendChild(h("span","lang",b.lang));
+    pre.appendChild(document.createTextNode(b.text));
+    pre.title="点击复制";
+    pre.addEventListener("click",function(){ copyText(b.text); });
+    wrap.appendChild(pre);
+    return wrap;
+  }
+  if(b.t==="table"){
+    var tbl=h("table","dtable");
+    var tr=h("tr"); b.head.forEach(function(x){ tr.appendChild(h("th",null,inline(x))); });
+    var theadEl=document.createElement("thead"); theadEl.appendChild(tr); tbl.appendChild(theadEl);
+    var tb=document.createElement("tbody");
+    b.rows.forEach(function(r){
+      var row=h("tr");
+      r.forEach(function(c){ row.appendChild(h("td",null,inline(c))); });
+      tb.appendChild(row);
+    });
+    tbl.appendChild(tb);
+    return tbl;
+  }
+  if(b.t==="steps"){
+    var ol=h("ol","steps");
+    b.items.forEach(function(it){
+      var li=document.createElement("li");
+      li.appendChild(h("div","step-text",inline(it.x)));
+      if(it.code) li.appendChild(renderBlock({t:"code", lang:it.code.lang, text:it.code.text}));
+      ol.appendChild(li);
+    });
+    return ol;
+  }
+  return h("div");
+}
+
+function renderLearn(){
+  var box=$("#learn-content"); box.innerHTML="";
+  STAGES.forEach(function(s){
+    var banner=h("div","stage-banner");
+    var num=h("span","stage-num",s.num);
+    num.style.color=s.color; num.style.borderColor=s.color+"55"; num.style.background=s.color+"14";
+    banner.appendChild(num);
+    banner.appendChild(h("h2",null,s.name));
+    banner.appendChild(h("p",null,s.desc));
+    box.appendChild(banner);
+
+    s.units.forEach(function(u){
+      var unit=h("article","unit"+(progress[u.id]?" done":""));
+      unit.id="unit-"+u.id;
+      var head=h("div","unit-head");
+      var chk=h("button","unit-check","✓"); chk.type="button"; chk.title="标记为已掌握";
+      chk.addEventListener("click",function(){
+        if(progress[u.id]) delete progress[u.id]; else progress[u.id]=1;
+        saveProgress(); renderLearn(); updatePill();
+        var el=document.getElementById("unit-"+u.id);
+        if(el) el.scrollIntoView({block:"nearest"});
+      });
+      head.appendChild(chk);
+      var title=h("div","unit-title",u.title);
+      head.appendChild(title);
+      var tag=h("span","unit-tag "+(u.tag==="case"?"tag-case":"tag-core"), u.tag==="case"?"案例":"核心");
+      head.appendChild(tag);
+      unit.appendChild(head);
+      var body=h("div","unit-body");
+      u.blocks.forEach(function(b){ body.appendChild(renderBlock(b)); });
+      unit.appendChild(body);
+      box.appendChild(unit);
+    });
+  });
+  renderOutline();
+}
+
+function updatePill(){
+  $("#progress-num").textContent=doneUnits()+"/"+totalUnits();
+}
+
+/* ---------- 速查手册渲染 ---------- */
+function entryText(e,cat){
+  return [e.n,e.c,e.k,e.code,e.d,e.kw,cat.name].filter(Boolean).join(" ").toLowerCase();
+}
+function hl(text,q){
+  var terms=String(q||"").toLowerCase().split(/\s+/).filter(Boolean);
+  if(!terms.length) return document.createTextNode(text);
+  var frag=document.createDocumentFragment();
+  var lower=text.toLowerCase(), i=0;
+  while(i<text.length){
+    var best=-1, bl=0;
+    terms.forEach(function(t){
+      var idx=lower.indexOf(t,i);
+      if(idx!==-1 && (best===-1 || idx<best)){ best=idx; bl=t.length; }
+    });
+    if(best===-1){ frag.appendChild(document.createTextNode(text.slice(i))); break; }
+    frag.appendChild(document.createTextNode(text.slice(i,best)));
+    var m=document.createElement("mark"); m.textContent=text.slice(best,best+bl);
+    frag.appendChild(m); i=best+bl;
+  }
+  return frag;
+}
+function matchQuery(e,cat){
+  if(!query) return true;
+  var q=query.toLowerCase().trim();
+  return q.split(/\s+/).every(function(w){ return entryText(e,cat).indexOf(w)!==-1; });
+}
+
+function renderRefNav(visible){
+  var nav=$("#ref-nav"); nav.innerHTML="";
+  var all=h("button","ref-nav-item"+(activeCat==="all"?" active":""));
+  all.type="button";
+  var allDot=h("span","cat-dot"); allDot.style.background="var(--text-2)"; all.appendChild(allDot);
+  all.appendChild(h("span",null,"全部"));
+  var total=0; CATS.forEach(function(c){ total+= (visible[c.id]||[]).length; });
+  all.appendChild(h("span","cnt",String(total)));
+  all.addEventListener("click",function(){ activeCat="all"; renderRef(); });
+  nav.appendChild(all);
+  CATS.forEach(function(c){
+    var list=visible[c.id]||[];
+    if(query && list.length===0) return;
+    var it=h("button","ref-nav-item"+(activeCat===c.id?" active":""));
+    it.type="button";
+    var dot=h("span","cat-dot"); dot.style.background=c.color; it.appendChild(dot);
+    it.appendChild(h("span",null,c.name));
+    it.appendChild(h("span","cnt",String(list.length)));
+    it.addEventListener("click",function(){
+      activeCat = activeCat===c.id ? "all" : c.id; renderRef();
+    });
+    nav.appendChild(it);
+  });
+}
+
+function renderRef(){
+  var content=$("#ref-content"); content.innerHTML="";
+  var visible={};
+  CATS.forEach(function(c){
+    visible[c.id]=c.entries.filter(function(e){ return matchQuery(e,c); });
+  });
+  renderRefNav(visible);
+
+  var any=false;
+  CATS.forEach(function(c){
+    if(activeCat!=="all" && activeCat!==c.id) return;
+    var list=visible[c.id];
+    if(list.length===0) return;
+    any=true;
+    var g=h("section","ref-group"); g.id="cat-"+c.id;
+    var gh=h("div","ref-group-head");
+    var dot=h("span","cat-dot"); dot.style.background=c.color; dot.style.alignSelf="center";
+    gh.appendChild(dot);
+    gh.appendChild(h("h3",null,c.name));
+    gh.appendChild(h("span","cnt",list.length+" 条"));
+    g.appendChild(gh);
+    var grid=h("div","ref-entries");
+    list.forEach(function(e){
+      var card=h("div","ref-card");
+      card.appendChild(h("span","r-copy","点击复制"));
+      var name=h("div","r-name"); name.appendChild(hl(e.n, query));
+      card.appendChild(name);
+      if(e.k){
+        var ks=h("div","r-keys"); ks.appendChild(kbdChips(e.k)); card.appendChild(ks);
+      }
+      if(e.c){
+        var cmd=h("div","r-cmd");
+        var p=h("span","prompt", e.c.charAt(0)==="/" ? "❯ " : "$ ");
+        cmd.appendChild(p);
+        cmd.appendChild(hl(e.c, query));
+        card.appendChild(cmd);
+      }
+      if(e.code){
+        var pre=h("pre","codeblock"); pre.style.margin="2px 0 0";
+        pre.appendChild(document.createTextNode(e.code));
+        pre.addEventListener("click",function(ev){ ev.stopPropagation(); copyText(e.code); });
+        card.appendChild(pre);
+      }
+      if(e.d){
+        var dd=h("div","r-desc"); dd.appendChild(hl(e.d, query));
+        card.appendChild(dd);
+      }
+      card.addEventListener("click",function(){
+        copyText(e.c || e.k || e.code || e.d || e.n);
+      });
+      grid.appendChild(card);
+    });
+    g.appendChild(grid);
+    content.appendChild(g);
+  });
+
+  if(!any){
+    var empty=h("div","ref-empty");
+    empty.appendChild(h("p",null,"没有匹配的内容"));
+    var m=h("p"); m.appendChild(h("span","mono",'query: "'+query+'"'));
+    empty.appendChild(m);
+    var btn=h("button","outline-reset","清除搜索"); btn.type="button"; btn.style.width="auto"; btn.style.margin="16px auto 0"; btn.style.padding="6px 18px";
+    btn.addEventListener("click",function(){ setQuery(""); $("#search").focus(); });
+    empty.appendChild(btn);
+    content.appendChild(empty);
+  }
+}
+
+/* ---------- 模式切换与搜索 ---------- */
+function setMode(m){
+  mode=m;
+  $("#btn-learn").classList.toggle("active", m==="learn");
+  $("#btn-ref").classList.toggle("active", m==="ref");
+  $("#learn-view").hidden = m!=="learn";
+  $("#ref-view").hidden = m!=="ref";
+  syncHash();
+  window.scrollTo({top:0});
+}
+function setQuery(q){
+  query=q; $("#search").value=q;
+  if(mode!=="ref" && q){ setMode("ref"); }
+  if(mode==="ref") renderRef();
+  syncHash();
+}
+function syncHash(){
+  var hs = mode==="ref" ? "#ref" : "#learn";
+  if(mode==="ref" && query) hs += "?q="+encodeURIComponent(query);
+  try{ history.replaceState(null,"",hs); }catch(e){}
+}
+function parseHash(){
+  var hs=location.hash||"";
+  if(hs.indexOf("#ref")===0){
+    var qi=hs.indexOf("?q=");
+    if(qi!==-1){ query=decodeURIComponent(hs.slice(qi+3)); $("#search").value=query; }
+    setMode("ref"); renderRef();
+  }
+}
+
+$("#btn-learn").addEventListener("click",function(){ setMode("learn"); });
+$("#btn-ref").addEventListener("click",function(){ setMode("ref"); });
+$("#progress-pill").addEventListener("click",function(){ setMode("learn"); });
+$("#search").addEventListener("input",function(ev){ setQuery(ev.target.value); });
+$("#search").addEventListener("keydown",function(ev){
+  if(ev.key==="Escape"){ setQuery(""); ev.target.blur(); }
+});
+document.addEventListener("keydown",function(ev){
+  var typing=/^(INPUT|TEXTAREA)$/.test(document.activeElement && document.activeElement.tagName || "");
+  if((ev.ctrlKey||ev.metaKey) && ev.key.toLowerCase()==="k"){ ev.preventDefault(); $("#search").focus(); $("#search").select(); }
+  else if(ev.key==="/" && !typing){ ev.preventDefault(); $("#search").focus(); }
+  else if(ev.key==="1" && !typing){ setMode("learn"); }
+  else if(ev.key==="2" && !typing){ setMode("ref"); }
+});
+
+/* ---------- 学习模式滚动高亮 ---------- */
+var scrollTick=false;
+window.addEventListener("scroll",function(){
+  if(scrollTick||mode!=="learn") return;
+  scrollTick=true;
+  requestAnimationFrame(function(){
+    scrollTick=false;
+    var current=null;
+    document.querySelectorAll(".unit").forEach(function(u){
+      if(u.getBoundingClientRect().top<120) current=u.id.replace("unit-","");
+    });
+    document.querySelectorAll(".outline-item").forEach(function(it){
+      it.classList.toggle("current", it.dataset.unit===current);
+    });
+  });
+},{passive:true});
+
+/* ---------- 启动 ---------- */
+renderLearn();
+renderRef();
+updatePill();
+parseHash();
+</script>
+</body>
+</html>

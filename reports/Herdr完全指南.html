@@ -1,0 +1,1130 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Herdr 完全指南 · 多智能体工作台</title>
+<style>
+:root{
+  --bg:#0c0e12; --bg-soft:#10141a; --panel:#12161d; --panel-2:#171c26; --panel-3:#1c2230;
+  --border:#232b3a; --border-soft:#1b2230;
+  --text:#e8eaf0; --text-2:#9aa3b2; --text-3:#5c6577;
+  --green:#4ade80; --amber:#fbbf24; --purple:#a78bfa; --blue:#60a5fa; --red:#f87171;
+  --mono:ui-monospace,"Cascadia Code","JetBrains Mono","SF Mono",Consolas,"Courier New",monospace;
+  --sans:-apple-system,"SF Pro Text","PingFang SC","Microsoft YaHei","Noto Sans SC",sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  background:var(--bg);color:var(--text);font-family:var(--sans);
+  font-size:15px;line-height:1.8;
+  background-image:radial-gradient(1200px 500px at 70% -200px,rgba(74,222,128,.06),transparent 60%),
+                   radial-gradient(900px 420px at 10% -160px,rgba(96,165,250,.05),transparent 60%);
+  min-height:100vh;
+}
+::selection{background:rgba(74,222,128,.25)}
+code,kbd,pre,.mono{font-family:var(--mono)}
+
+/* ============ 顶栏 ============ */
+.topbar{
+  position:sticky;top:0;z-index:50;
+  display:flex;align-items:center;gap:18px;flex-wrap:wrap;
+  padding:12px 24px;
+  background:rgba(12,14,18,.86);backdrop-filter:blur(14px);
+  border-bottom:1px solid var(--border-soft);
+}
+.brand{display:flex;align-items:baseline;gap:12px;min-width:0}
+.logo{
+  font-family:var(--mono);font-weight:700;font-size:18px;color:var(--green);
+  background:linear-gradient(180deg,#141a12,#0e130e);
+  border:1px solid #1f3526;border-radius:8px;padding:3px 10px;line-height:1.4;
+  text-shadow:0 0 12px rgba(74,222,128,.5);
+}
+.brand-title{font-size:16px;font-weight:650;letter-spacing:.02em;white-space:nowrap}
+.brand-sub{font-size:12px;color:var(--text-3);white-space:nowrap}
+.mode-switch{
+  display:flex;background:var(--panel);border:1px solid var(--border);
+  border-radius:10px;padding:3px;gap:2px;
+}
+.mode-btn{
+  font-family:var(--sans);font-size:13.5px;color:var(--text-2);
+  background:transparent;border:none;border-radius:8px;padding:6px 16px;cursor:pointer;
+  transition:all .18s ease;white-space:nowrap;
+}
+.mode-btn:hover{color:var(--text)}
+.mode-btn.active{background:var(--panel-3);color:var(--text);box-shadow:inset 0 0 0 1px var(--border)}
+.searchbox{
+  margin-left:auto;display:flex;align-items:center;gap:8px;
+  background:var(--panel);border:1px solid var(--border);border-radius:10px;
+  padding:7px 12px;min-width:260px;flex:0 1 340px;
+  transition:border-color .18s ease;
+}
+.searchbox:focus-within{border-color:var(--green);box-shadow:0 0 0 3px rgba(74,222,128,.12)}
+.searchbox svg{flex:none;opacity:.55}
+.searchbox input{
+  flex:1;min-width:0;background:transparent;border:none;outline:none;
+  color:var(--text);font-size:13.5px;font-family:var(--sans);
+}
+.searchbox input::placeholder{color:var(--text-3)}
+.searchbox kbd{flex:none}
+.progress-pill{
+  font-family:var(--mono);font-size:12px;color:var(--text-2);
+  border:1px solid var(--border);border-radius:999px;padding:5px 12px;
+  background:var(--panel);white-space:nowrap;cursor:pointer;
+}
+.progress-pill b{color:var(--green);font-weight:600}
+
+/* ============ 布局 ============ */
+.container{max-width:1240px;margin:0 auto;padding:28px 24px 120px}
+.view-grid{display:grid;grid-template-columns:250px minmax(0,1fr);gap:32px;align-items:start}
+@media(max-width:920px){.view-grid{grid-template-columns:1fr}.side{position:static!important}}
+.side{position:sticky;top:76px}
+
+/* ============ 学习路径：大纲 ============ */
+.outline-stage{margin-bottom:20px}
+.outline-stage-head{
+  display:flex;align-items:center;gap:8px;margin-bottom:8px;
+  font-size:12px;font-weight:700;letter-spacing:.14em;color:var(--text-3);
+}
+.stage-dot{width:8px;height:8px;border-radius:50%;flex:none}
+.stage-bar{flex:1;height:3px;background:var(--panel-3);border-radius:2px;overflow:hidden}
+.stage-bar i{display:block;height:100%;border-radius:2px;transition:width .3s ease}
+.outline-item{
+  display:flex;align-items:center;gap:10px;width:100%;text-align:left;
+  padding:7px 10px;border-radius:8px;border:1px solid transparent;
+  background:transparent;color:var(--text-2);font-size:13.5px;cursor:pointer;
+  font-family:var(--sans);transition:all .15s ease;
+}
+.outline-item:hover{background:var(--panel);color:var(--text)}
+.outline-item.current{background:var(--panel-2);border-color:var(--border);color:var(--text)}
+.outline-item .tick{
+  flex:none;width:15px;height:15px;border-radius:50%;
+  border:1.5px solid var(--text-3);display:grid;place-items:center;
+  font-size:10px;color:transparent;transition:all .15s ease;
+}
+.outline-item.done .tick{background:var(--green);border-color:var(--green);color:#08130c}
+.outline-item.done{color:var(--text-3)}
+.outline-reset{
+  margin-top:8px;width:100%;font-size:12px;color:var(--text-3);
+  background:transparent;border:1px dashed var(--border);border-radius:8px;
+  padding:6px;cursor:pointer;font-family:var(--sans);
+}
+.outline-reset:hover{color:var(--red);border-color:var(--red)}
+
+/* ============ 学习路径：单元 ============ */
+.stage-banner{
+  display:flex;align-items:center;gap:14px;margin:44px 0 18px;
+}
+.stage-banner:first-child{margin-top:0}
+.stage-num{
+  font-family:var(--mono);font-size:12px;font-weight:700;letter-spacing:.12em;
+  padding:4px 10px;border-radius:6px;border:1px solid;
+}
+.stage-banner h2{font-size:22px;font-weight:700;letter-spacing:.01em}
+.stage-banner p{font-size:13px;color:var(--text-3);margin-left:auto;text-align:right}
+.unit{
+  background:var(--panel);border:1px solid var(--border-soft);border-radius:14px;
+  padding:22px 24px;margin-bottom:16px;scroll-margin-top:84px;
+  transition:border-color .2s ease;
+}
+.unit:hover{border-color:var(--border)}
+.unit-head{display:flex;align-items:flex-start;gap:14px;margin-bottom:6px}
+.unit-check{
+  flex:none;margin-top:5px;width:22px;height:22px;border-radius:50%;cursor:pointer;
+  border:2px solid var(--text-3);background:transparent;display:grid;place-items:center;
+  color:transparent;font-size:12px;transition:all .18s ease;
+}
+.unit-check:hover{border-color:var(--green)}
+.unit.done .unit-check{background:var(--green);border-color:var(--green);color:#08130c}
+.unit.done .unit-title{color:var(--text-3);text-decoration:line-through;text-decoration-color:var(--text-3)}
+.unit-title{font-size:17px;font-weight:650}
+.unit-tag{
+  flex:none;margin-top:3px;font-size:11px;font-weight:700;letter-spacing:.1em;
+  padding:2px 8px;border-radius:5px;
+}
+.tag-case{background:rgba(251,191,36,.12);color:var(--amber);border:1px solid rgba(251,191,36,.3)}
+.tag-core{background:rgba(74,222,128,.1);color:var(--green);border:1px solid rgba(74,222,128,.28)}
+.unit-body{color:var(--text-2);font-size:14.5px}
+.unit-body p{margin:8px 0}
+.unit-body strong{color:var(--text);font-weight:600}
+
+/* 块：提示 */
+.tip,.warn{
+  border-radius:10px;padding:10px 14px;margin:12px 0;font-size:13.5px;
+  display:flex;gap:10px;align-items:flex-start;line-height:1.7;
+}
+.tip{background:rgba(96,165,250,.07);border:1px solid rgba(96,165,250,.22);color:#b9d4f5}
+.warn{background:rgba(251,191,36,.07);border:1px solid rgba(251,191,36,.25);color:#f0dcab}
+.tip::before{content:"提示";flex:none;font-size:11px;font-weight:700;color:var(--blue);border:1px solid rgba(96,165,250,.4);border-radius:4px;padding:1px 6px;margin-top:3px}
+.warn::before{content:"注意";flex:none;font-size:11px;font-weight:700;color:var(--amber);border:1px solid rgba(251,191,36,.4);border-radius:4px;padding:1px 6px;margin-top:3px}
+
+/* 块：列表 */
+.blist{list-style:none;margin:10px 0}
+.blist li{position:relative;padding:3px 0 3px 20px}
+.blist li::before{content:"▸";position:absolute;left:0;color:var(--green)}
+
+/* 块：终端 */
+.term{
+  background:#0a0d13;border:1px solid var(--border);border-radius:10px;
+  overflow:hidden;margin:12px 0;
+}
+.term-head{
+  display:flex;align-items:center;gap:6px;padding:8px 12px;
+  border-bottom:1px solid var(--border-soft);background:rgba(255,255,255,.015);
+}
+.term-dot{width:10px;height:10px;border-radius:50%}
+.term-title{margin-left:6px;font-family:var(--mono);font-size:11px;color:var(--text-3);letter-spacing:.06em}
+.term-body{padding:6px 0;font-family:var(--mono);font-size:13px;line-height:1.9;overflow-x:auto}
+.term-line{
+  display:flex;align-items:baseline;gap:10px;padding:2px 14px;
+  cursor:pointer;transition:background .12s ease;position:relative;white-space:pre;
+}
+.term-line:hover{background:rgba(74,222,128,.05)}
+.term-line .prompt{color:var(--green);flex:none;user-select:none}
+.term-line .cmd-text{color:#d7e0ee}
+.term-line .cmd-desc{
+  color:var(--text-3);font-family:var(--sans);font-size:12.5px;
+  white-space:normal;margin-left:auto;text-align:right;padding-left:16px;
+}
+.copy-hint{
+  position:absolute;right:10px;top:50%;transform:translateY(-50%);
+  font-family:var(--sans);font-size:11px;color:var(--green);
+  background:#0f1a12;border:1px solid #1f3526;border-radius:5px;padding:1px 7px;
+  opacity:0;pointer-events:none;transition:opacity .15s ease;
+}
+.term-line:hover .copy-hint{opacity:1}
+.term-line.has-desc:hover .copy-hint{opacity:0}
+
+/* 块：键帽 */
+.keys-row{
+  display:flex;align-items:center;gap:12px;padding:9px 4px;
+  border-bottom:1px dashed var(--border-soft);cursor:pointer;border-radius:6px;
+  transition:background .12s ease;
+}
+.keys-row:last-child{border-bottom:none}
+.keys-row:hover{background:rgba(255,255,255,.02)}
+.keys-row .kcombo{display:flex;align-items:center;gap:5px;flex:none;min-width:210px;flex-wrap:wrap}
+kbd{
+  font-family:var(--mono);font-size:12.5px;color:#dbe2f0;
+  background:var(--panel-3);border:1px solid #2c3548;border-bottom-width:3px;
+  border-radius:6px;padding:2px 8px;line-height:1.5;white-space:nowrap;
+}
+.keys-row .kalt{font-size:11.5px;color:var(--text-3)}
+.keys-row .kdesc{color:var(--text-2);font-size:13.5px}
+
+/* 块：代码 */
+.codeblock{
+  background:#0a0d13;border:1px solid var(--border);border-radius:10px;
+  padding:14px 16px;margin:12px 0;font-family:var(--mono);font-size:13px;
+  line-height:1.75;overflow-x:auto;white-space:pre;color:#c9d4e6;cursor:pointer;
+  position:relative;transition:border-color .15s ease;
+}
+.codeblock:hover{border-color:#31405a}
+.codeblock .lang{
+  position:absolute;top:8px;right:12px;font-size:10.5px;color:var(--text-3);
+  letter-spacing:.1em;text-transform:uppercase;
+}
+
+/* 块：表格 */
+.dtable{width:100%;border-collapse:collapse;margin:12px 0;font-size:13.5px}
+.dtable th{
+  text-align:left;font-size:12px;letter-spacing:.08em;color:var(--text-3);
+  font-weight:600;padding:8px 12px;border-bottom:1px solid var(--border);
+}
+.dtable td{padding:9px 12px;border-bottom:1px solid var(--border-soft);color:var(--text-2);vertical-align:top}
+.dtable td:first-child{color:var(--text);font-family:var(--mono);font-size:12.5px;white-space:nowrap}
+.dtable tr:last-child td{border-bottom:none}
+
+/* 块：案例步骤 */
+.steps{list-style:none;counter-reset:step;margin:14px 0 4px}
+.steps li{
+  counter-increment:step;position:relative;padding:0 0 22px 44px;
+}
+.steps li::before{
+  content:counter(step);position:absolute;left:0;top:1px;
+  width:26px;height:26px;border-radius:50%;
+  background:var(--panel-3);border:1px solid var(--border);
+  color:var(--text);font-family:var(--mono);font-size:12.5px;font-weight:600;
+  display:grid;place-items:center;
+}
+.steps li::after{
+  content:"";position:absolute;left:13px;top:30px;bottom:2px;width:1px;
+  background:var(--border);
+}
+.steps li:last-child::after{display:none}
+.steps li:last-child{padding-bottom:4px}
+.step-text{color:var(--text);font-size:14.5px;padding-top:2px}
+
+/* ============ 速查手册 ============ */
+.ref-nav-item{
+  display:flex;align-items:center;gap:9px;width:100%;text-align:left;
+  padding:8px 11px;border-radius:8px;border:1px solid transparent;
+  background:transparent;color:var(--text-2);font-size:13.5px;cursor:pointer;
+  font-family:var(--sans);transition:all .15s ease;
+}
+.ref-nav-item:hover{background:var(--panel);color:var(--text)}
+.ref-nav-item.active{background:var(--panel-2);border-color:var(--border);color:var(--text)}
+.ref-nav-item .cat-dot{width:7px;height:7px;border-radius:2px;flex:none}
+.ref-nav-item .cnt{margin-left:auto;font-family:var(--mono);font-size:11.5px;color:var(--text-3)}
+.ref-group{margin-bottom:36px;scroll-margin-top:84px}
+.ref-group-head{
+  display:flex;align-items:baseline;gap:10px;margin-bottom:12px;
+  padding-bottom:8px;border-bottom:1px solid var(--border);
+}
+.ref-group-head h3{font-size:16px;font-weight:700}
+.ref-group-head .cnt{font-family:var(--mono);font-size:12px;color:var(--text-3)}
+.ref-entries{
+  display:grid;grid-template-columns:repeat(auto-fill,minmax(min(340px,100%),1fr));gap:10px;
+}
+.ref-card{
+  background:var(--panel);border:1px solid var(--border-soft);border-radius:10px;
+  padding:12px 14px;cursor:pointer;transition:all .15s ease;position:relative;
+  display:flex;flex-direction:column;gap:6px;min-width:0;
+}
+.ref-card:hover{border-color:#31405a;background:var(--panel-2);transform:translateY(-1px)}
+.ref-card .r-name{font-size:13.5px;font-weight:600;color:var(--text);line-height:1.5}
+.ref-card .r-cmd{
+  font-family:var(--mono);font-size:12.5px;color:var(--green);
+  white-space:pre-wrap;word-break:break-all;line-height:1.6;
+}
+.ref-card .r-cmd .prompt{color:rgba(74,222,128,.55);user-select:none}
+.ref-card .r-keys{display:flex;gap:5px;flex-wrap:wrap;align-items:center}
+.ref-card .r-desc{font-size:12.5px;color:var(--text-2);line-height:1.65}
+.ref-card .r-copy{
+  position:absolute;top:8px;right:10px;font-size:10.5px;color:var(--text-3);
+  opacity:0;transition:opacity .15s ease;font-family:var(--mono);
+}
+.ref-card:hover .r-copy{opacity:1}
+.ref-empty{
+  text-align:center;padding:80px 20px;color:var(--text-3);
+}
+.ref-empty .mono{font-size:14px;color:var(--amber)}
+mark{background:rgba(251,191,36,.3);color:#ffe9b8;border-radius:3px;padding:0 1px}
+
+/* toast */
+.toast{
+  position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(20px);
+  background:#0f1a12;border:1px solid #1f3526;color:var(--green);
+  font-size:13px;padding:9px 18px;border-radius:10px;
+  opacity:0;pointer-events:none;transition:all .25s ease;z-index:99;
+  font-family:var(--mono);box-shadow:0 8px 30px rgba(0,0,0,.5);
+}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+.footer-note{
+  margin-top:60px;padding-top:20px;border-top:1px solid var(--border-soft);
+  font-size:12px;color:var(--text-3);display:flex;gap:8px;flex-wrap:wrap;
+}
+.footer-note a{color:var(--blue);text-decoration:none}
+.ref-card:focus-visible{outline:2px solid var(--green);outline-offset:2px}
+@media print{
+.topbar,.side,.toast,.r-copy{display:none!important}
+.view-grid{display:block}
+.ref-card,.unit{break-inside:avoid}
+}
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="brand">
+    <span class="logo">❯_</span>
+    <span class="brand-title">Herdr 完全指南</span>
+    <span class="brand-sub">多智能体工作台</span>
+  </div>
+  <nav class="mode-switch" aria-label="模式切换">
+    <button class="mode-btn active" id="btn-learn" type="button">学习路径</button>
+    <button class="mode-btn" id="btn-ref" type="button">速查手册</button>
+  </nav>
+  <div class="searchbox">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#9aa3b2" stroke-width="2.4" stroke-linecap="round"><circle cx="11" cy="11" r="7"></circle><line x1="21" y1="21" x2="16.5" y2="16.5"></line></svg>
+    <input id="search" type="text" placeholder="搜索命令、快捷键、概念…" autocomplete="off" spellcheck="false">
+    <kbd>Ctrl K</kbd>
+  </div>
+  <button class="progress-pill" id="progress-pill" type="button" title="点击查看学习路径">学习进度 <b id="progress-num">0/0</b></button>
+</header>
+
+<main class="container">
+  <section id="learn-view" data-screen-label="学习路径">
+    <div class="view-grid">
+      <aside class="side" id="outline"></aside>
+      <div id="learn-content"></div>
+    </div>
+  </section>
+  <section id="ref-view" data-screen-label="速查手册" hidden>
+    <div class="view-grid">
+      <aside class="side" id="ref-nav"></aside>
+      <div id="ref-content" aria-live="polite"></div>
+    </div>
+  </section>
+  <div class="footer-note">
+    <span>内容整理自</span><a href="https://herdr.dev/zh-cn/docs/" target="_blank" rel="noopener">Herdr 官方文档</a>
+<span>·</span><span>基于 Herdr 0.9.x 整理，命令与键位可能随版本变化</span>
+    <span>·</span><span>点击任意命令 / 快捷键即可复制</span>
+    <span>·</span><span>快捷键：Ctrl+K 搜索，Esc 清除，1 / 2 切换模式</span>
+  </div>
+</main>
+
+<div class="toast" id="toast">已复制</div>
+
+<script>
+"use strict";
+/* ================================================================
+   数据：学习路径（忠实整理自《分屏不提供隔离：一篇讲透 Herdr 多智能体工作台》）
+   块类型: p / list / tip / warn / cmds / keys / code / table / steps
+================================================================ */
+var STAGES = [
+{ id:"s1", num:"01", name:"入门", color:"#4ade80",
+  desc:"理解对象模型，完成安装、第一次启动与分离重连。",
+  units:[
+  { id:"u1", title:"Herdr 管理什么：三层对象模型", tag:"core", blocks:[
+    {t:"p", x:"Herdr 是为编程 Agent 设计的终端工作台，提供<strong>运行位置、状态视图和控制入口</strong>。布局分三层："},
+    {t:"code", lang:"text", title:"对象模型", text:"Workspace：一个项目或工作上下文\n└── Tab：一组相关终端的布局\n    ├── Pane：运行 Codex\n    └── Pane：运行测试、服务或其他 Agent"},
+    {t:"p", x:"Agent 是 Herdr 在某个窗格中识别出的当前进程；窗格也可以只运行 shell、测试或开发服务器。因此，<strong>分屏是布局操作；启动 Agent 是在窗格中运行进程。</strong>"},
+    {t:"p", x:"Herdr Session 与 Agent Session 不是同一个概念："},
+    {t:"table", head:["概念","保存什么"], rows:[
+      ["Herdr Session","后台服务、布局和仍在运行的终端"],
+      ["Agent Session","对话上下文，由对应 Agent 自己管理"],
+      ["恢复条件","只有集成上报了有效的原生会话引用，Herdr 才能在服务器重启后恢复对应对话"]
+    ]}
+  ]},
+  { id:"u2", title:"安装、启动与集成", tag:"core", blocks:[
+    {t:"cmds", items:[
+      {c:"brew install herdr", d:"Homebrew 安装（macOS / Linux）"},
+      {c:"curl -fsSL https://herdr.dev/install.sh | sh", d:"Linux 或 macOS 安装脚本"},
+      {c:'powershell -ExecutionPolicy Bypass -c "irm https://herdr.dev/install.ps1 | iex"', d:"Windows 安装"},
+      {c:"herdr --version", d:"验证安装"},
+      {c:"brew update && brew upgrade herdr", d:"更新"},
+      {c:"herdr integration install codex", d:"安装 Codex 集成"},
+      {c:"herdr integration install pi", d:"安装 Pi 集成"},
+      {c:"herdr integration install omp", d:"安装 OMP 集成"},
+      {c:"herdr integration status", d:"查看集成状态"},
+      {c:"herdr completion powershell", d:"Shell 补全（另有 bash / zsh）"},
+      {c:"herdr server stop", d:"关闭服务器；也可以直接关掉终端窗口"}
+    ]}
+  ]},
+  { id:"u3", title:"先学这些键位", tag:"core", blocks:[
+    {t:"p", x:"Herdr 默认前缀键是 <strong>ctrl+b</strong>。<strong>prefix+v</strong> 表示先按 Ctrl+B，松开后再按 v。前缀键让 Herdr 的操作与 shell、编辑器和 Agent TUI 的快捷键分开。"},
+    {t:"keys", items:[
+      {k:"prefix+?", alt:"", d:"查看当前生效的键位"},
+      {k:"prefix+s", alt:"", d:"打开设置"},
+      {k:"prefix+c", alt:"", d:"新建标签页"},
+      {k:"prefix+v", alt:"prefix+minus 向下分割", d:"向右分割"},
+      {k:"prefix+h/j/k/l", alt:"", d:"在窗格间移动"},
+      {k:"prefix+w", alt:"", d:"工作区导航"},
+      {k:"prefix+z", alt:"", d:"缩放当前窗格"},
+      {k:"prefix+[", alt:"", d:"进入复制模式"},
+      {k:"prefix+b", alt:"", d:"切换侧边栏"},
+      {k:"prefix+q", alt:"", d:"分离客户端"}
+    ]},
+    {t:"tip", x:"Herdr 也支持鼠标：<strong>单击</strong>切换焦点，<strong>右键</strong>创建或分屏，<strong>拖动分隔线</strong>调整大小，<strong>拖选终端文字</strong>进行复制。"},
+    {t:"p", x:"复制模式中用 h/j/k/l 移动，/ 或 ? 搜索，v 或空格开始选择，y 或回车复制，q 或 Esc 退出。复制模式<strong>不会暂停窗格进程</strong>。"}
+  ]},
+  { id:"u4", title:"案例：第一次启动并重连一个 Agent", tag:"case", blocks:[
+    {t:"steps", items:[
+      {x:"在普通终端确认版本并安装集成：", code:{lang:"bash", text:"herdr --version\nherdr integration install codex"}},
+      {x:"在项目目录启动 Herdr：", code:{lang:"bash", text:"herdr"}},
+      {x:"在窗格中运行 codex，提交一个小任务，确认侧边栏出现 Agent。"},
+      {x:"按 prefix+q 分离客户端。"},
+      {x:"回到外部普通终端再次运行 herdr，确认布局和进程仍然可见。"}
+    ]},
+    {t:"warn", x:"Agent 状态不能代替代码、测试和实际行为验收。"}
+  ]}
+]},
+{ id:"s2", num:"02", name:"进阶", color:"#fbbf24",
+  desc:"读懂五种 Agent 状态，掌握派工、等待与读取输出的语义。",
+  units:[
+  { id:"u5", title:"五种 Agent 状态", tag:"core", blocks:[
+    {t:"p", x:"Herdr 将 Agent 状态汇总到窗格、标签页和工作区，帮助定位谁还在运行、谁在等待输入、谁已经可以审阅。"},
+    {t:"table", head:["状态","含义","接下来做什么"], rows:[
+      ["working","Agent 正在处理任务","继续等待，必要时查看进展"],
+      ["blocked","识别到审批、提问或权限界面","读取输出，确认它需要什么"],
+      ["done","已回到可输入状态，但标签页尚未查看","查看结果并验收"],
+      ["idle","可以接收输入，且标签页已被查看","派下一项任务"],
+      ["unknown","识别到了 Agent，但无法可靠分类","检查集成和实际输出"]
+    ]},
+    {t:"warn", x:"<strong>done 和 idle 的差别是标签页是否已被查看</strong>。显式执行 pane focus 或 agent focus 会标记目标，读取输出不会。unknown 只表示生命周期判断不可靠，<strong>不表示任务成功完成</strong>。"}
+  ]},
+  { id:"u6", title:"状态来自哪里", tag:"core", blocks:[
+    {t:"p", x:"每个窗格只有一个状态权威："},
+    {t:"list", items:[
+      "Pi、OMP 等提供完整生命周期上报的 Agent，在集成主动上报时由集成决定 idle、working 和 blocked；",
+      "Codex、Claude Code 等没有完整生命周期上报的 Agent，状态主要来自前台进程和终端底部缓冲区的屏幕规则；",
+      "会话身份集成可以帮助恢复对话，但不一定负责生命周期状态；",
+      "不受支持的 Agent 仍能作为普通终端进程运行，只是状态可能不完整。"
+    ]},
+    {t:"warn", x:"对屏幕检测型 Agent，<strong>blocked 的判断刻意从严</strong>。未识别的新提示界面可能暂时显示为 idle。排查时直接看解释结果："},
+    {t:"cmds", items:[
+      {c:"herdr agent explain reviewer --json", d:"给出最终状态、清单来源、匹配规则和回退原因"}
+    ]},
+    {t:"tip", x:"如果 Agent 运行在 Herdr 窗格内的 tmux、虚拟机或沙箱包装器之后，Herdr 可能看不到真实前台进程。"}
+  ]},
+  { id:"u7", title:"集成与 Skill 的分工", tag:"core", blocks:[
+    {t:"table", head:["能力","作用"], rows:[
+      ["集成","上报生命周期状态、原生会话身份，或两者之一"],
+      ["Skill","教 Agent 如何操作 Herdr 的布局、窗格和 Agent 命令"]
+    ]},
+    {t:"p", x:"在普通 shell 中安装官方 Skill：<strong>-g</strong> 表示全局安装，只用于当前项目时省略。已经安装 Herdr，也可以用 herdr --skill 输出与当前二进制匹配的内置版本。"},
+    {t:"cmds", items:[
+      {c:"npx skills add herdrdev/herdr --skill herdr -g", d:"全局安装官方 Skill"},
+      {c:"herdr --skill", d:"输出与二进制匹配的内置 Skill"}
+    ]},
+    {t:"warn", x:"<strong>执行 Herdr 控制命令的 Agent 必须运行在 Herdr 管理的窗格中。</strong>控制前先检查；检查失败就停止控制操作，从 Herdr 窗格重新启动 Agent。不要手工设置 HERDR_ENV 绕过检查。"},
+    {t:"code", lang:"bash", title:"控制前检查", text:'test "${HERDR_ENV:-}" = 1'}
+  ]},
+  { id:"u8", title:"派工：分屏、启动、提交、读取", tag:"core", blocks:[
+    {t:"p", x:"最省事的方式是把<strong>位置、角色、任务和边界</strong>一次说清："},
+    {t:"code", lang:"text", title:"派工提示模板", text:"使用 Herdr Skill，在当前项目目录的相邻窗格启动一个 Codex Reviewer。\n保持当前焦点。让它只读审阅当前 diff，对照需求检查遗漏和错误路径，\n报告文件、行号、触发条件与影响，不修改文件。\n等待状态变化后读取结果；遇到 blocked，先说明它在等待什么。"},
+    {t:"warn", x:"对应的 CLI 流程如下。创建命令返回 JSON，<strong>必须从响应读取新窗格 ID，不能按侧边栏顺序猜测。</strong>"},
+    {t:"code", lang:"bash", title:"完整派工流程", text:"test \"${HERDR_ENV:-}\" = 1\n\nsplit=$(herdr pane split --current --direction right --cwd \"$PWD\" --no-focus)\nreview_pane=$(printf '%s\\n' \"$split\" | jq -r '.result.pane.pane_id')\n\nherdr agent start reviewer --kind codex --pane \"$review_pane\"\nherdr agent prompt reviewer \\\n  \"只读审阅当前 git diff，列出文件、行号、触发条件与影响；不修改文件。\" \\\n  --wait --timeout 60000\n\nherdr agent get reviewer\nherdr agent read reviewer --source recent-unwrapped --lines 120"},
+    {t:"p", x:"<strong>agent start</strong> 只在已有的空闲 shell 窗格中启动 Agent，不创建布局。成功返回表示 Herdr 已识别目标 Agent，并认为它可以接收输入。"},
+    {t:"warn", x:"agent prompt --wait 默认等待稳定的 idle、done 或 blocked。如果返回 blocked，先读输出，再明确处理审批或问题。<strong>blocked 不是完成，等待超时也不表示提示没有发出。</strong>超时后先执行 agent get 和 agent read，避免重复提交同一任务。"}
+  ]},
+  { id:"u9", title:"窗格命令与 Agent 命令", tag:"core", blocks:[
+    {t:"table", head:["目标","使用的命令"], rows:[
+      ["运行 shell 命令","pane run"],
+      ["发送纯文本或按键","pane send-text、pane send-keys"],
+      ["等待文本或正则","pane wait-output"],
+      ["启动受支持的 Agent","agent start"],
+      ["提交提示并等待生命周期状态","agent prompt"],
+      ["操作 Agent 的交互界面","agent send-keys"],
+      ["等待精确 Agent 状态","agent wait"]
+    ]},
+    {t:"p", x:"<strong>对 shell、测试、服务器和 CI 监视器使用窗格命令；需要识别 Agent 身份或生命周期状态时使用 Agent 命令。</strong>"},
+    {t:"p", x:"pane wait-output 只匹配终端文本，不解释 Agent 生命周期，而且已有文本也可能立即命中。agent wait 观察当前状态，状态已匹配时会立即返回。两个等待命令省略 --timeout 都会<strong>无限等待</strong>。"}
+  ]},
+  { id:"u10", title:"读取输出", tag:"core", blocks:[
+    {t:"cmds", items:[
+      {c:"herdr agent read reviewer --source recent-unwrapped --lines 120", d:"读 Agent 最近回滚（合并软换行）"},
+      {c:"herdr pane read <pane_id> --source visible", d:"读窗格当前渲染屏幕"},
+      {c:"herdr agent read reviewer --source detection", d:"读状态检测使用的快照"}
+    ]},
+    {t:"table", head:["来源","适用场景"], rows:[
+      ["visible","当前渲染的屏幕，适合处理交互界面"],
+      ["recent","保留终端软换行的最近回滚内容"],
+      ["recent-unwrapped","合并软换行，适合日志和长回复"],
+      ["detection","状态检测使用的底部纯文本快照"]
+    ]},
+    {t:"tip", x:"Claude Code、OpenCode 等全屏 Agent 可能把历史放在备用屏幕中。读取不完整时，先增加 --lines；仍然缺失就等 Agent 空闲后再读，或让它把完整结果写入 Markdown 文件并返回路径。"}
+  ]},
+  { id:"u11", title:"案例：等待审批，再读取结果", tag:"case", blocks:[
+    {t:"cmds", items:[
+      {c:"herdr agent wait reviewer --until blocked --timeout 120000", d:"等待审批界面出现"},
+      {c:"herdr agent read reviewer --source recent-unwrapped --lines 80", d:"读取它在等待什么"},
+      {c:"herdr agent send-keys reviewer esc", d:"操作交互界面（如按 Esc）"}
+    ]},
+    {t:"p", x:"普通进程不应伪装成 Agent——shell、测试和 CI 监视器用窗格命令："},
+    {t:"code", lang:"bash", title:"普通进程", text:'herdr pane run w1:p3 "just test --watch"\nherdr pane wait-output w1:p3 --regex "passed|failed" --timeout 120000'}
+  ]}
+]},
+{ id:"s3", num:"03", name:"拓展", color:"#a78bfa",
+  desc:"分离与恢复、服务器行为与自动化脚本的 ID 原则。",
+  units:[
+  { id:"u12", title:"布局、分离与恢复", tag:"core", blocks:[
+    {t:"p", x:"离开时按 <strong>prefix+q</strong> 分离，返回时在外部终端重新运行 herdr。<strong>不要在 Herdr 窗格中嵌套启动不带参数的 herdr。</strong>"},
+    {t:"warn", x:"只有确实要结束服务器及其全部窗格进程时，才运行 herdr server stop。"},
+    {t:"p", x:"服务器重启后，Herdr 可以恢复保存的布局，以及已上报原生会话引用的 Agent 对话。普通测试、开发服务器和没有会话引用的 Agent 需要重新启动。"},
+    {t:"cmds", items:[
+      {c:"herdr workspace list", d:"列出工作区"},
+      {c:"herdr tab list", d:"列出标签页"},
+      {c:"herdr pane list", d:"列出窗格"},
+      {c:'herdr pane split --current --direction right --cwd "$PWD" --no-focus', d:"向右分屏，不转移焦点"}
+    ]}
+  ]},
+  { id:"u13", title:"自动化脚本的 ID 原则", tag:"core", blocks:[
+    {t:"p", x:"Herdr CLI 通过与集成和 Agent 相同的本地 socket API 与服务器通信，大多数命令输出 JSON 响应，需要确定性自动化时从脚本中使用它们。"},
+    {t:"list", items:[
+      "创建工作区和标签页时会同时创建根窗格；",
+      "自动化脚本应读取返回 JSON 中的 ID；",
+      "窗格移动后 ID 可能变化，应继续使用新响应中的 ID。"
+    ]},
+    {t:"cmds", items:[
+      {c:"herdr api snapshot", d:"打印实时会话快照"},
+      {c:"herdr api schema --json", d:"打印 API schema"},
+      {c:"herdr <group> --help", d:"完整选项以各命令组帮助为准"}
+    ]}
+  ]}
+]}
+];
+
+/* ================================================================
+   数据：速查手册（12 大类）
+   条目: {n:名称, c:命令, k:快捷键, code:代码, d:说明, kw:关键词}
+================================================================ */
+var CATS = [
+{ id:"concept", name:"状态与概念", color:"#f87171", entries:[
+  {n:"五种 Agent 状态", d:"working 处理中 / blocked 等待审批或提问 / done 完成但标签页未查看 / idle 可接收输入且已查看 / unknown 无法可靠分类", kw:"状态 生命周期 working blocked done idle unknown"},
+  {n:"done 与 idle 的差别", d:"标签页是否已被查看；显式 pane focus 或 agent focus 会标记目标，读取输出不会", kw:"done idle 查看 focus"},
+  {n:"unknown 的含义", d:"只表示生命周期判断不可靠，不表示任务成功完成；检查集成和实际输出", kw:"unknown 状态"},
+  {n:"blocked 从严", d:"屏幕检测型 Agent 的 blocked 判断刻意从严；未识别的新提示界面可能暂时显示为 idle", kw:"blocked 屏幕检测"},
+  {n:"HERDR_ENV 控制前检查", code:'test "${HERDR_ENV:-}" = 1', d:"执行控制命令的 Agent 必须运行在 Herdr 管理的窗格中；不要手工设置 HERDR_ENV 绕过检查", kw:"herdr_env 环境变量 检查"},
+  {n:"分屏 ≠ 启动 Agent", d:"分屏是布局操作；启动 Agent 是在窗格中运行进程；agent start 只在已有空闲 shell 窗格中启动，不创建布局", kw:"分屏 split 布局 进程"},
+  {n:"Herdr Session vs Agent Session", d:"Herdr Session 保存后台服务、布局和终端；Agent Session 保存对话上下文；恢复对话需要集成上报原生会话引用", kw:"session 会话 恢复"},
+  {n:"读取来源对比", d:"visible 当前屏幕 / recent 保留软换行的回滚 / recent-unwrapped 合并软换行适合长回复 / detection 状态检测快照", kw:"source visible recent unwrapped detection 读取"},
+  {n:"等待语义", d:"agent prompt --wait 默认等待稳定的 idle/done/blocked；blocked 不是完成；超时不表示提示未发出；省略 --timeout 无限等待", kw:"wait 等待 超时 timeout"},
+  {n:"派工提示模板", code:"使用 Herdr Skill，在当前项目目录的相邻窗格启动一个 Codex Reviewer。\n保持当前焦点。让它只读审阅当前 diff，对照需求检查遗漏和错误路径，\n报告文件、行号、触发条件与影响，不修改文件。\n等待状态变化后读取结果；遇到 blocked，先说明它在等待什么。", d:"把位置、角色、任务和边界一次说清", kw:"派工 模板 dispatch reviewer"},
+  {n:"窗格命令 vs Agent 命令", d:"shell、测试、服务器、CI 监视器用 pane 命令；需要 Agent 身份或生命周期状态时用 agent 命令", kw:"pane agent 分工 命令选择"},
+  {n:"脚本 ID 原则", d:"创建命令返回 JSON，必须从响应读取新窗格 ID，不能按侧边栏顺序猜测；窗格移动后 ID 可能变化，应使用新响应中的 ID", kw:"json pane_id 自动化 脚本"}
+]},
+{ id:"keys", name:"键位与鼠标", color:"#60a5fa", entries:[
+  {n:"前缀键", k:"ctrl+b", d:"默认前缀；prefix+v 表示先按 Ctrl+B 松开再按 v", kw:"prefix 前缀"},
+  {n:"查看当前键位", k:"prefix+?", d:"查看当前生效的键位", kw:"帮助"},
+  {n:"打开设置", k:"prefix+s", d:"打开设置", kw:"设置 settings"},
+  {n:"新建标签页", k:"prefix+c", d:"新建标签页", kw:"tab 新建"},
+  {n:"向右分割", k:"prefix+v", d:"向右分割窗格", kw:"split 分屏"},
+  {n:"向下分割", k:"prefix+minus", d:"向下分割窗格", kw:"split 分屏"},
+  {n:"窗格间移动", k:"prefix+h/j/k/l", d:"在窗格间移动焦点", kw:"移动 焦点 vim"},
+  {n:"工作区导航", k:"prefix+w", d:"工作区导航", kw:"workspace 导航"},
+  {n:"缩放当前窗格", k:"prefix+z", d:"缩放当前窗格", kw:"zoom 缩放"},
+  {n:"进入复制模式", k:"prefix+[", d:"进入复制模式；不会暂停窗格进程", kw:"copy 复制模式"},
+  {n:"切换侧边栏", k:"prefix+b", d:"切换侧边栏", kw:"sidebar 侧边栏"},
+  {n:"分离客户端", k:"prefix+q", d:"分离客户端；返回时在外部终端重新运行 herdr", kw:"detach 分离"},
+  {n:"复制模式：移动", k:"h/j/k/l", d:"复制模式中移动光标", kw:"copy 复制模式 移动"},
+  {n:"复制模式：搜索", k:"/", d:"或 ?；在复制模式中搜索", kw:"copy 复制模式 搜索"},
+  {n:"复制模式：选择", k:"v", d:"或空格；开始选择", kw:"copy 复制模式 选择"},
+  {n:"复制模式：复制", k:"y", d:"或回车；复制选中内容", kw:"copy 复制模式 复制"},
+  {n:"复制模式：退出", k:"q", d:"或 Esc；退出复制模式", kw:"copy 复制模式 退出 esc"},
+  {n:"鼠标操作", d:"单击切换焦点；右键创建或分屏；拖动分隔线调整大小；拖选终端文字进行复制", kw:"mouse 鼠标 拖选"}
+]},
+{ id:"start", name:"安装与启动", color:"#4ade80", entries:[
+  {n:"Homebrew 安装", c:"brew install herdr", d:"macOS / Linux", kw:"install 安装 brew"},
+  {n:"脚本安装", c:"curl -fsSL https://herdr.dev/install.sh | sh", d:"Linux 或 macOS 官方安装脚本", kw:"install 安装 curl"},
+  {n:"Windows 安装", c:'powershell -ExecutionPolicy Bypass -c "irm https://herdr.dev/install.ps1 | iex"', d:"Windows 安装", kw:"install 安装 windows powershell"},
+  {n:"验证安装", c:"herdr --version", d:"查看版本号（别名 -V）", kw:"version 版本"},
+  {n:"更新", c:"brew update && brew upgrade herdr", d:"Homebrew 升级", kw:"update upgrade 更新 升级"},
+  {n:"启动或连接默认会话", c:"herdr", d:"在项目目录启动；不要在 Herdr 窗格中嵌套启动不带参数的 herdr", kw:"启动 start"},
+  {n:"命名持久会话", c:"herdr --session <name>", d:"使用或创建命名持久会话", kw:"session 会话 命名"},
+  {n:"SSH 远程连接", c:"herdr --remote <ssh-target>", d:"通过 SSH 连接远程 Herdr 服务器", kw:"remote ssh 远程"},
+  {n:"远程按键绑定", c:"herdr --remote-keybindings <local|server>", d:"远程附加使用哪一侧的按键绑定", kw:"remote 按键 keybindings"},
+  {n:"打印默认配置", c:"herdr --default-config", d:"打印默认配置并退出", kw:"config 配置 默认"},
+  {n:"打印 Agent Skill", c:"herdr --skill", d:"输出与二进制版本匹配的 Agent Skill", kw:"skill"},
+  {n:"查看状态", c:"herdr status [server|client]", d:"查看服务器或客户端状态", kw:"status 状态"},
+  {n:"更新 Herdr", c:"herdr update [--handoff]", d:"内置更新", kw:"update 更新"},
+  {n:"更新通道", c:"herdr channel show | set <stable|preview>", d:"查看或设置更新通道", kw:"channel stable preview"},
+  {n:"API schema", c:"herdr api schema [--json] [--output PATH]", d:"打印 API schema", kw:"api schema"},
+  {n:"实时会话快照", c:"herdr api snapshot", d:"打印实时会话快照", kw:"api snapshot 快照"},
+  {n:"配置检查 / 重置键位", c:"herdr config check | reset-keys", d:"检查配置或重置按键绑定", kw:"config 配置 reset"},
+  {n:"Shell 补全", c:"herdr completion <bash|zsh|fish|powershell|elvish>", d:"别名 completions", kw:"completion 补全"}
+]},
+{ id:"server", name:"服务器", color:"#fbbf24", entries:[
+  {n:"显式运行无界面服务器", c:"herdr server", d:"显式运行无界面服务器", kw:"server 服务器"},
+  {n:"停止服务器", c:"herdr server stop", d:"结束服务器及其全部窗格进程；平时关闭可直接关终端窗口", kw:"server stop 停止 关闭"},
+  {n:"重载配置", c:"herdr server reload-config", d:"重新加载服务器配置", kw:"server reload 配置"},
+  {n:"查看 Agent 清单", c:"herdr server agent-manifests [--json]", d:"列出 Agent manifests", kw:"server manifest"},
+  {n:"更新 Agent 清单", c:"herdr server update-agent-manifests [--json]", d:"更新 Agent manifests", kw:"server manifest 更新"},
+  {n:"重载 Agent 清单", c:"herdr server reload-agent-manifests", d:"重新加载 Agent manifests", kw:"server manifest 重载"}
+]},
+{ id:"machine", name:"机器与会话", color:"#fbbf24", entries:[
+  {n:"列出机器", c:"herdr machine list [--json]", d:"列出已配置的远程机器", kw:"machine 机器 远程"},
+  {n:"添加机器", c:"herdr machine add <host> [--label TEXT] [--remote-session <name>]", d:"添加远程机器", kw:"machine 机器 添加"},
+  {n:"重命名机器", c:"herdr machine rename <profile-id> --label TEXT", d:"重命名机器配置", kw:"machine 重命名"},
+  {n:"启用 / 禁用 / 移除机器", c:"herdr machine enable | disable | remove <profile-id>", d:"管理机器配置", kw:"machine enable disable remove"},
+  {n:"列出会话", c:"herdr session list [--json]", d:"列出 Herdr 会话", kw:"session 会话 列表"},
+  {n:"附加会话", c:"herdr session attach <name>", d:"附加到命名会话", kw:"session attach 附加"},
+  {n:"停止会话", c:"herdr session stop <name> [--json]", d:"停止命名会话", kw:"session stop 停止"},
+  {n:"删除会话", c:"herdr session delete <name> [--json]", d:"删除命名会话", kw:"session delete 删除"}
+]},
+{ id:"workspace", name:"工作区", color:"#4ade80", entries:[
+  {n:"列出工作区", c:"herdr workspace list", d:"列出全部工作区", kw:"workspace 工作区 列表"},
+  {n:"创建工作区", c:"herdr workspace create [--cwd PATH] [--label TEXT] [--env KEY=VALUE] [--focus] [--no-focus]", d:"创建时同时创建根窗格；从返回 JSON 读取 ID", kw:"workspace 工作区 创建"},
+  {n:"查看工作区", c:"herdr workspace get <workspace_id>", d:"查看工作区详情", kw:"workspace 工作区"},
+  {n:"聚焦工作区", c:"herdr workspace focus <workspace_id>", d:"切换焦点到工作区", kw:"workspace focus 聚焦"},
+  {n:"重命名工作区", c:"herdr workspace rename <workspace_id> <label>", d:"重命名工作区", kw:"workspace rename 重命名"},
+  {n:"上报工作区元数据", c:"herdr workspace report-metadata <workspace_id> --source ID [--token NAME=VALUE] [--clear-token NAME] [--seq N] [--ttl-ms N]", d:"供侧边栏元数据使用", kw:"workspace metadata 上报"},
+  {n:"关闭工作区", c:"herdr workspace close <workspace_id> [--group]", d:"关闭工作区", kw:"workspace close 关闭"}
+]},
+{ id:"worktree", name:"Worktree", color:"#a78bfa", entries:[
+  {n:"列出 Worktree", c:"herdr worktree list [--workspace ID | --cwd PATH] [--trust-repository]", d:"列出 Git worktree", kw:"worktree git 列表"},
+  {n:"创建 Worktree", c:"herdr worktree create [--workspace ID | --cwd PATH] [--branch NAME] [--base REF] [--path PATH] [--label TEXT] [--focus] [--no-focus] [--trust-repository]", d:"创建 Git worktree", kw:"worktree git 创建 branch"},
+  {n:"打开 Worktree", c:"herdr worktree open [--workspace ID | --cwd PATH] (--path PATH | --branch NAME) [--label TEXT] [--focus] [--no-focus] [--trust-repository]", d:"按路径或分支打开 worktree", kw:"worktree git 打开"},
+  {n:"移除 Worktree", c:"herdr worktree remove --workspace ID [--force] [--trust-repository]", d:"移除 worktree", kw:"worktree git 移除 remove"}
+]},
+{ id:"tab", name:"标签页", color:"#4ade80", entries:[
+  {n:"列出标签页", c:"herdr tab list [--workspace <workspace_id>]", d:"列出标签页", kw:"tab 标签页 列表"},
+  {n:"创建标签页", c:"herdr tab create [--workspace <workspace_id>] [--cwd PATH] [--label TEXT] [--env KEY=VALUE] [--focus] [--no-focus]", d:"创建时同时创建根窗格", kw:"tab 标签页 创建"},
+  {n:"查看 / 聚焦 / 重命名 / 关闭", c:"herdr tab get <tab_id> | focus <tab_id> | rename <tab_id> <label> | close <tab_id>", d:"标签页管理子命令", kw:"tab 标签页 focus rename close"}
+]},
+{ id:"pane", name:"窗格", color:"#60a5fa", entries:[
+  {n:"列出窗格", c:"herdr pane list [--workspace <workspace_id>]", d:"列出窗格", kw:"pane 窗格 列表"},
+  {n:"当前窗格", c:"herdr pane current [--pane ID|--current]", d:"查看当前窗格", kw:"pane 当前"},
+  {n:"查看窗格", c:"herdr pane get <pane_id>", d:"查看窗格详情", kw:"pane 查看"},
+  {n:"窗格布局", c:"herdr pane layout [--pane ID|--current]", d:"查看窗格布局信息", kw:"pane layout 布局"},
+  {n:"前台进程信息", c:"herdr pane process-info [--pane ID|--current]", d:"查看窗格前台进程", kw:"pane process 进程"},
+  {n:"相邻窗格", c:"herdr pane neighbor --direction left|right|up|down [--pane ID|--current]", d:"查询指定方向的相邻窗格", kw:"pane neighbor 相邻"},
+  {n:"窗格边缘", c:"herdr pane edges [--pane ID|--current]", d:"查看窗格边缘信息", kw:"pane edges 边缘"},
+  {n:"移动焦点", c:"herdr pane focus --direction left|right|up|down [--pane ID|--current]", d:"显式 focus 会标记 done 标签页为已查看", kw:"pane focus 焦点"},
+  {n:"调整大小", c:"herdr pane resize --direction left|right|up|down [--amount FLOAT] [--pane ID|--current]", d:"调整窗格大小", kw:"pane resize 大小"},
+  {n:"缩放窗格", c:"herdr pane zoom [<pane_id>|--pane ID|--current] [--toggle|--on|--off]", d:"缩放窗格", kw:"pane zoom 缩放"},
+  {n:"重命名窗格", c:"herdr pane rename <pane_id> <label>|--clear", d:"重命名或清除标签", kw:"pane rename 重命名"},
+  {n:"分屏", c:"herdr pane split [<pane_id>|--pane ID|--current] --direction right|down [--ratio FLOAT] [--cwd PATH] [--env KEY=VALUE] [--focus] [--no-focus]", d:"从返回 JSON 的 result.pane.pane_id 读取新窗格 ID", kw:"pane split 分屏"},
+  {n:"交换窗格（方向）", c:"herdr pane swap --direction left|right|up|down [--pane ID|--current]", d:"与相邻窗格交换", kw:"pane swap 交换"},
+  {n:"交换窗格（指定）", c:"herdr pane swap --source-pane ID --target-pane ID", d:"交换两个指定窗格", kw:"pane swap 交换"},
+  {n:"移动到标签页", c:"herdr pane move <pane_id> --tab <tab_id> --split right|down [--target-pane ID] [--ratio FLOAT] [--focus|--no-focus]", d:"移动后 ID 可能变化，使用新响应中的 ID", kw:"pane move 移动"},
+  {n:"移动到新标签页", c:"herdr pane move <pane_id> --new-tab [--workspace ID] [--label TEXT] [--focus|--no-focus]", d:"移动到新标签页", kw:"pane move 移动 新标签页"},
+  {n:"移动到新工作区", c:"herdr pane move <pane_id> --new-workspace [--label TEXT] [--tab-label TEXT] [--focus|--no-focus]", d:"移动到新工作区", kw:"pane move 移动 新工作区"},
+  {n:"关闭窗格", c:"herdr pane close <pane_id>", d:"关闭窗格", kw:"pane close 关闭"},
+  {n:"设置输入路由", c:"herdr pane input", d:"设置窗格输入路由（0.9.0 有，线上文档未收录）", kw:"pane input 输入路由"},
+  {n:"读取窗格输出", c:"herdr pane read <pane_id> [--source visible|recent|recent-unwrapped|detection] [--lines N] [--format text|ansi] [--ansi] [--raw]", d:"读取窗格内容", kw:"pane read 读取 输出"},
+  {n:"发送纯文本", c:"herdr pane send-text <pane_id> <text>", d:"发送纯文本到窗格", kw:"pane send-text 发送"},
+  {n:"发送按键", c:"herdr pane send-keys <pane_id> <key> [key ...]", d:"发送按键到窗格", kw:"pane send-keys 按键"},
+  {n:"运行 shell 命令", c:"herdr pane run <pane_id> <command>", d:"在窗格中运行命令；普通进程用 pane 命令", kw:"pane run 运行 shell"},
+  {n:"等待文本或正则", c:"herdr pane wait-output <pane_id> (--match <text> | --regex <pattern>) [--source visible|recent|recent-unwrapped] [--lines N] [--timeout MS] [--raw]", d:"只匹配终端文本，不解释生命周期；已有文本可能立即命中；省略 --timeout 无限等待", kw:"pane wait 等待 regex"}
+]},
+{ id:"agent", name:"Agent", color:"#4ade80", entries:[
+  {n:"列出 Agent", c:"herdr agent list", d:"列出已识别的 Agent", kw:"agent 列表"},
+  {n:"查看 Agent", c:"herdr agent get <target>", d:"查看 Agent 状态与详情", kw:"agent get 查看"},
+  {n:"读取 Agent 输出", c:"herdr agent read <target> [--source visible|recent|recent-unwrapped|detection] [--lines N] [--format text|ansi] [--ansi]", d:"读取不会标记 done 为已查看", kw:"agent read 读取 输出"},
+  {n:"操作交互界面", c:"herdr agent send-keys <target> <key> [key ...]", d:"向 Agent 的 TUI 发送按键（如 esc）", kw:"agent send-keys 按键"},
+  {n:"提交提示", c:"herdr agent prompt <target> <text> [--wait] [--until STATUS]... [--timeout MS]", d:"--wait 默认等待稳定的 idle/done/blocked；blocked 不是完成；超时不表示未发出", kw:"agent prompt 提交 等待"},
+  {n:"重命名 Agent", c:"herdr agent rename <target> <name>|--clear", d:"重命名或清除名称", kw:"agent rename 重命名"},
+  {n:"聚焦 Agent", c:"herdr agent focus <target>", d:"聚焦并标记标签页为已查看", kw:"agent focus 聚焦"},
+  {n:"等待状态", c:"herdr agent wait <target> [--until STATUS]... [--timeout MS]", d:"状态已匹配时立即返回；省略 --timeout 无限等待", kw:"agent wait 等待 状态"},
+  {n:"附加到 Agent", c:"herdr agent attach <target> [--takeover]", d:"附加到 Agent 终端", kw:"agent attach 附加"},
+  {n:"启动 Agent", c:"herdr agent start <name> --kind KIND --pane ID [--timeout MS] [-- <agent-args...>]", d:"只在已有空闲 shell 窗格中启动，不创建布局", kw:"agent start 启动 kind"},
+  {n:"解释状态", c:"herdr agent explain <target> [--json|--verbose]", d:"给出最终状态、清单来源、匹配规则和回退原因", kw:"agent explain 解释 排查"},
+  {n:"解释离线输出", c:"herdr agent explain --file PATH --agent LABEL [--json|--verbose]", d:"对保存的输出文件做状态解释", kw:"agent explain 解释 文件"}
+]},
+{ id:"terminal", name:"终端直连", color:"#fbbf24", entries:[
+  {n:"附加终端", c:"herdr terminal attach <terminal_id> [--takeover]", d:"直接附加到终端", kw:"terminal attach 终端"},
+  {n:"设置终端标题", c:"herdr terminal title set <title>", d:"设置终端标题", kw:"terminal title 标题"},
+  {n:"清除终端标题", c:"herdr terminal title clear", d:"清除终端标题", kw:"terminal title 标题 清除"}
+]},
+{ id:"report", name:"上报接口", color:"#a78bfa", entries:[
+  {n:"上报 Agent 状态", c:"herdr pane report-agent <pane_id> --source ID --agent LABEL --state idle|working|blocked|unknown [--message TEXT] [--seq N] [--agent-session-id ID] [--agent-session-path PATH]", d:"供自定义集成和钩子使用", kw:"report 上报 集成 state"},
+  {n:"上报 Agent 会话", c:"herdr pane report-agent-session <pane_id> --source ID --agent LABEL [--seq N] [--agent-session-id ID] [--agent-session-path PATH] [--session-start-source SOURCE]", d:"上报原生会话引用，用于服务器重启后恢复对话", kw:"report 上报 session 会话"},
+  {n:"释放 Agent", c:"herdr pane release-agent <pane_id> --source ID --agent LABEL [--seq N]", d:"释放窗格上的 Agent 声明", kw:"report release 释放"},
+  {n:"上报窗格元数据", c:"herdr pane report-metadata <pane_id> --source ID [--agent LABEL] [--applies-to-source ID] [--title TEXT|--clear-title] [--display-agent TEXT|--clear-display-agent] [--state-label STATUS=TEXT] [--clear-state-labels] [--token NAME=VALUE] [--clear-token NAME] [--seq N] [--ttl-ms N]", d:"供侧边栏元数据使用", kw:"report metadata 元数据 侧边栏"}
+]},
+{ id:"integration", name:"集成与插件", color:"#a78bfa", entries:[
+  {n:"安装集成", c:"herdr integration install <pi|omp|claude|codex|copilot|devin|droid|kimi|opencode|kilo|hermes|mastracode|qodercli|qwen|cursor|antigravity-cli|grok>", d:"安装 Agent 集成", kw:"integration 集成 安装"},
+  {n:"卸载集成", c:"herdr integration uninstall <同上>", d:"卸载集成", kw:"integration 集成 卸载"},
+  {n:"集成状态", c:"herdr integration status [--outdated-only]", d:"查看集成状态", kw:"integration 集成 状态"},
+  {n:"安装插件", c:"herdr plugin install <owner>/<repo>[/subdir...] [--ref REF] [--yes]", d:"从 Git 仓库安装插件", kw:"plugin 插件 安装"},
+  {n:"链接本地插件", c:"herdr plugin link <path> [--disabled]", d:"链接本地插件目录", kw:"plugin 插件 link 本地"},
+  {n:"取消链接插件", c:"herdr plugin unlink <plugin_id>", d:"取消本地链接", kw:"plugin 插件 unlink"},
+  {n:"卸载插件", c:"herdr plugin uninstall <plugin_id|owner/repo[/subdir...]>", d:"卸载插件", kw:"plugin 插件 卸载"},
+  {n:"启用 / 禁用插件", c:"herdr plugin enable | disable <plugin_id>", d:"启用或禁用插件", kw:"plugin 插件 enable disable"},
+  {n:"列出插件", c:"herdr plugin list [--plugin ID] [--json]", d:"列出插件", kw:"plugin 插件 列表"},
+  {n:"插件配置目录", c:"herdr plugin config-dir <plugin_id>", d:"查看插件配置目录", kw:"plugin 插件 配置"},
+  {n:"列出插件动作", c:"herdr plugin action list [--plugin ID]", d:"列出插件动作", kw:"plugin action 动作"},
+  {n:"调用插件动作", c:"herdr plugin action invoke <action_id> [--plugin ID]", d:"调用插件动作", kw:"plugin action 动作 调用"},
+  {n:"插件日志", c:"herdr plugin log list [--plugin ID] [--limit N]", d:"查看插件日志", kw:"plugin log 日志"},
+  {n:"打开插件窗格", c:"herdr plugin pane open --plugin ID --entrypoint ID [--placement overlay|popup|split|tab|zoomed] [--width SIZE] [--height SIZE] [--workspace ID] [--target-pane PANE] [--direction right|down] [--cwd PATH] [--env KEY=VALUE] [--focus|--no-focus]", d:"以多种放置方式打开插件界面", kw:"plugin pane 插件 窗格 overlay"},
+  {n:"聚焦 / 关闭插件窗格", c:"herdr plugin pane focus <pane_id> | close <pane_id>", d:"管理插件窗格", kw:"plugin pane 插件 窗格"}
+]}
+];
+
+/* ================================================================ 渲染 */
+var $ = function(s){ return document.querySelector(s); };
+function h(tag, cls, html){ var e=document.createElement(tag); if(cls)e.className=cls; if(html!=null)e.innerHTML=html; return e; }
+
+var LS_KEY="herdr-guide-progress-v1";
+var progress={}; try{ progress=JSON.parse(localStorage.getItem(LS_KEY)||"{}"); }catch(e){ progress={}; }
+function saveProgress(){ try{ localStorage.setItem(LS_KEY, JSON.stringify(progress)); }catch(e){} }
+
+var mode="learn", query="", activeCat="all";
+
+/* ---------- 复制 ---------- */
+var toastTimer=null;
+function toast(msg){
+  var t=$("#toast"); t.textContent=msg; t.classList.add("show");
+  clearTimeout(toastTimer); toastTimer=setTimeout(function(){ t.classList.remove("show"); },1600);
+}
+function copyText(text){
+  function done(){ toast("已复制  "+(text.length>42?text.slice(0,42)+"…":text)); }
+  if(navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(text).then(done, function(){ fallback(); });
+  } else fallback();
+  function fallback(){
+    var ta=document.createElement("textarea"); ta.value=text; ta.style.position="fixed"; ta.style.opacity="0";
+    document.body.appendChild(ta); ta.select();
+    try{ document.execCommand("copy"); done(); }catch(e){ toast("复制失败"); }
+    document.body.removeChild(ta);
+  }
+}
+
+/* ---------- 键帽 ---------- */
+function kbdChips(combo){
+  var wrap=h("span","kcombo");
+  combo.split("+").forEach(function(part,i){
+    if(i>0) wrap.appendChild(h("span",null,"+")).style.cssText="color:var(--text-3);font-size:11px";
+    var k=document.createElement("kbd"); k.textContent=part.trim(); wrap.appendChild(k);
+  });
+  return wrap;
+}
+
+/* ---------- 学习路径渲染 ---------- */
+function totalUnits(){ var n=0; STAGES.forEach(function(s){ n+=s.units.length; }); return n; }
+function doneUnits(){ var n=0; STAGES.forEach(function(s){ s.units.forEach(function(u){ if(progress[u.id])n++; }); }); return n; }
+function stageDone(s){ var n=0; s.units.forEach(function(u){ if(progress[u.id])n++; }); return n; }
+
+function renderOutline(){
+  var box=$("#outline"); box.innerHTML="";
+  STAGES.forEach(function(s){
+    var g=h("div","outline-stage");
+    var head=h("div","outline-stage-head");
+    var dot=h("span","stage-dot"); dot.style.background=s.color;
+    head.appendChild(dot);
+    head.appendChild(h("span",null,s.num+" · "+s.name));
+    var bar=h("span","stage-bar"); var fill=document.createElement("i");
+    var pct=s.units.length? stageDone(s)/s.units.length*100 : 0;
+    fill.style.width=pct+"%"; fill.style.background=s.color; bar.appendChild(fill);
+    head.appendChild(bar);
+    g.appendChild(head);
+    s.units.forEach(function(u){
+      var it=h("button","outline-item"+(progress[u.id]?" done":""));
+      it.type="button"; it.dataset.unit=u.id;
+      it.appendChild(h("span","tick","✓"));
+      it.appendChild(h("span",null,u.title.replace(/^案例：/,"案例 · ")));
+      it.addEventListener("click",function(){
+        var el=document.getElementById("unit-"+u.id);
+        if(el) el.scrollIntoView({behavior:"smooth",block:"start"});
+      });
+      g.appendChild(it);
+    });
+    box.appendChild(g);
+  });
+  var reset=h("button","outline-reset","重置学习进度"); reset.type="button";
+  reset.addEventListener("click",function(){
+    progress={}; saveProgress(); renderLearn(); updatePill();
+    toast("进度已重置");
+  });
+  box.appendChild(reset);
+}
+
+function renderBlock(b){
+  if(b.t==="p") return h("p",null,b.x);
+  if(b.t==="tip") return h("div","tip",h("span",null,b.x).outerHTML);
+  if(b.t==="warn") return h("div","warn",h("span",null,b.x).outerHTML);
+  if(b.t==="list"){
+    var ul=h("ul","blist");
+    b.items.forEach(function(x){ ul.appendChild(h("li",null,x)); });
+    return ul;
+  }
+  if(b.t==="cmds"){
+    var term=h("div","term");
+    var thead=h("div","term-head");
+    ["#f87171","#fbbf24","#4ade80"].forEach(function(c){
+      var d=h("span","term-dot"); d.style.background=c; thead.appendChild(d);
+    });
+    thead.appendChild(h("span","term-title", b.slash?"slash commands":"terminal"));
+    term.appendChild(thead);
+    var body=h("div","term-body");
+    b.items.forEach(function(it){
+      var line=h("div","term-line"+(it.d?" has-desc":""));
+      line.appendChild(h("span","prompt", b.slash?"❯":"$"));
+      var cmd=h("span","cmd-text"); cmd.textContent=it.c; line.appendChild(cmd);
+      if(it.d) line.appendChild(h("span","cmd-desc",it.d));
+      line.appendChild(h("span","copy-hint","复制"));
+      line.addEventListener("click",function(){ copyText(it.c); });
+      body.appendChild(line);
+    });
+    term.appendChild(body);
+    return term;
+  }
+  if(b.t==="keys"){
+    var box=h("div");
+    b.items.forEach(function(it){
+      var row=h("div","keys-row");
+      var left=kbdChips(it.k);
+      if(it.alt){ var alt=h("span","kalt",it.alt); left.appendChild(alt); }
+      row.appendChild(left);
+      row.appendChild(h("span","kdesc",it.d));
+      row.title="点击复制快捷键";
+      row.addEventListener("click",function(){ copyText(it.k); });
+      box.appendChild(row);
+    });
+    return box;
+  }
+  if(b.t==="code"){
+    var pre=h("pre","codeblock");
+    if(b.lang) pre.appendChild(h("span","lang",b.lang));
+    pre.appendChild(document.createTextNode(b.text));
+    pre.title="点击复制";
+    pre.addEventListener("click",function(){ copyText(b.text); });
+    return pre;
+  }
+  if(b.t==="table"){
+    var tbl=h("table","dtable");
+    var tr=h("tr"); b.head.forEach(function(x){ tr.appendChild(h("th",null,x)); });
+    var theadEl=document.createElement("thead"); theadEl.appendChild(tr); tbl.appendChild(theadEl);
+    var tb=document.createElement("tbody");
+    b.rows.forEach(function(r){
+      var row=h("tr");
+      r.forEach(function(c){ row.appendChild(h("td",null,c)); });
+      tb.appendChild(row);
+    });
+    tbl.appendChild(tb);
+    return tbl;
+  }
+  if(b.t==="steps"){
+    var ol=h("ol","steps");
+    b.items.forEach(function(it){
+      var li=document.createElement("li");
+      li.appendChild(h("div","step-text",it.x));
+      if(it.code) li.appendChild(renderBlock({t:"code", lang:it.code.lang, text:it.code.text}));
+      ol.appendChild(li);
+    });
+    return ol;
+  }
+  return h("div");
+}
+
+function renderLearn(){
+  var box=$("#learn-content"); box.innerHTML="";
+  STAGES.forEach(function(s){
+    var banner=h("div","stage-banner");
+    var num=h("span","stage-num",s.num);
+    num.style.color=s.color; num.style.borderColor=s.color+"55"; num.style.background=s.color+"14";
+    banner.appendChild(num);
+    banner.appendChild(h("h2",null,s.name));
+    banner.appendChild(h("p",null,s.desc));
+    box.appendChild(banner);
+
+    s.units.forEach(function(u){
+      var unit=h("article","unit"+(progress[u.id]?" done":""));
+      unit.id="unit-"+u.id;
+      var head=h("div","unit-head");
+      var chk=h("button","unit-check","✓"); chk.type="button"; chk.title="标记为已掌握";
+      chk.addEventListener("click",function(){
+        if(progress[u.id]) delete progress[u.id]; else progress[u.id]=1;
+        saveProgress(); renderLearn(); updatePill();
+        var el=document.getElementById("unit-"+u.id);
+        if(el) el.scrollIntoView({block:"nearest"});
+      });
+      head.appendChild(chk);
+      var title=h("div","unit-title",u.title);
+      head.appendChild(title);
+      var tag=h("span","unit-tag "+(u.tag==="case"?"tag-case":"tag-core"), u.tag==="case"?"案例":"核心");
+      head.appendChild(tag);
+      unit.appendChild(head);
+      var body=h("div","unit-body");
+      u.blocks.forEach(function(b){ body.appendChild(renderBlock(b)); });
+      unit.appendChild(body);
+      box.appendChild(unit);
+    });
+  });
+  renderOutline();
+}
+
+function updatePill(){
+  $("#progress-num").textContent=doneUnits()+"/"+totalUnits();
+}
+
+/* ---------- 速查手册渲染 ---------- */
+function entryText(e,cat){
+  return [e.n,e.c,e.k,e.code,e.d,e.kw,cat.name].filter(Boolean).join(" ").toLowerCase();
+}
+function hl(text,q){
+  var words=(q||"").toLowerCase().trim().split(/\s+/).filter(Boolean);
+  if(words.length===0) return document.createTextNode(text);
+  var frag=document.createDocumentFragment();
+  var lower=text.toLowerCase(), i=0;
+  while(i<text.length){
+    var best=-1, bw="";
+    words.forEach(function(w){
+      var idx=lower.indexOf(w,i);
+      if(idx!==-1 && (best===-1 || idx<best || (idx===best && w.length>bw.length))){ best=idx; bw=w; }
+    });
+    if(best===-1){ frag.appendChild(document.createTextNode(text.slice(i))); break; }
+    if(best>i) frag.appendChild(document.createTextNode(text.slice(i,best)));
+    var m=document.createElement("mark"); m.textContent=text.slice(best,best+bw.length);
+    frag.appendChild(m); i=best+bw.length;
+  }
+  return frag;
+}
+function matchQuery(e,cat){
+  if(!query) return true;
+  var q=query.toLowerCase().trim();
+  return q.split(/\s+/).every(function(w){ return entryText(e,cat).indexOf(w)!==-1; });
+}
+
+function renderRefNav(visible){
+  var nav=$("#ref-nav"); nav.innerHTML="";
+  var all=h("button","ref-nav-item"+(activeCat==="all"?" active":""));
+  all.type="button";
+  var allDot=h("span","cat-dot"); allDot.style.background="var(--text-2)"; all.appendChild(allDot);
+  all.appendChild(h("span",null,"全部"));
+  var total=0; CATS.forEach(function(c){ total+= (visible[c.id]||[]).length; });
+  all.appendChild(h("span","cnt",String(total)));
+  all.addEventListener("click",function(){ activeCat="all"; renderRef(); });
+  nav.appendChild(all);
+  CATS.forEach(function(c){
+    var list=visible[c.id]||[];
+    if(query && list.length===0) return;
+    var it=h("button","ref-nav-item"+(activeCat===c.id?" active":""));
+    it.type="button";
+    var dot=h("span","cat-dot"); dot.style.background=c.color; it.appendChild(dot);
+    it.appendChild(h("span",null,c.name));
+    it.appendChild(h("span","cnt",String(list.length)));
+    it.addEventListener("click",function(){
+      activeCat = activeCat===c.id ? "all" : c.id; renderRef();
+    });
+    nav.appendChild(it);
+  });
+}
+
+function renderRef(){
+  var content=$("#ref-content"); content.innerHTML="";
+  var visible={};
+  CATS.forEach(function(c){
+    visible[c.id]=c.entries.filter(function(e){ return matchQuery(e,c); });
+  });
+  renderRefNav(visible);
+
+  var any=false;
+  CATS.forEach(function(c){
+    if(activeCat!=="all" && activeCat!==c.id) return;
+    var list=visible[c.id];
+    if(list.length===0) return;
+    any=true;
+    var g=h("section","ref-group"); g.id="cat-"+c.id;
+    var gh=h("div","ref-group-head");
+    var dot=h("span","cat-dot"); dot.style.background=c.color; dot.style.alignSelf="center";
+    gh.appendChild(dot);
+    gh.appendChild(h("h3",null,c.name));
+    gh.appendChild(h("span","cnt",list.length+" 条"));
+    g.appendChild(gh);
+    var grid=h("div","ref-entries");
+    list.forEach(function(e){
+      var copyable=!!(e.c || e.k || e.code);
+      var card=h("div","ref-card");
+      if(copyable) card.appendChild(h("span","r-copy","点击复制"));
+      var name=h("div","r-name"); name.appendChild(hl(e.n, query));
+      card.appendChild(name);
+      if(e.k){
+        var ks=h("div","r-keys"); ks.appendChild(kbdChips(e.k)); card.appendChild(ks);
+      }
+      if(e.c){
+        var cmd=h("div","r-cmd");
+        var p=h("span","prompt", e.c.charAt(0)==="/" ? "❯ " : "$ ");
+        cmd.appendChild(p);
+        cmd.appendChild(hl(e.c, query));
+        card.appendChild(cmd);
+      }
+      if(e.code){
+        var pre=h("pre","codeblock"); pre.style.margin="2px 0 0";
+        pre.appendChild(document.createTextNode(e.code));
+        pre.addEventListener("click",function(ev){ ev.stopPropagation(); copyText(e.code); });
+        card.appendChild(pre);
+      }
+      if(e.d){
+        var dd=h("div","r-desc"); dd.appendChild(hl(e.d, query));
+        card.appendChild(dd);
+      }
+      if(copyable){
+        card.tabIndex=0;
+        card.setAttribute("role","button");
+        card.setAttribute("aria-label","复制 "+(e.c || e.k || e.code));
+        var doCopy=function(){ copyText(e.c || e.k || e.code); };
+        card.addEventListener("click",doCopy);
+        card.addEventListener("keydown",function(ev){
+          if(ev.key==="Enter" || ev.key===" " || ev.key==="Spacebar"){ ev.preventDefault(); doCopy(); }
+        });
+      } else {
+        card.style.cursor="default";
+      }
+      grid.appendChild(card);
+    });
+    g.appendChild(grid);
+    content.appendChild(g);
+  });
+
+  if(!any){
+    var total=0; CATS.forEach(function(c){ total+=visible[c.id].length; });
+    var empty=h("div","ref-empty");
+    if(activeCat!=="all" && total>0){
+      var catName=""; CATS.forEach(function(c){ if(c.id===activeCat) catName=c.name; });
+      empty.appendChild(h("p",null,"当前分类「"+catName+"」没有匹配，全部类别中共有 "+total+" 条结果"));
+      var sAll=h("span","mono"); sAll.textContent='query: "'+query+'"';
+      var mAll=h("p"); mAll.appendChild(sAll); empty.appendChild(mAll);
+      var btnAll=h("button","outline-reset","在全部类别中查看"); btnAll.type="button"; btnAll.style.width="auto"; btnAll.style.margin="16px auto 0"; btnAll.style.padding="6px 18px";
+      btnAll.addEventListener("click",function(){ activeCat="all"; renderRef(); });
+      empty.appendChild(btnAll);
+    } else {
+      empty.appendChild(h("p",null,"没有匹配的内容"));
+      var s=h("span","mono"); s.textContent='query: "'+query+'"';
+      var m=h("p"); m.appendChild(s);
+      empty.appendChild(m);
+      var btn=h("button","outline-reset","清除搜索"); btn.type="button"; btn.style.width="auto"; btn.style.margin="16px auto 0"; btn.style.padding="6px 18px";
+      btn.addEventListener("click",function(){ setQuery(""); $("#search").focus(); });
+      empty.appendChild(btn);
+    }
+    content.appendChild(empty);
+  }
+}
+
+/* ---------- 模式切换与搜索 ---------- */
+function setMode(m){
+  mode=m;
+  $("#btn-learn").classList.toggle("active", m==="learn");
+  $("#btn-ref").classList.toggle("active", m==="ref");
+  $("#learn-view").hidden = m!=="learn";
+  $("#ref-view").hidden = m!=="ref";
+  syncHash();
+  window.scrollTo({top:0});
+}
+function setQuery(q){
+  query=q; $("#search").value=q;
+  if(mode!=="ref" && q){ setMode("ref"); }
+  if(mode==="ref") renderRef();
+  syncHash();
+}
+function syncHash(){
+  var hs = mode==="ref" ? "#ref" : "#learn";
+  if(mode==="ref" && query) hs += "?q="+encodeURIComponent(query);
+  try{ history.replaceState(null,"",hs); }catch(e){}
+}
+function parseHash(){
+  var hs=location.hash||"";
+  if(hs.indexOf("#ref")===0){
+    var qi=hs.indexOf("?q=");
+    if(qi!==-1){ query=decodeURIComponent(hs.slice(qi+3)); $("#search").value=query; }
+    setMode("ref"); renderRef();
+  }
+}
+
+$("#btn-learn").addEventListener("click",function(){ setMode("learn"); });
+$("#btn-ref").addEventListener("click",function(){ setMode("ref"); });
+$("#progress-pill").addEventListener("click",function(){ setMode("learn"); });
+var imeComposing=false;
+$("#search").addEventListener("compositionstart",function(){ imeComposing=true; });
+$("#search").addEventListener("compositionend",function(ev){ imeComposing=false; setQuery(ev.target.value); });
+$("#search").addEventListener("input",function(ev){ if(imeComposing || ev.isComposing) return; setQuery(ev.target.value); });
+$("#search").addEventListener("keydown",function(ev){
+  if(ev.key==="Escape"){ setQuery(""); ev.target.blur(); }
+});
+document.addEventListener("keydown",function(ev){
+  var typing=/^(INPUT|TEXTAREA)$/.test(document.activeElement && document.activeElement.tagName || "");
+  if((ev.ctrlKey||ev.metaKey) && ev.key.toLowerCase()==="k"){ ev.preventDefault(); $("#search").focus(); $("#search").select(); }
+  else if(ev.key==="/" && !typing){ ev.preventDefault(); $("#search").focus(); }
+  else if(ev.key==="Escape" && !typing && query){ setQuery(""); }
+  else if(ev.key==="1" && !typing){ setMode("learn"); }
+  else if(ev.key==="2" && !typing){ setMode("ref"); }
+});
+
+/* ---------- 学习模式滚动高亮 ---------- */
+var scrollTick=false;
+window.addEventListener("scroll",function(){
+  if(scrollTick||mode!=="learn") return;
+  scrollTick=true;
+  requestAnimationFrame(function(){
+    scrollTick=false;
+    var current=null;
+    document.querySelectorAll(".unit").forEach(function(u){
+      if(u.getBoundingClientRect().top<120) current=u.id.replace("unit-","");
+    });
+    document.querySelectorAll(".outline-item").forEach(function(it){
+      it.classList.toggle("current", it.dataset.unit===current);
+    });
+  });
+},{passive:true});
+
+/* ---------- 启动 ---------- */
+renderLearn();
+renderRef();
+updatePill();
+parseHash();
+</script>
+</body>
+</html>
