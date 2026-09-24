@@ -1,0 +1,601 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#F5F1E9">
+  <meta name="description" content="用几个问题和可切换的情景，循序读懂 A 股科技第二波行情为什么还不能确认。">
+  <title>A 股科技的第二波，为什么还不能确认？｜互动学习报告</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Noto+Sans+SC:wght@400;500;600;700&family=Noto+Serif+SC:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #F5F1E9;
+      --surface: #FFFCF7;
+      --surface-alt: #ECE6DA;
+      --surface-hover: #F4EBDD;
+      --border: #DED6C9;
+      --border-hover: #BDB09D;
+      --text: #29271F;
+      --text-secondary: #625E54;
+      --text-tertiary: #81796C;
+      --accent: #A44732;
+      --accent-hover: #853725;
+      --accent-soft: #F2E1D9;
+      --green: #496C56;
+      --green-soft: #E5ECE4;
+      --warning: #9A702C;
+      --warning-soft: #F3EBD8;
+      --error: #9A4037;
+      --success: #496C56;
+      --bg-rgb: 245, 241, 233;
+      --text-rgb: 41, 39, 31;
+      --accent-rgb: 164, 71, 50;
+      --green-rgb: 73, 108, 86;
+      --shadow-rgb: 64, 52, 34;
+      --surface-rgb: 255, 252, 247;
+      --accent-light: #D5A18D;
+      --serif: "Noto Serif SC", "Songti SC", "SimSun", serif;
+      --sans: "Noto Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif;
+      --mono: "DM Mono", ui-monospace, monospace;
+      --measure: 760px;
+      --wide: 1120px;
+    }
+    *, *::before, *::after { box-sizing: border-box; }
+    html { scroll-behavior: smooth; scroll-padding-top: 94px; }
+    body { margin: 0; color: var(--text); background: var(--bg); font: 400 16px/1.85 var(--sans); letter-spacing: .02em; }
+    body::before { content: ""; position: fixed; inset: 0; z-index: -1; pointer-events: none; background: radial-gradient(ellipse at 84% 8%, rgba(var(--accent-rgb), .055), transparent 34%), radial-gradient(ellipse at 4% 38%, rgba(var(--green-rgb), .045), transparent 28%); }
+    a { color: var(--accent); text-decoration-thickness: 1px; text-underline-offset: .22em; transition: color .2s ease; }
+    a:hover { color: var(--accent-hover); }
+    a:active { color: var(--text); }
+    a:focus-visible, button:focus-visible, input:focus-visible + label { outline: 3px solid var(--green); outline-offset: 3px; }
+    button { font: inherit; letter-spacing: inherit; }
+    .skip-link { position: fixed; top: 8px; left: 8px; z-index: 30; padding: 10px 14px; transform: translateY(-150%); color: var(--surface); background: var(--text); border-radius: 8px; }
+    .skip-link:focus { transform: none; }
+    .topline { height: 3px; position: fixed; inset: 0 auto auto 0; z-index: 25; width: 100%; background: var(--accent); transform: scaleX(0); transform-origin: left; }
+    .masthead { position: sticky; top: 0; z-index: 20; border-bottom: 1px solid transparent; background: rgba(var(--bg-rgb), .93); transition: border-color .2s ease, box-shadow .2s ease; }
+    .masthead.is-scrolled { border-bottom-color: var(--border); box-shadow: 0 5px 18px rgba(var(--shadow-rgb), .06); }
+    .masthead-inner { width: min(100% - 48px, var(--wide)); min-height: 58px; margin: auto; display: flex; align-items: center; justify-content: space-between; gap: 20px; }
+    .wordmark { min-height: 44px; display: flex; align-items: center; gap: 10px; color: var(--text); text-decoration: none; font-size: .78rem; font-weight: 700; white-space: nowrap; }
+    .wordmark-mark { display: grid; place-items: center; width: 27px; height: 27px; border: 1px solid var(--accent); border-radius: 50%; color: var(--accent); font-family: var(--serif); font-size: .95rem; }
+    .chapter-nav { display: flex; align-items: center; gap: 4px; overflow-x: auto; scrollbar-width: thin; }
+    .chapter-nav a { min-height: 44px; display: inline-flex; align-items: center; padding: 0 10px; color: var(--text-secondary); font-size: .76rem; text-decoration: none; white-space: nowrap; border-bottom: 2px solid transparent; }
+    .chapter-nav a:hover, .chapter-nav a[aria-current="location"] { color: var(--accent); border-bottom-color: var(--accent); }
+    .chapter-nav a:active { color: var(--accent-hover); }
+    .nav-progress { font: 500 .72rem/1 var(--mono); color: var(--text-tertiary); white-space: nowrap; }
+    .page-shell { width: min(100% - 48px, var(--wide)); margin-inline: auto; }
+    .hero { min-height: min(790px, calc(100svh - 62px)); display: grid; align-items: center; padding-block: 84px 80px; position: relative; isolation: isolate; }
+    .hero::after { content: ""; position: absolute; inset: 9% -2% 0 37%; z-index: -1; background-image: radial-gradient(rgba(var(--accent-rgb), .17) .7px, transparent .7px); background-size: 15px 15px; mask-image: radial-gradient(ellipse at center, black, transparent 69%); opacity: .38; pointer-events: none; }
+    .hero-grid { display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(265px, .65fr); gap: clamp(32px, 7vw, 96px); align-items: center; }
+    .eyebrow { margin: 0 0 20px; display: flex; align-items: center; gap: 10px; color: var(--accent); font-size: .74rem; font-weight: 700; letter-spacing: .13em; }
+    .eyebrow::before { content: ""; width: 30px; height: 1px; background: currentColor; }
+    h1, h2, h3, p { margin-top: 0; }
+    h1, h2 { font-family: var(--serif); letter-spacing: .02em; }
+    h1 { max-width: 760px; margin-bottom: 22px; font-size: clamp(2.45rem, 6vw, 5rem); font-weight: 700; line-height: 1.3; }
+    .title-line { display: block; overflow: hidden; padding-bottom: .08em; }
+    .title-line > span { display: block; animation: title-rise .78s cubic-bezier(.2,.7,.2,1) both; }
+    .title-line:nth-child(2) > span { animation-delay: .13s; }
+    @keyframes title-rise { from { opacity: 0; transform: translateY(.55em); } to { opacity: 1; transform: translateY(0); } }
+    .hero-deck { max-width: 620px; margin-bottom: 24px; color: var(--text-secondary); font-size: clamp(1rem, 1.4vw, 1.125rem); }
+    .hero-deck strong { color: var(--text); font-weight: 600; }
+    .source-chip { display: inline-flex; align-items: center; gap: 8px; min-height: 34px; padding: 3px 11px; border: 1px solid var(--border); border-radius: 999px; color: var(--text-tertiary); font-size: .75rem; }
+    .source-chip span { width: 6px; height: 6px; border-radius: 50%; background: var(--green); }
+    .hero-stat { position: relative; padding: 28px 28px 24px; border: 1px solid var(--border); border-radius: 22px; background: rgba(var(--surface-rgb), .78); box-shadow: 0 20px 56px rgba(var(--shadow-rgb), .07); transform: translateY(var(--drift, 0)); transition: transform .18s ease; }
+    .stat-label { margin-bottom: 7px; color: var(--text-tertiary); font-size: .75rem; }
+    .stat-number { margin: 0; color: var(--accent); font: 500 clamp(4.5rem, 10vw, 7.4rem)/1 var(--mono); letter-spacing: -.08em; }
+    .stat-number small { font: 500 .34em/1 var(--sans); letter-spacing: 0; }
+    .stat-caption { margin: 12px 0 18px; color: var(--text-secondary); font-size: .86rem; line-height: 1.7; }
+    .mini-scale { height: 8px; overflow: hidden; border-radius: 99px; background: var(--surface-alt); }
+    .mini-scale span { display: block; width: 49.3%; height: 100%; border-radius: inherit; background: var(--accent); transform-origin: left; animation: grow-bar .9s .45s both; }
+    @keyframes grow-bar { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+    .stat-foot { display: flex; justify-content: space-between; margin-top: 9px; color: var(--text-tertiary); font: 400 .67rem/1.5 var(--mono); }
+    .hero-foot { display: flex; align-items: center; gap: 10px; margin-top: 24px; color: var(--text-tertiary); font-size: .76rem; }
+    .hero-foot svg { width: 16px; height: 16px; flex: none; }
+    .chapter-rail { display: flex; gap: 8px; align-items: center; padding-top: 30px; color: var(--text-tertiary); font: 400 .7rem/1.4 var(--mono); }
+    .chapter-rail::before { content: ""; width: 38px; height: 1px; background: var(--border-hover); }
+    main { padding-bottom: 72px; }
+    .manifesto { padding: clamp(28px, 5vw, 56px); margin: 4px 0 112px; border-radius: 24px; color: var(--surface); background: var(--text); overflow: hidden; position: relative; }
+    .manifesto::after { content: "≠"; position: absolute; right: 2%; bottom: -41%; color: rgba(var(--surface-rgb), .055); font: 700 clamp(12rem, 28vw, 23rem)/1 var(--serif); pointer-events: none; }
+    .manifesto .eyebrow { color: var(--accent-light); }
+    .manifesto h2 { max-width: 900px; margin: 0; font-size: clamp(2rem, 5.5vw, 4.5rem); font-weight: 600; line-height: 1.42; position: relative; z-index: 1; }
+    .manifesto h2 em { color: var(--accent-light); font-style: normal; }
+    .section { padding: 0 0 112px; scroll-margin-top: 100px; }
+    .section-heading { max-width: 800px; margin-bottom: 34px; }
+    .section-kicker { margin-bottom: 10px; color: var(--accent); font: 500 .73rem/1.4 var(--mono); letter-spacing: .13em; }
+    h2.section-title { margin-bottom: 14px; font-size: clamp(1.85rem, 3.7vw, 3rem); line-height: 1.42; }
+    .section-lead { max-width: var(--measure); margin-bottom: 0; color: var(--text-secondary); font-size: 1.02rem; }
+    .section-title.reveal { transition-delay: .06s; }
+    .section-lead.reveal { transition-delay: .12s; }
+    .reveal { opacity: 0; transform: translateY(20px); transition: opacity .65s cubic-bezier(.2,.7,.2,1), transform .65s cubic-bezier(.2,.7,.2,1); }
+    .reveal.is-visible { opacity: 1; transform: translateY(0); }
+    .reveal-group > .reveal:nth-child(2) { transition-delay: .08s; }
+    .reveal-group > .reveal:nth-child(3) { transition-delay: .16s; }
+    .reveal-group > .reveal:nth-child(4) { transition-delay: .24s; }
+    .reading-column { max-width: var(--measure); }
+    .reading-column p { margin-bottom: 1.25rem; color: var(--text-secondary); }
+    .reading-column strong { color: var(--text); font-weight: 700; }
+    .reading-column .callout { padding: 18px 22px; border-left: 3px solid var(--accent); background: var(--surface); color: var(--text); }
+    .data-note { display: inline; color: var(--text-tertiary); font-size: .84em; }
+    .split-grid { display: grid; grid-template-columns: repeat(12, 1fr); gap: 16px; }
+    .panel { padding: clamp(20px, 3vw, 30px); border: 1px solid var(--border); border-radius: 18px; background: var(--surface); box-shadow: 0 8px 28px rgba(var(--shadow-rgb), .05); transition: transform .25s ease, border-color .25s ease, box-shadow .25s ease; }
+    .panel:hover { transform: translateY(-3px); border-color: var(--border-hover); box-shadow: 0 14px 34px rgba(var(--shadow-rgb), .09); }
+    .panel:focus-within { outline: 2px solid var(--green); outline-offset: 3px; }
+    .panel:active { transform: translateY(-1px); }
+    .panel-wide { grid-column: span 7; }
+    .panel-narrow { grid-column: span 5; }
+    .panel-third { grid-column: span 4; }
+    .panel h3 { margin-bottom: 10px; font-size: 1.02rem; line-height: 1.6; }
+    .panel p { margin-bottom: 0; color: var(--text-secondary); font-size: .9rem; }
+    .metric { display: block; margin: 2px 0 10px; color: var(--accent); font: 500 clamp(2rem, 5vw, 3.1rem)/1.15 var(--mono); letter-spacing: -.06em; }
+    .metric-caption { color: var(--text-tertiary); font-size: .78rem; }
+    .micro-label { display: inline-block; margin-bottom: 15px; padding-bottom: 3px; border-bottom: 2px solid var(--accent); color: var(--accent); font-size: .7rem; font-weight: 700; letter-spacing: .1em; }
+    .quiz { padding: clamp(22px, 4vw, 36px); margin-top: 30px; border: 1px solid var(--border); border-radius: 22px; background: var(--surface-alt); }
+    .quiz-top { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 10px; }
+    .quiz-label { margin: 0; color: var(--green); font-size: .73rem; font-weight: 700; letter-spacing: .1em; }
+    .quiz-count { color: var(--text-tertiary); font: 400 .7rem var(--mono); }
+    .quiz h3 { margin-bottom: 18px; font-family: var(--serif); font-size: 1.28rem; line-height: 1.6; }
+    .answer-list { display: grid; gap: 10px; }
+    .answer { width: 100%; min-height: 48px; padding: 11px 15px; display: flex; gap: 11px; align-items: flex-start; border: 1px solid var(--border); border-radius: 12px; background: var(--surface); color: var(--text); text-align: left; cursor: pointer; transition: border-color .2s ease, background .2s ease, transform .2s ease; }
+    .answer:hover { transform: translateY(-1px); border-color: var(--border-hover); background: var(--surface-hover); }
+    .answer:active { transform: scale(.99); }
+    .answer:disabled { cursor: default; }
+    .answer:disabled:hover { transform: none; }
+    .answer-mark { width: 22px; height: 22px; flex: none; display: grid; place-items: center; border: 1px solid var(--border-hover); border-radius: 50%; color: var(--text-tertiary); font: 500 .72rem var(--mono); }
+    .answer.is-correct { border-color: var(--success); background: var(--green-soft); }
+    .answer.is-correct .answer-mark { color: var(--surface); border-color: var(--success); background: var(--success); }
+    .answer.is-wrong { border-color: var(--error); background: var(--accent-soft); }
+    .answer.is-wrong .answer-mark { color: var(--surface); border-color: var(--error); background: var(--error); }
+    .quiz-feedback { min-height: 2em; margin: 14px 0 0; color: var(--text-secondary); font-size: .88rem; }
+    .quiz-feedback[data-state="correct"] { color: var(--green); }
+    .quiz-feedback[data-state="wrong"] { color: var(--error); }
+    .lesson-chip { display: inline-flex; align-items: center; gap: 7px; color: var(--text-tertiary); font-size: .76rem; }
+    .lesson-chip::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: var(--green); }
+    .timeline { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-top: 30px; }
+    .timeline-step { padding: 20px; border-top: 1px solid var(--border-hover); background: linear-gradient(180deg, rgba(var(--accent-rgb), .045), transparent 72%); }
+    .timeline-step b { display: block; margin-bottom: 8px; color: var(--accent); font: 500 .8rem var(--mono); }
+    .timeline-step h3 { margin-bottom: 7px; font-size: .95rem; }
+    .timeline-step p { margin: 0; color: var(--text-secondary); font-size: .84rem; }
+    .model-bridge { margin-top: 25px; padding: 19px 22px; border-radius: 14px; background: var(--green-soft); color: var(--text); }
+    .model-bridge strong { color: var(--green); }
+    .flow { display: grid; grid-template-columns: 1fr auto 1fr auto 1fr; align-items: center; gap: 10px; margin-top: 25px; }
+    .flow-node { min-height: 116px; padding: 16px; display: grid; align-content: center; border: 1px solid var(--border); border-radius: 14px; background: var(--surface); text-align: center; }
+    .flow-node strong { display: block; margin-bottom: 3px; font-size: .91rem; }
+    .flow-node span { color: var(--text-tertiary); font-size: .77rem; }
+    .flow-arrow { color: var(--accent); font: 500 1.35rem var(--mono); }
+    .scenario-wrap { display: grid; grid-template-columns: minmax(220px, .78fr) minmax(0, 1.22fr); gap: 20px; align-items: stretch; }
+    .scenario-tabs { display: grid; align-content: start; gap: 9px; }
+    .scenario-tab { min-height: 54px; padding: 12px 15px; display: flex; justify-content: space-between; align-items: center; gap: 10px; border: 1px solid var(--border); border-radius: 12px; color: var(--text-secondary); background: var(--surface); text-align: left; cursor: pointer; transition: border-color .2s ease, color .2s ease, background .2s ease, transform .2s ease; }
+    .scenario-tab:hover { transform: translateX(3px); border-color: var(--border-hover); color: var(--text); }
+    .scenario-tab:active { transform: translateX(1px); }
+    .scenario-tab[aria-pressed="true"] { border-color: var(--accent); color: var(--accent); background: var(--accent-soft); }
+    .scenario-tab:disabled { color: var(--text-tertiary); background: var(--surface-alt); cursor: not-allowed; }
+    .scenario-panel { min-height: 265px; padding: clamp(23px, 4vw, 36px); border: 1px solid var(--border); border-radius: 18px; background: var(--surface); box-shadow: 0 8px 28px rgba(var(--shadow-rgb), .05); }
+    .scenario-panel h3 { margin: 8px 0 10px; font-family: var(--serif); font-size: 1.48rem; }
+    .scenario-panel p { margin: 0; color: var(--text-secondary); }
+    .scenario-meta { color: var(--accent); font-size: .72rem; font-weight: 700; letter-spacing: .1em; }
+    .scenario-detail { min-height: 4em; margin-top: 14px !important; padding-top: 14px; border-top: 1px solid var(--border); font-size: .9rem; }
+    .source-caveat { margin-top: 26px; padding: 16px 19px; border: 1px solid var(--border); border-radius: 14px; background: var(--warning-soft); color: var(--text-secondary); font-size: .84rem; }
+    .source-caveat strong { color: var(--warning); }
+    .signal-intro { margin-bottom: 18px; color: var(--text-secondary); }
+    .signal-list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 11px; }
+    .signal-item { position: relative; }
+    .signal-item input { position: absolute; width: 1px; height: 1px; opacity: 0; }
+    .signal-item label { min-height: 82px; display: flex; align-items: flex-start; gap: 12px; padding: 16px; border: 1px solid var(--border); border-radius: 13px; background: var(--surface); cursor: pointer; transition: border-color .2s ease, background .2s ease, transform .2s ease; }
+    .signal-item label:hover { transform: translateY(-2px); border-color: var(--border-hover); }
+    .signal-item input:focus-visible + label { outline: 3px solid var(--green); outline-offset: 2px; }
+    .check-box { width: 20px; height: 20px; flex: none; display: grid; place-items: center; margin-top: 2px; border: 1px solid var(--border-hover); border-radius: 5px; color: transparent; background: var(--surface); font-size: .82rem; transition: color .15s ease, background .15s ease, border-color .15s ease; }
+    .signal-item input:checked + label { border-color: var(--green); background: var(--green-soft); }
+    .signal-item input:checked + label .check-box { color: var(--surface); border-color: var(--green); background: var(--green); }
+    .signal-copy strong { display: block; margin-bottom: 2px; font-size: .89rem; }
+    .signal-copy small { display: block; color: var(--text-tertiary); font-size: .75rem; line-height: 1.65; }
+    .signal-status { min-height: 44px; margin-top: 13px; color: var(--green); font-size: .85rem; }
+    .closing { padding: clamp(26px, 5vw, 54px); border: 1px solid var(--border); border-radius: 22px; background: var(--surface); }
+    .closing blockquote { max-width: 740px; margin: 0; font-family: var(--serif); font-size: clamp(1.55rem, 3.3vw, 2.3rem); line-height: 1.6; }
+    .closing cite { display: block; margin-top: 15px; color: var(--text-tertiary); font: normal .82rem/1.7 var(--sans); }
+    .closing-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 25px; }
+    .button { min-height: 44px; display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: .65rem 1.05rem; border: 1px solid var(--accent); border-radius: 999px; color: var(--surface); background: var(--accent); text-decoration: none; cursor: pointer; transition: transform .2s ease, background .2s ease, border-color .2s ease; }
+    .button:hover { transform: translateY(-2px); color: var(--surface); border-color: var(--accent-hover); background: var(--accent-hover); }
+    .button:active { transform: scale(.98); }
+    .button-secondary { color: var(--text); border-color: var(--border-hover); background: transparent; }
+    .button-secondary:hover { color: var(--text); border-color: var(--text-secondary); background: var(--surface-hover); }
+    .button:disabled { color: var(--text-tertiary); border-color: var(--border); background: var(--surface-alt); cursor: not-allowed; transform: none; }
+    .report-footer { padding: 27px 0 36px; border-top: 1px solid var(--border); color: var(--text-tertiary); font-size: .77rem; }
+    .footer-inner { display: flex; justify-content: space-between; align-items: start; gap: 20px; }
+    .footer-inner p { max-width: 670px; margin: 0; }
+    .footer-mark { white-space: nowrap; font: 400 .7rem var(--mono); }
+    .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
+    @media (max-width: 960px) {
+      .masthead-inner { width: min(100% - 32px, var(--wide)); }
+      .hero-grid { grid-template-columns: minmax(0, 1.1fr) minmax(240px, .8fr); gap: 30px; }
+      .panel-wide { grid-column: span 7; }
+      .panel-narrow { grid-column: span 5; }
+    }
+    @media (max-width: 680px) {
+      html { scroll-padding-top: 86px; }
+      body { font-size: 16px; }
+      .masthead-inner { min-height: 56px; width: calc(100% - 28px); gap: 8px; }
+      .wordmark { font-size: .7rem; gap: 7px; }
+      .wordmark-mark { width: 25px; height: 25px; }
+      .chapter-nav { gap: 0; }
+      .chapter-nav a { padding-inline: 9px; font-size: .72rem; }
+      .nav-progress { display: none; }
+      .page-shell { width: calc(100% - 36px); }
+      .hero { min-height: auto; padding-block: 64px 58px; }
+      .hero-grid { grid-template-columns: 1fr; gap: 30px; }
+      h1 { font-size: clamp(2.3rem, 10vw, 3.5rem); }
+      .hero-stat { max-width: 390px; }
+      .hero::after { inset: 7% 0 35% 15%; }
+      .manifesto { margin-bottom: 82px; border-radius: 18px; }
+      .section { padding-bottom: 82px; }
+      .split-grid { grid-template-columns: 1fr 1fr; }
+      .panel-wide, .panel-narrow { grid-column: span 2; }
+      .panel-third { grid-column: span 1; }
+      .timeline { grid-template-columns: 1fr; gap: 4px; }
+      .timeline-step { padding: 15px 17px; }
+      .flow { grid-template-columns: 1fr; gap: 6px; }
+      .flow-node { min-height: 74px; }
+      .flow-arrow { transform: rotate(90deg); justify-self: center; }
+      .scenario-wrap { grid-template-columns: 1fr; }
+      .scenario-tabs { grid-template-columns: 1fr; }
+      .scenario-panel { min-height: 245px; }
+      .signal-list { grid-template-columns: 1fr; }
+      .signal-item label { min-height: 74px; }
+      .footer-inner { flex-direction: column; }
+    }
+    @media (max-width: 380px) {
+      .masthead-inner { width: calc(100% - 20px); }
+      .wordmark > span:last-child { max-width: 100px; overflow: hidden; text-overflow: ellipsis; }
+      .chapter-nav a { padding-inline: 7px; font-size: .68rem; }
+      .page-shell { width: calc(100% - 28px); }
+      .panel-third { grid-column: span 2; }
+    }
+    @media (hover: hover) and (pointer: fine) {
+      .hero-stat { will-change: transform; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
+      .reveal { opacity: 1; transform: none; }
+      .hero-stat { transform: none !important; }
+    }
+    @media print {
+      .masthead, .topline, .quiz, .scenario-tabs, .closing-actions { display: none !important; }
+      body, .manifesto { color: var(--text); background: var(--surface); }
+      .section, .hero { padding-block: 24px; }
+      .reveal { opacity: 1; transform: none; }
+      .page-shell { width: 100%; }
+      a { color: var(--text); }
+    }
+  </style>
+</head>
+<body>
+  <a class="skip-link" href="#main">跳到报告正文</a>
+  <div class="topline" aria-hidden="true"></div>
+  <header class="masthead" id="top">
+    <div class="masthead-inner">
+      <a class="wordmark" href="#top" aria-label="回到报告开头"><span class="wordmark-mark" aria-hidden="true">研</span><span>一篇读懂市场逻辑</span></a>
+      <nav class="chapter-nav" aria-label="报告章节">
+        <a href="#question">先看问题</a><a href="#history">第二顶</a><a href="#rates">利率传导</a><a href="#rebound">反弹结构</a><a href="#scenarios">三种路径</a><a href="#signals">观察信号</a>
+      </nav>
+      <span class="nav-progress" aria-live="polite">01 / 07</span>
+    </div>
+  </header>
+
+  <div class="page-shell">
+    <section class="hero" aria-labelledby="hero-title">
+      <div class="hero-grid">
+        <div>
+          <p class="eyebrow">一份循序渐进的市场学习报告</p>
+          <h1 id="hero-title"><span class="title-line"><span>A 股科技的第二波，</span></span><span class="title-line"><span>为什么还不能确认？</span></span></h1>
+          <p class="hero-deck">科技景气仍在，不等于股价第二波已经成立。接下来用几个小问题，拆开看清<strong>资金、时间、龙头、利润与催化</strong>之间的关系。</p>
+          <span class="source-chip"><span aria-hidden="true"></span>根据原文重组 · 约 8 分钟 · 可互动</span>
+          <div class="hero-foot"><svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M10 2.5v14m0 0 5-5m-5 5-5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>往下读：先判断反弹，再理解为什么还不能下结论</div>
+        </div>
+        <aside class="hero-stat" aria-label="原文所列数据：成交额从高点缩量约百分之四十九点三">
+          <p class="stat-label">市场成交额 · 原文统计口径</p>
+          <p class="stat-number">49<small>.3%</small></p>
+          <p class="stat-caption">从 6 月一组 5 日均值高点到 9 月统计周期。<strong>这是一个现象，不是牛熊转换的判决。</strong></p>
+          <div class="mini-scale" aria-hidden="true"><span></span></div>
+          <div class="stat-foot"><span>高点基准</span><span>缩量幅度</span></div>
+        </aside>
+      </div>
+      <div class="chapter-rail" aria-label="学习进度">START HERE <span>先带着一个问题开始</span></div>
+    </section>
+
+    <main id="main">
+      <section class="manifesto reveal" aria-label="核心观点">
+        <p class="eyebrow">先记住这句话</p>
+        <h2>产业景气还在，和股价已经确认<em>第二波</em>，是两件事。</h2>
+      </section>
+
+      <section class="section" id="question" aria-labelledby="question-title">
+        <div class="section-heading">
+          <p class="section-kicker reveal">01 / 先辨认市场状态</p>
+          <h2 class="section-title reveal" id="question-title">成交额缩近一半，意味着牛市结束了吗？</h2>
+          <p class="section-lead reveal">先别急着给市场贴标签。缩量告诉我们交易变少了，却不能单独说明下跌趋势已经形成。</p>
+        </div>
+        <div class="split-grid reveal-group">
+          <article class="panel panel-wide reveal">
+            <span class="micro-label">文章引用的历史复盘</span>
+            <span class="metric">21 / 22</span>
+            <h3>五轮典型牛市里，缩量回调并不罕见</h3>
+            <p>原文转述的统计称，2005 年以来五轮典型牛市共出现 22 次缩量回调，其中 21 次缩量超过 30%。<strong>这个“21 次”在原文也注明转写待核。</strong>因此，即使按该引用口径，约 49% 的缩量也不足以独立证明“牛转熊”。</p>
+          </article>
+          <article class="panel panel-narrow reveal">
+            <span class="micro-label">历史参照，不是预测线</span>
+            <span class="metric">1.42<span class="metric-caption"> 万亿元</span></span>
+            <h3>原文提到的 60% 缩量参照</h3>
+            <p>以 3.55 万亿元为基准，缩量 60% 约对应 1.42 万亿元。它是历史经验线，不是未来涨跌的开关。</p>
+          </article>
+        </div>
+        <div class="reading-column" style="margin-top:22px">
+          <p class="callout reveal"><strong>更完整的判断：</strong>成交量要和指数有没有连续破位、恐慌是否扩散、企业盈利是否普遍走弱一起看。原文描述的市场是高位震荡、成交缩减、行业盈利分化——更像多空观望，而不是已经有充分证据宣布熊市。</p>
+        </div>
+        <div class="model-bridge reveal"><strong>高位观望如何结束？</strong>原文归纳了两条路：经济全面修复、盈利向更多行业扩散；或出现有业绩、有容量的高景气主线，重新聚拢资金。原文认为短期更值得期待的是科技接棒，但这仍需订单、利润和市场结构给出确认。</div>
+        <div class="quiz reveal" id="quiz-volume">
+          <div class="quiz-top"><p class="quiz-label">停一下，试着判断</p><span class="quiz-count">小测验 · 01</span></div>
+          <h3>“成交额比高点少了近一半”，最稳妥的解读是什么？</h3>
+          <div class="answer-list" role="group" aria-label="选择你认为最稳妥的解读">
+            <button class="answer" type="button" data-answer="a"><span class="answer-mark">A</span><span>牛市已经结束，科技股反弹只能是诱多。</span></button>
+            <button class="answer" type="button" data-answer="b" data-correct="true"><span class="answer-mark">B</span><span>交易活跃度明显下降；还需要结合指数、盈利和资金行为判断。</span></button>
+            <button class="answer" type="button" data-answer="c"><span class="answer-mark">C</span><span>只要成交额跌破 1.42 万亿元，就一定会转熊。</span></button>
+          </div>
+          <p class="quiz-feedback" role="status" aria-live="polite">选择一个答案，看看它背后的推理。</p>
+        </div>
+      </section>
+
+      <section class="section" id="history" aria-labelledby="history-title">
+        <div class="section-heading">
+          <p class="section-kicker reveal">02 / 理解什么是“第二顶”</p>
+          <h2 class="section-title reveal" id="history-title">第二顶不是“跌了再涨”，而是基本面重新接上。</h2>
+          <p class="section-lead reveal">产业行情的第一段，股价可能提前透支多年增长；回调之后，即使盈利还在增长，市场也需要新的理由，才愿意再给估值。</p>
+        </div>
+        <div class="timeline reveal-group" aria-label="产业行情第一顶到第二顶的三个阶段">
+          <article class="timeline-step reveal"><b>第一顶 · 预期跑在前面</b><h3>先把未来买进价格</h3><p>估值与情绪可能先见顶，股价领先盈利转向。原文引用的一组行业复盘称，股价高点可能早于盈利指标高点。</p></article>
+          <article class="timeline-step reveal"><b>中间 · 重新检验逻辑</b><h3>等待估值消化与催化</h3><p>需求、订单、价格、利润需要经受验证；交易拥挤度和资金条件也要重新平衡。</p></article>
+          <article class="timeline-step reveal"><b>第二顶 · 兑现才有再定价</b><h3>不一定由原来的龙头领涨</h3><p>只要行业景气延续，供应链利润流向变化，新的领涨方向也可能出现。</p></article>
+        </div>
+        <div class="model-bridge reveal"><strong>读案例时记住：</strong>第二顶往往低于第一顶；复苏可能只覆盖产业链的一部分。文章列举的新能源例子里，上游材料涨价时，上游公司和中游制造商的股价表现并不相同。</div>
+        <div class="flow reveal" aria-label="需求改善通过订单和利润兑现传导到市场再定价">
+          <div class="flow-node"><strong>需求与订单</strong><span>客户持续投入、出货增加</span></div><span class="flow-arrow" aria-hidden="true">→</span>
+          <div class="flow-node"><strong>价格与利润</strong><span>成本能否传导、利润流向谁</span></div><span class="flow-arrow" aria-hidden="true">→</span>
+          <div class="flow-node"><strong>市场再定价</strong><span>资金是否愿意接回龙头</span></div>
+        </div>
+        <div class="reading-column" style="margin-top:22px"><p class="reveal"><strong>反例：</strong>如果估值脱离内生盈利、资金杠杆退潮，或者供需从短缺转为过剩，产业叙事并不能保证第二波出现。趋势还在，不等于价格和业绩就永远朝同一个方向走。</p></div>
+      </section>
+
+      <section class="section" id="rates" aria-labelledby="rates-title">
+        <div class="section-heading">
+          <p class="section-kicker reveal">03 / 把利率传导讲明白</p>
+          <h2 class="section-title reveal" id="rates-title">利率会压估值，但真正关键的是它能不能压到订单。</h2>
+          <p class="section-lead reveal">把一家科技公司想成一间未来收租的房子：利率上升后，未来租金折算到今天的价值会变低；但如果租金预期持续上修，估值压力未必立刻打断景气。</p>
+        </div>
+        <div class="split-grid reveal-group">
+          <article class="panel panel-third reveal"><span class="micro-label">第一条 · 定价</span><h3>实际利率上升</h3><p>安全资产回报更高，投资者可能降低对远期成长股愿意支付的价格。</p></article>
+          <article class="panel panel-third reveal"><span class="micro-label">第二条 · 投入</span><h3>融资成本增加</h3><p>若云厂商因此放慢数据中心投资，影响才会从估值传到算力订单。</p></article>
+          <article class="panel panel-third reveal"><span class="micro-label">第三条 · 资金</span><h3>美元与风险偏好</h3><p>美元走强、风险偏好走弱，可能让海外资金降低对科技资产的配置。</p></article>
+        </div>
+        <div class="reading-column" style="margin-top:25px">
+          <p class="reveal">所以原文追问的不是“加息利不利空”，而是：加息会持续多久？云厂商资本开支还会不会增加？AI 收入能否兑现？如果投入和收入一起增长，利率压力可能只是估值扰动；如果投资放慢、盈利预期下修，压力才更可能沿产业链传导。</p>
+          <p class="callout reveal"><strong>注意时点：</strong>原文按其写作时点讨论美联储路径与云厂商资本开支。这些表述是文章的分析前提，不是对当前宏观状态的实时更新。</p>
+        </div>
+      </section>
+
+      <section class="section" id="rebound" aria-labelledby="rebound-title">
+        <div class="section-heading">
+          <p class="section-kicker reveal">04 / 回到眼前这次反弹</p>
+          <h2 class="section-title reveal" id="rebound-title">跌幅够深，只说明“可能有机会”；时间和结构还要过关。</h2>
+          <p class="section-lead reveal">文章的核心判断是：截至其讨论时点，科技板块更像超跌修复，离“第二波主升”仍差几个确认信号。</p>
+        </div>
+        <div class="split-grid reveal-group">
+          <article class="panel panel-third reveal"><span class="micro-label">幅度 · 已进入历史区间</span><span class="metric">33–44%</span><h3>部分指数回撤已经很深</h3><p>原文列举算力、半导体、PCB 最大回撤约 33%–43.5%。深跌不是反转凭证。</p></article>
+          <article class="panel panel-third reveal"><span class="micro-label">时间 · 仍偏短</span><span class="metric">≈ 2.5<span class="metric-caption"> 个月</span></span><h3>调整时间还不充分</h3><p>文章从 7 月初算到约 9 月中旬；其历史样本里两顶相隔常在数月。</p></article>
+          <article class="panel panel-third reveal"><span class="micro-label">结构 · 还没接棒</span><span class="metric">小票 &gt; 龙头</span><h3>反弹广度与质量待观察</h3><p>文章描述小市值公司弹性更强，巨头龙头尚未持续接棒，结构更像“高切低”。</p></article>
+        </div>
+        <div class="reading-column" style="margin-top:23px"><p class="callout reveal"><strong>关键区别：</strong>小票可以靠较少资金、送样或题材快速上涨；要推动大市值龙头走出持续行情，需要更强的增量资金，也要有订单与利润接力。第二波可能换领涨者，但不应该只靠故事。</p></div>
+      </section>
+
+      <section class="section" id="upstream" aria-labelledby="upstream-title">
+        <div class="section-heading">
+          <p class="section-kicker reveal">05 / 观察利润可能流向哪一段</p>
+          <h2 class="section-title reveal" id="upstream-title">算力需求很热，瓶颈环节的议价能力也值得看。</h2>
+          <p class="section-lead reveal">原文把高端电子布、HVLP 铜箔、数据中心光纤等列为供给偏紧的材料环节。若订单持续而产能扩张受限，利润可能从设备/材料瓶颈处重新分配。</p>
+        </div>
+        <div class="split-grid reveal-group">
+          <article class="panel panel-wide reveal"><span class="micro-label">原文转述的供需估算</span><h3>缺口不是结论，供给反应速度也要一起看</h3><p>文章援引一份 AI 基础设施材料报告，估算部分高端材料在未来几年供给偏紧；同时提到专用设备产量有限、交期较长。真正要追问的是：需求预测是否兑现、扩产是否延迟、涨价能否传导到毛利。</p></article>
+          <article class="panel panel-narrow reveal"><span class="micro-label">跟踪利润去向</span><h3>谁在提价？谁能保住毛利？</h3><p>同样的原材料涨价，对上游供应商可能是收入机会，对中游加工商可能是成本压力。要看产业链位置，不要只记热门名词。</p></article>
+        </div>
+        <div class="reading-column" style="margin-top:21px"><p class="reveal"><strong>一条更实用的产业链检查：</strong>云厂商仍然投入吗？下游订单转成出货了吗？产品涨价后毛利改善了吗？供给瓶颈仍然存在，还是新增产能已赶上来？只有几环一起对得上，产业景气才更可能进入上市公司的利润表。</p></div>
+      </section>
+
+      <section class="section" id="scenarios" aria-labelledby="scenarios-title">
+        <div class="section-heading">
+          <p class="section-kicker reveal">06 / 不押单一路径，比较条件</p>
+          <h2 class="section-title reveal" id="scenarios-title">未来可能有三种走法，差别在于证据能否凑齐。</h2>
+          <p class="section-lead reveal">点击每张情景卡，看看需要哪些前提、哪些地方可能掉链子。它们是原文的条件推演，不是概率预测。</p>
+        </div>
+        <div class="scenario-wrap reveal">
+          <div class="scenario-tabs" role="group" aria-label="选择市场情景">
+            <button class="scenario-tab" type="button" data-scenario="strong" aria-pressed="true"><span>标准 M 型</span><span aria-hidden="true">↗</span></button>
+            <button class="scenario-tab" type="button" data-scenario="weak" aria-pressed="false"><span>弱 M 型</span><span aria-hidden="true">↗</span></button>
+            <button class="scenario-tab" type="button" data-scenario="failed" aria-pressed="false"><span>M 型失效</span><span aria-hidden="true">↗</span></button>
+          </div>
+          <article class="scenario-panel" aria-live="polite" aria-atomic="true">
+            <span class="scenario-meta" id="scenario-label">条件同时改善</span>
+            <h3 id="scenario-title">标准 M 型</h3>
+            <p id="scenario-copy">产业逻辑稳固、大盘没有转熊，云厂商继续投入，相关公司订单和利润兑现，龙头重新接棒。板块才可能向前高的 80%–90% 修复；这是要求较高的条件组合。</p>
+            <p class="scenario-detail" id="scenario-detail">要观察：成交量回暖、龙头相对强度改善、财报和订单兑现，且海外投资节奏未转弱。</p>
+          </article>
+        </div>
+        <div class="source-caveat reveal"><strong>怎样读这些情景：</strong>“可能”不等于“会发生”；单一信号（例如涨价、缩量或小票创新高）不足以验证整条路径。多个维度同步变化，判断才有更新依据。</div>
+      </section>
+
+      <section class="section" id="signals" aria-labelledby="signals-title">
+        <div class="section-heading">
+          <p class="section-kicker reveal">07 / 带走一张观察清单</p>
+          <h2 class="section-title reveal" id="signals-title">下次看到行情波动，先检查这些信号。</h2>
+          <p class="section-lead reveal">勾选你认为已经得到证据支持的项。清单不是交易指令，也不计算“买入分数”；它只是提醒：别用一个热闹的数字替代完整判断。</p>
+        </div>
+        <p class="signal-intro reveal">优先看多类证据是否同向，而不是猜明天涨跌。</p>
+        <div class="signal-list reveal" role="group" aria-label="第二波观察信号清单">
+          <div class="signal-item"><input id="signal-market" type="checkbox"><label for="signal-market"><span class="check-box" aria-hidden="true">✓</span><span class="signal-copy"><strong>量能与指数</strong><small>全 A 成交额企稳回升；上涨时放量、回调时缩量，而非只看一天。</small></span></label></div>
+          <div class="signal-item"><input id="signal-leadership" type="checkbox"><label for="signal-leadership"><span class="check-box" aria-hidden="true">✓</span><span class="signal-copy"><strong>科技板块广度</strong><small>科技成交占比和相对强度能否维持；回撤时是否仍强于大盘。</small></span></label></div>
+          <div class="signal-item"><input id="signal-capex" type="checkbox"><label for="signal-capex"><span class="check-box" aria-hidden="true">✓</span><span class="signal-copy"><strong>云厂商投入与收入</strong><small>资本开支指引能否维持，云收入能否一起增长。</small></span></label></div>
+          <div class="signal-item"><input id="signal-orders" type="checkbox"><label for="signal-orders"><span class="check-box" aria-hidden="true">✓</span><span class="signal-copy"><strong>公司订单与利润</strong><small>三季报及后续指引中的出货、价格、毛利是否环比改善。</small></span></label></div>
+          <div class="signal-item"><input id="signal-supply" type="checkbox"><label for="signal-supply"><span class="check-box" aria-hidden="true">✓</span><span class="signal-copy"><strong>瓶颈供给与扩产</strong><small>订单紧张、提价与交期是否持续，新增产能有没有改变供需。</small></span></label></div>
+          <div class="signal-item"><input id="signal-rates" type="checkbox"><label for="signal-rates"><span class="check-box" aria-hidden="true">✓</span><span class="signal-copy"><strong>利率与海外风险偏好</strong><small>美债收益率是继续上冲还是趋稳，海外紧缩是否开始改变投资节奏。</small></span></label></div>
+        </div>
+        <p class="signal-status" role="status" aria-live="polite">已核对 0 / 6 项。重点是等待证据，不是凑满勾选。</p>
+        <div class="reading-column" style="margin-top:14px"><p class="reveal"><strong>整篇文章的逻辑链：</strong>市场缩量不等于牛熊已定 → 第二顶需要基本面重新接力 → 利率影响估值，也可能影响资本开支 → 当前反弹在时间、量能和龙头结构上还不充分 → 瓶颈与利润流向提供观察方向 → 等待多类信号共同验证。</p></div>
+      </section>
+
+      <section class="section" aria-labelledby="closing-title">
+        <div class="closing reveal">
+          <p class="section-kicker">最后，留一个判断习惯</p>
+          <h2 class="sr-only" id="closing-title">结语</h2>
+          <blockquote>“不亏钱就是赚钱。”<cite>原文结语。面对证据还不充分的阶段，少做不必要的操作，也是一种选择。</cite></blockquote>
+          <div class="closing-actions">
+            <a class="button" href="#top">回到开头<span aria-hidden="true">↑</span></a>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="report-footer">
+      <div class="footer-inner">
+        <p>本页面为原文的学习型重组，不构成投资建议。原文部分日期、名称、指数口径及数字存在转写待核，本页不将其视作独立核实的实时数据。请以原文说明和正式披露为准。</p>
+        <span class="footer-mark">READ · THINK · VERIFY</span>
+      </div>
+    </footer>
+  </div>
+
+  <script>
+    (() => {
+      const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      const revealItems = document.querySelectorAll('.reveal');
+      if ('IntersectionObserver' in window && !reduceMotion) {
+        const revealObserver = new IntersectionObserver(entries => {
+          entries.forEach(entry => {
+            if (!entry.isIntersecting) return;
+            entry.target.classList.add('is-visible');
+            revealObserver.unobserve(entry.target);
+          });
+        }, { threshold: 0.12 });
+        revealItems.forEach(item => revealObserver.observe(item));
+      } else {
+        revealItems.forEach(item => item.classList.add('is-visible'));
+      }
+
+      const masthead = document.querySelector('.masthead');
+      const progress = document.querySelector('.topline');
+      let scrollQueued = false;
+      const updateScrollChrome = () => {
+        if (scrollQueued) return;
+        scrollQueued = true;
+        requestAnimationFrame(() => {
+          const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
+          const ratio = maxScroll > 0 ? Math.min(1, Math.max(0, window.scrollY / maxScroll)) : 0;
+          progress.style.transform = `scaleX(${ratio})`;
+          masthead.classList.toggle('is-scrolled', window.scrollY > 12);
+          scrollQueued = false;
+        });
+      };
+      window.addEventListener('scroll', updateScrollChrome, { passive: true });
+      updateScrollChrome();
+
+      const sections = [...document.querySelectorAll('main section[id]')];
+      const navLinks = [...document.querySelectorAll('.chapter-nav a')];
+      const navProgress = document.querySelector('.nav-progress');
+      if ('IntersectionObserver' in window) {
+        const sectionObserver = new IntersectionObserver(entries => {
+          entries.forEach(entry => {
+            if (!entry.isIntersecting) return;
+            const index = sections.indexOf(entry.target);
+            navLinks.forEach(link => {
+              const current = link.getAttribute('href') === `#${entry.target.id}`;
+              if (current) link.setAttribute('aria-current', 'location');
+              else link.removeAttribute('aria-current');
+            });
+            if (navProgress && index >= 0) navProgress.textContent = `${String(index + 1).padStart(2, '0')} / ${String(sections.length).padStart(2, '0')}`;
+          });
+        }, { rootMargin: '-22% 0px -62% 0px' });
+        sections.forEach(section => sectionObserver.observe(section));
+      }
+
+      const quiz = document.querySelector('#quiz-volume');
+      const quizFeedback = quiz.querySelector('.quiz-feedback');
+      quiz.querySelectorAll('.answer').forEach(button => {
+        button.addEventListener('click', () => {
+          const correct = button.dataset.correct === 'true';
+          quiz.querySelectorAll('.answer').forEach(option => {
+            option.disabled = true;
+            if (option.dataset.correct === 'true') option.classList.add('is-correct');
+          });
+          if (!correct) button.classList.add('is-wrong');
+          quizFeedback.dataset.state = correct ? 'correct' : 'wrong';
+          quizFeedback.textContent = correct
+            ? '判断正确。缩量是交易活跃度的线索；还需把指数、恐慌、盈利和资金条件放在一起看。'
+            : '再想一步：成交额描述交易活跃度，不直接等于趋势反转。文章的历史复盘也显示，牛市调整中缩量并不少见。正确思路是结合多类证据。';
+        });
+      });
+
+      const scenarios = {
+        strong: {
+          label: '条件同时改善', title: '标准 M 型',
+          copy: '产业逻辑稳固、大盘没有转熊，云厂商继续投入，相关公司订单和利润兑现，龙头重新接棒。板块才可能向前高的 80%–90% 修复；这是要求较高的条件组合。',
+          detail: '要观察：成交量回暖、龙头相对强度改善、财报和订单兑现，且海外投资节奏未转弱。'
+        },
+        weak: {
+          label: '只有局部通过验证', title: '弱 M 型',
+          copy: '产业逻辑没有被证伪，但大盘量能不足、利率偏高、业绩只在少数方向兑现。行情可能有第二段，却更分化、更有限。',
+          detail: '可能的特征：涨价、订单与业绩同时支持的少数环节相对占优；不能把局部强势等同于全板块牛市。'
+        },
+        failed: {
+          label: '关键前提开始逆转', title: 'M 型失效',
+          copy: '如果云厂商投资放缓、需求或订单走弱、扩产让供需反转，或者资金与盈利条件明显恶化，超跌反弹就可能结束。',
+          detail: '需要警惕：订单下修、价格走弱、毛利承压与成交结构恶化同时出现；若核心逻辑变了，就要重新评估，而非等待图形“补成 M”。'
+        }
+      };
+      const scenarioTabs = [...document.querySelectorAll('.scenario-tab')];
+      const scenarioPanel = document.querySelector('.scenario-panel');
+      scenarioTabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+          const scenario = scenarios[tab.dataset.scenario];
+          scenarioTabs.forEach(item => item.setAttribute('aria-pressed', String(item === tab)));
+          scenarioPanel.querySelector('.scenario-meta').textContent = scenario.label;
+          scenarioPanel.querySelector('h3').textContent = scenario.title;
+          scenarioPanel.querySelector('#scenario-copy').textContent = scenario.copy;
+          scenarioPanel.querySelector('#scenario-detail').textContent = scenario.detail;
+        });
+      });
+
+      const signalInputs = [...document.querySelectorAll('.signal-item input')];
+      const signalStatus = document.querySelector('.signal-status');
+      signalInputs.forEach(input => input.addEventListener('change', () => {
+        const checked = signalInputs.filter(item => item.checked).length;
+        signalStatus.textContent = `已核对 ${checked} / ${signalInputs.length} 项。重点是等待证据，不是凑满勾选。`;
+      }));
+
+      const heroStat = document.querySelector('.hero-stat');
+      const finePointer = window.matchMedia('(hover: hover) and (pointer: fine)');
+      if (finePointer.matches && !reduceMotion) {
+        let pointerQueued = false;
+        let nextDrift = 0;
+        window.addEventListener('pointermove', event => {
+          if (pointerQueued) return;
+          pointerQueued = true;
+          requestAnimationFrame(() => {
+            const rect = heroStat.getBoundingClientRect();
+            const center = rect.top + rect.height / 2;
+            nextDrift = Math.max(-5, Math.min(5, (event.clientY - center) * -0.018));
+            heroStat.style.setProperty('--drift', `${nextDrift}px`);
+            pointerQueued = false;
+          });
+        }, { passive: true });
+        heroStat.addEventListener('pointerleave', () => heroStat.style.setProperty('--drift', '0px'));
+      }
+    })();
+  </script>
+</body>
+</html>
