@@ -134,10 +134,13 @@
 ```
 
 ### Navigation
-本页无导航栏。滚动导航 = 粘性年月标题（sticky H2）：
+站点有一条分区导航，链到「报告」（`/`）与「日报」（`/digests/`）。当前页用 `aria-current="page"`。导航吸顶，背景用 `--bg` 不透底，不用 `backdrop-filter`。
+
+年月标题仍吸顶，停在导航下方：
 ```css
+.site-nav { position: sticky; top: 0; z-index: 5; height: var(--nav-h); background: var(--bg); }
 .group h2 {
-  position: sticky; top: 0; z-index: 2;
+  position: sticky; top: var(--nav-h); z-index: 2;
   background: var(--bg);           /* 不透底，滚动时不穿帮 */
   padding: 14px 0 10px; margin: -14px 0 16px;
 }
@@ -268,6 +271,7 @@ JS 侧：`matchMedia('(prefers-reduced-motion: reduce)')` 命中时跳过 count-
 - 所有动效提供 `prefers-reduced-motion` 降级
 - 卡片显示的日期与排序依据同源（同一 dateLabel），可读且可校验
 - 新增报告自动按日期归组，无需修改代码
+- 新增日报只放入 `digests/YYYY-MM-DD.html`，构建时自动进入「日报」列表
 
 ### Don't
 - ❌ 硬编码 hex 颜色（一律走 CSS 变量）
@@ -276,7 +280,7 @@ JS 侧：`matchMedia('(prefers-reduced-motion: reduce)')` 命中时跳过 count-
 - ❌ 标题使用渐变文字或投影（克制风格）
 - ❌ 无节流的 pointermove 监听（本页仅 1 处委托 + rAF 节流，且限制 `hover: hover` 设备）
 - ❌ 引入第三方依赖（GSAP/Lenis/框架）——本页零外部运行时依赖
-- ❌ 手动编辑根目录 index.html（由 generate-index.js 生成，改生成器而非产物）
+- ❌ 手动编辑根目录 index.html 或 digests/index.html（由 generate-index.js 生成，改生成器而非产物）
 - ❌ 中文字体缺失让系统回退（font-family 必须链接中文字族）
 - ❌ 移动端 ≤600px 出现横向溢出（长标题两行截断 + 容器收缩）
 
