@@ -1,6 +1,9 @@
 {
   "scripts": {
     "build": "node generate-index.js",
+    "daily:init": "node scripts/daily.js init",
+    "daily:preview": "node scripts/daily.js preview",
+    "daily:finalize": "node scripts/daily.js finalize",
     "weekly:init": "node scripts/weekly.js init",
     "weekly:preview": "node scripts/weekly.js preview",
     "weekly:finalize": "node scripts/weekly.js finalize",

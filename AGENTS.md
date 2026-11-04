@@ -24,7 +24,7 @@ This project file controls repository-specific behavior.
 my-reports/
 ├── index.html              # 自动生成的报告索引页（不要手动编辑）
 ├── generate-index.js       # 索引生成脚本（核心逻辑）
-├── package.json            # 仅包含 build 脚本
+├── package.json            # 构建、日报与周报命令
 ├── digests/                # 日报（今日中文推特圈精选 + AI 资讯）
 │   ├── index.html          # 自动生成的日报列表（不要手动编辑）
 │   └── YYYY-MM-DD.html     # 某一天的自包含 HTML
@@ -103,7 +103,7 @@ reports/my-report/
 
 ### 方式三：日报（今日中文推特圈精选）
 
-每天只提交一个自包含 HTML，不要手改索引，也不要另写元数据：
+新增日报优先按 README.md「日报与周报」流程由脚本生成，每天只提交一个自包含 HTML。保持旧 HTML 的兼容，不手改索引，不另写正文元数据：
 
 ```bash
 digests/2026-10-20.html
@@ -114,7 +114,7 @@ digests/2026-10-20.html
 - `digests/index.html` 是构建产物。以 `.` 或 `_` 开头的文件会被忽略。
 - 点击列表项会打开这份 HTML 原文件，样式和链接保持原样。
 
-构建后站点导航有两个分区：「报告」（`/`）和「日报」（`/digests/`）。
+构建后站点导航有三个分区：「报告」（`/`）、「日报」（`/digests/`）和「周报」（`/weeklies/`）。
 
 ### 方式四：排除某些目录
 
@@ -132,7 +132,7 @@ npm run build
 node generate-index.js
 ```
 
-执行后会重新生成根目录的 `index.html` 和 `digests/index.html`。
+执行后会重新生成根目录的 `index.html`、`digests/index.html` 和 `weeklies/index.html`。
 
 ### 自动部署
 
@@ -189,7 +189,7 @@ node generate-index.js
 
 ### Verification
 
-- After changing runtime behavior, run `npm run build` and verify the generated `index.html` and `digests/index.html`.
+- After changing runtime behavior, run `npm run build` and verify the generated `index.html`, `digests/index.html`, and `weeklies/index.html`.
 - After changing frontend UI (index template), open the generated `index.html` and `digests/index.html` in a browser and open one digest file to verify layout, navigation, and that the digest keeps its own styling.
 - If a check is skipped, report it explicitly.
 
@@ -207,8 +207,10 @@ node generate-index.js
 - Match nearby code style in `generate-index.js`.
 - Keep changes scoped to the request.
 
-## 周报工作流
+## 日报与周报生成
 
-起草、预览、定稿周报前读取 README.md 的「周简报」章节。私人素材与草稿在 Git 忽略的 .local/weeklies；审阅后的 HTML 才进入 weeklies。来源核对由用户自行处理，不属于流程或发布前置条件。整理、预览、定稿分别使用 weekly:draft、weekly:preview、weekly:finalize 脚本。Agent 仅协助去重和组织栏目，内容细节由用户自行编辑；只允许对用户提供或选定的原文进行删除、重排、加标题；保留采用段落的措辞、数字、链接，不改写、概括或额外撰写导读、摘要、推荐理由。需要时在本地审阅说明中记录删选理由。用户确认本期内容后，使用 weekly:finalize 定稿并验证预览版本一致。
+生成、预览、修订或定稿日报／周报前，读取 README.md「日报与周报」。用户负责收集与整理正文，Agent 调用 daily:*／weekly:* 脚本，使用已确认的 A 模板。私人稿件在 .local/digests 与 .local/weeklies；用户确认本期内容后才能 finalize，并验证产物与预览一致。
 
-生成器入口 generate-index.js；lib/indexes.js 生成三个索引；lib/site.js 打包公开产物到 dist；lib/weekly.js 和 scripts/weekly.js 负责周报工具。weeklies/index.html 是自动生成产物。构建后验证三个索引、历史资源、发布目录的素材隔离；部署使用 Node.js 24、npm ci，只上传 dist。
+正文保留用户的措辞、数字、链接和限定条件。用户明确要求协助整理时，仅删除、重排或加标题；不改写、概括或补写导读、摘要、推荐理由。来源核对由用户处理，不属于发布前置条件。已有完整 draft.md 时直接预览；weekly:draft 仅按明确需要调用。
+
+正式样式与章节颜色以 DESIGN.md 第 10 节和 lib/publication* 为准；不从历史 HTML 或设计 Demo 重新拼装模板。旧日报／周报不会自动迁移。索引和发布目录仍由 generate-index.js 构建，只上传 dist；构建后验证三个索引、历史资源和私人素材隔离。

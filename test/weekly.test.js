@@ -88,10 +88,7 @@ test("索引保留旧报告日期及周报标题，日期区间进入说明", (t
   const root = fixture(t);
   for (const dir of ["lib", "reports", "digests", "weeklies"])
     fs.mkdirSync(path.join(root, dir));
-  fs.copyFileSync(
-    path.join(__dirname, "../lib/indexes.js"),
-    path.join(root, "lib/indexes.js"),
-  );
+  fs.cpSync(path.join(__dirname, "../lib"), path.join(root, "lib"), { recursive: true });
   fs.writeFileSync(
     path.join(root, "reports/legacy.html"),
     "<title>旧报告</title>",
@@ -189,7 +186,8 @@ test("阅读排版保留原文换行和网址文字，仅增强链接与导航",
   assert.match(html, /href="http:\/\/github.com\/vercel-labs\/agent-desktop"/);
   assert.match(html, /<article class="prose" id="content"/);
   assert.match(html, /<details class="mobile-toc">/);
-  assert.ok(!html.includes("<script"));
+  assert.equal((html.match(/<script\b/g) || []).length, 1);
+  assert.match(html, /<script data-publication-ui>/);
 });
 
 test("文件名不会被误认成网站，也不会在原有链接内嵌套链接", () => {
