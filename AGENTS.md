@@ -209,6 +209,8 @@ node generate-index.js
 
 ## 日报与周报生成
 
+- 步骤见 `.agents/skills/`：`my-reports-daily`、`my-reports-weekly`、`my-reports-add-report`。
+
 生成、预览、修订或定稿日报／周报前，读取 README.md「日报与周报」。用户负责收集与整理正文，Agent 调用 daily:*／weekly:* 脚本，使用已确认的 A 模板。私人稿件在 .local/digests 与 .local/weeklies；用户确认本期内容后才能 finalize，并验证产物与预览一致。
 
 正文保留用户的措辞、数字、链接和限定条件。用户明确要求协助整理时，仅删除、重排或加标题；不改写、概括或补写导读、摘要、推荐理由。来源核对由用户处理，不属于发布前置条件。已有完整 draft.md 时直接预览；weekly:draft 仅按明确需要调用。
