@@ -3,17 +3,24 @@ const path = require("node:path");
 const http = require("node:http");
 const { execFileSync } = require("node:child_process");
 const weekly = require("../lib/weekly");
+const { draft } = require("../lib/draft");
 const [command, id, ...flags] = process.argv.slice(2);
 try {
   if (
-    !["init", "preview", "finalize"].includes(command) ||
+    !["init", "draft", "preview", "finalize"].includes(command) ||
     flags.some((f) => f !== "--replace") ||
-    (flags.length && command !== "finalize")
+    (flags.length && !["draft", "finalize"].includes(command))
   )
     throw new Error(
-      "用法：weekly init|preview|finalize YYYY-MM-DD [--replace]",
+      "用法：weekly init|draft|preview|finalize YYYY-MM-DD [--replace]",
     );
   if (command === "init") console.log(weekly.init(weekly.ROOT, id));
+  if (command === "draft") {
+    const result = draft(weekly.ROOT, id, flags.includes("--replace"));
+    console.log(
+      `${result.path}\n栏目：${result.columns.join("、")}；删除完全重复条目：${result.removed}。请自行编辑内容，再运行 weekly:preview。`,
+    );
+  }
   if (command === "finalize")
     console.log(weekly.finalize(weekly.ROOT, id, flags.includes("--replace")));
   if (command === "preview") {

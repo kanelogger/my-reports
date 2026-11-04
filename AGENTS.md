@@ -209,6 +209,6 @@ node generate-index.js
 
 ## 周报工作流
 
-起草、预览、定稿周报前读取 README.md 的「周简报」章节。私人素材与草稿在 Git 忽略的 .local/weeklies；审阅后的 HTML 才进入 weeklies。起草时核对原始来源，保留手选备注，在本地记录无法核实、缺失日报和未采用素材。用户确认本期内容后，使用 weekly:finalize 定稿并验证预览版本一致。
+起草、预览、定稿周报前读取 README.md 的「周简报」章节。私人素材与草稿在 Git 忽略的 .local/weeklies；审阅后的 HTML 才进入 weeklies。来源核对由用户自行处理，不属于流程或发布前置条件。整理、预览、定稿分别使用 weekly:draft、weekly:preview、weekly:finalize 脚本。Agent 仅协助去重和组织栏目，内容细节由用户自行编辑；只允许对用户提供或选定的原文进行删除、重排、加标题；保留采用段落的措辞、数字、链接，不改写、概括或额外撰写导读、摘要、推荐理由。需要时在本地审阅说明中记录删选理由。用户确认本期内容后，使用 weekly:finalize 定稿并验证预览版本一致。
 
 生成器入口 generate-index.js；lib/indexes.js 生成三个索引；lib/site.js 打包公开产物到 dist；lib/weekly.js 和 scripts/weekly.js 负责周报工具。weeklies/index.html 是自动生成产物。构建后验证三个索引、历史资源、发布目录的素材隔离；部署使用 Node.js 24、npm ci，只上传 dist。

@@ -118,3 +118,139 @@ test("空栏目隐藏且正文标题只出现一次", () => {
   assert.equal((html.match(/<h1>/g) || []).length, 1);
   assert.ok(html.indexOf("<h1>") < html.indexOf('class="period"'));
 });
+
+test("整理只去除完整重复条目，保留同链接不同正文和代码中的标题", () => {
+  const { organize } = require("../lib/draft");
+  const entry = "### 原文标题\n\nhttps://example.com\n\n原文内容  不能改。\n";
+  const different =
+    "### 另一个角度\n\nhttps://example.com\n\n相同链接，但内容不同。\n";
+  const code = "### 代码示例\n\n```md\n## 这不是栏目\n### 这不是条目\n```\n";
+  const result = organize(
+    "# 素材\n\n## 好文章\n\n" +
+      entry +
+      "\n" +
+      entry +
+      "\n## 项目\n\n" +
+      different +
+      code,
+    id,
+  );
+  assert.equal(result.removed.length, 1);
+  assert.deepEqual(result.columns, ["好文章", "项目"]);
+  assert.ok(result.text.includes(entry));
+  assert.ok(result.text.includes(different));
+  assert.ok(result.text.includes(code));
+  assert.equal((result.text.match(/原文内容/g) || []).length, 1);
+});
+test("重复栏目合并，未分组的原文保留，空模板不能生成正文", () => {
+  const { organize } = require("../lib/draft");
+  const result = organize(
+    "# 素材\n\n开头原文\n\n## 文章\n\n第一段\n\n## 文章\n\n第二段\n",
+    id,
+  );
+  assert.deepEqual(result.columns, ["本周精选", "文章"]);
+  assert.equal((result.text.match(/## 文章/g) || []).length, 1);
+  for (const text of ["开头原文", "第一段", "第二段"])
+    assert.ok(result.text.includes(text));
+  assert.throws(() => organize("# 素材\n\n## 文章\n\n<!-- 添加内容 -->\n", id));
+});
+test("脚本整理不修改素材，不覆盖人工编辑，显式重做备份旧稿", (t) => {
+  const { draft: prepare } = require("../lib/draft");
+  const root = fixture(t),
+    dir = weekly.init(root, id);
+  const material = "# 素材\n\n## 本周精选\n\n用户原文，保留细节。\n";
+  fs.writeFileSync(path.join(dir, "materials.md"), material);
+  prepare(root, id);
+  assert.equal(
+    fs.readFileSync(path.join(dir, "materials.md"), "utf8"),
+    material,
+  );
+  prepare(root, id);
+  const target = path.join(dir, "draft.md");
+  fs.appendFileSync(target, "人工补充");
+  assert.throws(() => prepare(root, id), /人工编辑/);
+  assert.ok(fs.readFileSync(target, "utf8").endsWith("人工补充"));
+  prepare(root, id, true);
+  const backups = fs
+    .readdirSync(dir)
+    .filter((name) => name.startsWith("draft-backup-"));
+  assert.equal(backups.length, 1);
+  assert.ok(
+    fs.readFileSync(path.join(dir, backups[0]), "utf8").endsWith("人工补充"),
+  );
+});
+
+test("阅读排版保留原文换行和网址文字，仅增强链接与导航", () => {
+  const source =
+    "# 原标题\n\n## 原栏目\n\n原句第一行\n原句第二行\n\n地址：github.com/vercel-labs/agent-desktop\n";
+  const html = weekly.render(source, id);
+  assert.match(html, /原句第一行<br>\n原句第二行/);
+  assert.match(html, />github.com\/vercel-labs\/agent-desktop<\/a>/);
+  assert.match(html, /href="http:\/\/github.com\/vercel-labs\/agent-desktop"/);
+  assert.match(html, /<article class="prose" id="content"/);
+  assert.match(html, /<details class="mobile-toc">/);
+  assert.ok(!html.includes("<script"));
+});
+
+test("文件名不会被误认成网站，也不会在原有链接内嵌套链接", () => {
+  const html = weekly.render(
+    "# 周报\n\n## 文章\n\nCLAUDE.md 和 README.md 是文件名。\n\n[github.com/repo](https://example.com)\n",
+    id,
+  );
+  assert.ok(!html.includes('href="http://CLAUDE.md'));
+  assert.ok(!html.includes('href="http://claude.md'));
+  assert.match(html, /<a href="https:\/\/example.com">github.com\/repo<\/a>/);
+});
+
+test("本地图片内嵌，图片变动阻止旧预览定稿，拒绝越界和远程图片", (t) => {
+  const root = fixture(t),
+    dir = weekly.init(root, id);
+  const images = path.join(dir, "images");
+  fs.mkdirSync(images);
+  const png = Buffer.from(
+    "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAusB9Wl6jLkAAAAASUVORK5CYII=",
+    "base64",
+  );
+  fs.writeFileSync(path.join(images, "示例.png"), png);
+  const source = "# 周报\n\n## 图片\n\n![图片说明](images/示例.png)\n";
+  fs.writeFileSync(path.join(dir, "draft.md"), source);
+  const html = weekly.preview(root, id);
+  assert.match(html, /src="data:image\/png;base64,/);
+  assert.match(html, /alt="图片说明"/);
+  assert.equal(fs.readFileSync(path.join(dir, "draft.md"), "utf8"), source);
+  fs.appendFileSync(path.join(images, "示例.png"), "modified");
+  assert.throws(() => weekly.finalize(root, id), /图片已变化/);
+  fs.writeFileSync(path.join(images, "示例.png"), png);
+  const out = weekly.finalize(root, id);
+  assert.ok(fs.readFileSync(out, "utf8").includes(png.toString("base64")));
+  fs.writeFileSync(path.join(dir, "outside.png"), png);
+  const options = { imageRoot: images };
+  assert.throws(
+    () =>
+      weekly.render(
+        "# 周报\n\n## 图片\n\n![越界](images/../outside.png)",
+        id,
+        options,
+      ),
+    /目录内/,
+  );
+  fs.symlinkSync(path.join(dir, "outside.png"), path.join(images, "link.png"));
+  assert.throws(
+    () =>
+      weekly.render(
+        "# 周报\n\n## 图片\n\n![越界](images/link.png)",
+        id,
+        options,
+      ),
+    /目录内/,
+  );
+  assert.throws(
+    () =>
+      weekly.render(
+        "# 周报\n\n## 图片\n\n![远程](https://example.com/photo.png)",
+        id,
+        options,
+      ),
+    /images/,
+  );
+});
