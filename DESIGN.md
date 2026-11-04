@@ -134,7 +134,7 @@
 ```
 
 ### Navigation
-站点有一条分区导航，链到「报告」（`/`）与「日报」（`/digests/`）。当前页用 `aria-current="page"`。导航吸顶，背景用 `--bg` 不透底，不用 `backdrop-filter`。
+站点有一条分区导航，链到「报告」（`/`）、「日报」（`/digests/`）与「周报」（`/weeklies/`）。当前页用 `aria-current="page"`。导航吸顶，背景用 `--bg` 不透底，不用 `backdrop-filter`。
 
 年月标题仍吸顶，停在导航下方：
 ```css

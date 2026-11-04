@@ -140,7 +140,7 @@ node generate-index.js
 
 - 触发条件：push 到 `main` 或 `master` 分支
 - 部署前执行 `npm run build`（重写根目录 `index.html` 和 `digests/index.html`）
-- 然后把仓库内容上传到 GitHub Pages
+- 然后仅把 dist 上传到 GitHub Pages
 
 **推到 `main` 或 `master` 就会发布。** 新的一天只提交 `digests/YYYY-MM-DD.html` 即可，线上列表会在这次构建里更新，不必手改索引。本地预览请先跑 `npm run build`。若希望仓库里的索引文件和线上一致，可以把构建结果一并提交，但这不是发布的前提。
 
@@ -148,7 +148,7 @@ node generate-index.js
 
 ## 编码规范
 
-- `generate-index.js` 使用 Node.js 原生 API（`fs`, `path`），无外部依赖
+- 索引和打包使用 Node.js 原生 API，周报 Markdown 使用 markdown-it
 - HTML 报告使用中文（`zh-CN`），确保包含 `<meta charset="utf-8">`
 - 子目录报告的 `index.html` 应包含 `<title>` 标签以便正确显示标题
 - 不要手动编辑根目录的 `index.html` 或 `digests/index.html`，它们会被脚本覆盖
@@ -165,8 +165,8 @@ node generate-index.js
 
 ## 依赖
 
-- Node.js（任意现代版本即可，仅使用原生模块）
-- 无 npm 包依赖
+- Node.js 24
+- markdown-it 为周报构建依赖，浏览器无新增依赖
 
 ---
 
@@ -180,9 +180,9 @@ node generate-index.js
 
 ### Commands
 
-- Install: `npm install`（无实际依赖，可跳过）
+- Install: `npm ci`
 - Dev: not available
-- Test: not available
+- Test: `npm test`
 - Typecheck: not available
 - Lint: not available
 - Build: `npm run build`
@@ -206,3 +206,9 @@ node generate-index.js
 - Use Node.js native `fs`/`path` APIs before adding new npm dependencies.
 - Match nearby code style in `generate-index.js`.
 - Keep changes scoped to the request.
+
+## 周报工作流
+
+起草、预览、定稿周报前读取 README.md 的「周简报」章节。私人素材与草稿在 Git 忽略的 .local/weeklies；审阅后的 HTML 才进入 weeklies。起草时核对原始来源，保留手选备注，在本地记录无法核实、缺失日报和未采用素材。用户确认本期内容后，使用 weekly:finalize 定稿并验证预览版本一致。
+
+生成器入口 generate-index.js；lib/indexes.js 生成三个索引；lib/site.js 打包公开产物到 dist；lib/weekly.js 和 scripts/weekly.js 负责周报工具。weeklies/index.html 是自动生成产物。构建后验证三个索引、历史资源、发布目录的素材隔离；部署使用 Node.js 24、npm ci，只上传 dist。

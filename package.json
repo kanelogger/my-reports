@@ -1,5 +1,12 @@
 {
   "scripts": {
-    "build": "node generate-index.js"
+    "build": "node generate-index.js",
+    "weekly:init": "node scripts/weekly.js init",
+    "weekly:preview": "node scripts/weekly.js preview",
+    "weekly:finalize": "node scripts/weekly.js finalize",
+    "test": "node --test"
+  },
+  "devDependencies": {
+    "markdown-it": "^15.0.3"
   }
 }
