@@ -1,183 +1,435 @@
-<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="color-scheme" content="light dark">
-<title>今日中文推特圈精选（11 月 4 日）</title><style>
-:root{--bg:#f6f4ef;--card:#ffffff;--ink:#1d1d1f;--ink2:#4a4a4f;--muted:#8a8a90;--line:#e7e3da;
---accent:#c2410c;--accent-soft:#fff4ea;--chip:#f1efe9;--shadow:0 1px 2px rgba(0,0,0,.04),0 6px 20px rgba(30,20,0,.05);
---model:#2563eb;--biz:#059669;--policy:#dc2626;--product:#7c3aed;--research:#d97706}
-@media (prefers-color-scheme:dark){:root{--bg:#141416;--card:#1e1e21;--ink:#ececef;--ink2:#c3c3c8;--muted:#8d8d94;
---line:#2e2e33;--accent:#fb923c;--accent-soft:#2a1f17;--chip:#2a2a2e;--shadow:0 1px 2px rgba(0,0,0,.3),0 6px 20px rgba(0,0,0,.25);
---model:#60a5fa;--biz:#34d399;--policy:#f87171;--product:#a78bfa;--research:#fbbf24}}
-*{box-sizing:border-box}
-html{scroll-behavior:smooth;scroll-padding-top:64px;-webkit-text-size-adjust:100%}
-body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.75 -apple-system,BlinkMacSystemFont,"PingFang SC","Hiragino Sans GB",
-"Noto Sans CJK SC","Noto Sans SC","Source Han Sans SC","Microsoft YaHei","Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
--webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
-a{color:var(--accent);text-decoration:none}
-a:hover{text-decoration:underline}
-.wrap{max-width:760px;margin:0 auto;padding:0 18px}
-nav.top{position:sticky;top:0;z-index:10;background:color-mix(in srgb,var(--bg) 86%,transparent);
-backdrop-filter:saturate(1.6) blur(10px);-webkit-backdrop-filter:saturate(1.6) blur(10px);border-bottom:1px solid var(--line)}
-nav.top .wrap{display:flex;align-items:center;gap:6px;height:52px;overflow-x:auto;scrollbar-width:none}
-nav.top .wrap::-webkit-scrollbar{display:none}
-nav.top .brand{font-weight:800;letter-spacing:.02em;margin-right:auto;white-space:nowrap;color:var(--ink);font-size:15px}
-nav.top .brand span{color:var(--accent)}
-nav.top a.nl{color:var(--ink2);font-size:14px;padding:5px 12px;border-radius:999px;white-space:nowrap}
-nav.top a.nl:hover{background:var(--chip);text-decoration:none;color:var(--ink)}
-header.hero{padding:44px 0 26px}
-.kicker{font-size:13px;letter-spacing:.18em;text-transform:uppercase;color:var(--accent);font-weight:700}
-.date{font-size:44px;line-height:1.1;font-weight:800;letter-spacing:-.01em;margin:8px 0 6px;font-feature-settings:"tnum"}
-.date small{font-size:18px;font-weight:500;color:var(--muted);margin-left:10px;letter-spacing:0}
-h1.title{font-size:20px;font-weight:600;margin:0 0 22px;color:var(--ink2)}
-.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
-.stat{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px 16px;box-shadow:var(--shadow)}
-.stat b{display:block;font-size:28px;line-height:1.2;font-weight:800;font-feature-settings:"tnum"}
-.stat span{font-size:13px;color:var(--muted)}
-section{margin:34px 0}
-h2.sec{display:flex;align-items:baseline;gap:10px;font-size:22px;margin:0 0 14px;font-weight:800}
-h2.sec .n{font-size:13px;font-weight:600;color:var(--muted)}
-h2.sec:before{content:"";width:5px;height:20px;border-radius:3px;background:var(--accent);align-self:center}
-.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:20px 22px;box-shadow:var(--shadow)}
-.main{background:linear-gradient(135deg,var(--accent-soft),var(--card) 70%);border-color:color-mix(in srgb,var(--accent) 25%,var(--line))}
-.main ol{list-style:none;margin:0;padding:0;counter-reset:m}
-.main li{counter-increment:m;position:relative;padding:8px 0 8px 44px;font-size:16.5px;font-weight:500}
-.main li+li{border-top:1px dashed color-mix(in srgb,var(--accent) 22%,var(--line))}
-.main li:before{content:counter(m);position:absolute;left:0;top:9px;width:28px;height:28px;border-radius:50%;
-background:var(--accent);color:#fff;font-weight:800;font-size:14px;display:flex;align-items:center;justify-content:center}
-.people-index{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 16px}
-.people-index a{display:inline-flex;align-items:center;gap:6px;font-size:13px;color:var(--ink2);background:var(--card);
-border:1px solid var(--line);border-radius:999px;padding:3px 10px 3px 3px}
-.people-index a:hover{text-decoration:none;border-color:var(--accent)}
-.people-index i{width:20px;height:20px;border-radius:50%;color:#fff;font-style:normal;font-size:11px;font-weight:700;
-display:flex;align-items:center;justify-content:center}
-.person{margin:0 0 16px}
-.ph{display:flex;align-items:center;gap:14px;margin-bottom:12px}
-.av{flex:none;width:46px;height:46px;border-radius:50%;color:#fff;font-weight:800;font-size:20px;display:flex;
-align-items:center;justify-content:center;box-shadow:inset 0 -2px 0 rgba(0,0,0,.12)}
-.pn{font-size:18px;font-weight:750;line-height:1.3}
-.pn a.handle{display:block;font-size:13.5px;font-weight:500;color:var(--muted)}
-.pn a.handle:hover{color:var(--accent)}
-.pc{margin-left:auto;font-size:12px;color:var(--muted);background:var(--chip);border-radius:999px;padding:2px 10px;white-space:nowrap}
-ul.pts{list-style:none;margin:0;padding:0}
-ul.pts li{position:relative;padding:7px 0 7px 18px;color:var(--ink2)}
-ul.pts li:before{content:"";position:absolute;left:2px;top:17px;width:6px;height:6px;border-radius:50%;background:var(--dot,var(--accent))}
-ul.pts li strong.t{color:var(--ink);font-weight:700;margin-right:2px}
-a.src{display:inline-block;font-size:12px;line-height:1.6;padding:0 8px;margin:0 2px;border-radius:999px;background:var(--chip);
-color:var(--ink2);vertical-align:1px;white-space:nowrap}
-a.src:after{content:" ↗";opacity:.6}
-a.src:hover{background:var(--accent);color:#fff;text-decoration:none}
-a.mention{color:inherit;border-bottom:1px dotted var(--muted)}
-.op{margin:12px 0 0;padding:10px 14px 10px 14px;border-radius:12px;background:var(--chip);color:var(--ink2);font-size:14.5px;
-border-left:3px solid var(--muted);display:flex;gap:10px}
-.op b{flex:none;font-size:12px;font-weight:700;color:var(--muted);letter-spacing:.06em;padding-top:2px}
-.tools{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px}
-.tool{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px 16px;box-shadow:var(--shadow);font-size:14px;
-color:var(--ink2);line-height:1.65}
-.tool h3{margin:0 0 6px;font-size:15px;color:var(--ink);line-height:1.4}
-.tool h3:before{content:"◆ ";color:var(--accent);font-size:11px;vertical-align:2px}
-.note{font-size:14px;color:var(--muted);margin:-4px 0 14px}
-.legend{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 14px}
-ol.news{list-style:none;margin:0;padding:0;counter-reset:n}
-ol.news li{counter-increment:n;position:relative;background:var(--card);border:1px solid var(--line);border-left:4px solid var(--c);
-border-radius:12px;padding:14px 18px 14px 54px;margin:0 0 10px;box-shadow:var(--shadow);color:var(--ink2);font-size:15px}
-ol.news li:before{content:counter(n,decimal-leading-zero);position:absolute;left:16px;top:14px;font-weight:800;font-size:17px;
-color:var(--c);font-feature-settings:"tnum"}
-ol.news h3{margin:0 0 4px;font-size:16px;line-height:1.5;color:var(--ink)}
-.chip{display:inline-block;font-size:11.5px;font-weight:700;line-height:1.7;padding:0 8px;border-radius:6px;margin-right:8px;
-color:var(--c);background:color-mix(in srgb,var(--c) 13%,transparent);vertical-align:2px;white-space:nowrap}
-.c-model{--c:var(--model)}.c-biz{--c:var(--biz)}.c-policy{--c:var(--policy)}.c-product{--c:var(--product)}.c-research{--c:var(--research)}
-.other p{margin:.4em 0;color:var(--ink2)}
-code{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:.88em;background:var(--chip);padding:1px 5px;border-radius:5px}
-footer{color:var(--muted);font-size:12.5px;text-align:center;padding:30px 0 50px;border-top:1px solid var(--line);margin-top:40px}
-@media (max-width:560px){body{font-size:15.5px}.date{font-size:34px}.date small{display:block;margin:6px 0 0}
-.card{padding:16px}.stat{padding:10px 12px}.stat b{font-size:22px}ol.news li{padding:12px 14px 12px 46px}
-ol.news li:before{left:12px}.pc{display:none}nav.top .brand{display:none}}
-@media print{nav.top{display:none}.card,.tool,ol.news li{box-shadow:none;break-inside:avoid}}
-</style></head><body>
-<nav class="top"><div class="wrap"><a class="brand" href="#top">推特<span>日报</span> · 11 月 4 日</a><a class="nl" href="#mainline">主线</a><a class="nl" href="#people">人物</a><a class="nl" href="#tools">小工具</a><a class="nl" href="#news">AI 资讯</a></div></nav>
-<div class="wrap" id="top"><header class="hero"><div class="kicker">Daily Digest · 中文推特圈</div>
-<div class="date">11 月 4 日<small>2026 · 星期三</small></div>
-<h1 class="title">今日中文推特圈精选（11 月 4 日）</h1>
-<div class="stats"><div class="stat"><b>14</b><span>位作者</span></div><div class="stat"><b>32</b><span>条原帖</span></div><div class="stat"><b>8</b><span>条 AI 资讯</span></div></div></header>
-<section id="mainline"><h2 class="sec">今日主线</h2><div class="card main"><ol><li>权重空间编程刷屏：MIT CSAIL 用前沿模型直接改小模型权重，数学约涨六倍；也有人发现关思考就能涨，引发质疑</li><li>Personal Agent 继续落地：Alma Personal Agent 上线，Tuwa 接云手机／微信／Zoom，归藏把设计 Skill 塞进 DeepSeek Harness</li><li>Agent 把源控与团队压出形变：OpenAI 发 Pando 扛海量 Git；Claude Code 产品负责人 Cat Wu 离职</li></ol></div></section>
-<section id="people"><h2 class="sec">人物<span class="n">14 位</span></h2>
-<div class="people-index"><a href="#p-dotey"><i style="background:hsl(234,58%,48%)">宝</i>宝玉</a><a href="#p-HiTw93"><i style="background:hsl(72,58%,48%)">T</i>Tw93</a><a href="#p-Saccc_c"><i style="background:hsl(66,58%,48%)">S</i>Sac</a><a href="#p-op7418"><i style="background:hsl(6,58%,48%)">歸</i>歸藏(guizang.ai)</a><a href="#p-oran_ge"><i style="background:hsl(174,58%,48%)">O</i>Orange AI</a><a href="#p-yetone"><i style="background:hsl(20,58%,48%)">Y</i>yetone</a><a href="#p-turingou"><i style="background:hsl(211,58%,48%)">郭</i>郭宇 guoyu.eth</a><a href="#p-tualatrix"><i style="background:hsl(131,58%,48%)">圖</i>圖拉鼎</a><a href="#p-xiaoxiaodong"><i style="background:hsl(256,58%,48%)">小</i>小小东</a><a href="#p-lifesinger"><i style="background:hsl(6,58%,48%)">F</i>Frank Wang 玉伯</a><a href="#p-evilcos"><i style="background:hsl(298,58%,48%)">C</i>Cos(余弦)</a><a href="#p-Fenng"><i style="background:hsl(252,58%,48%)">F</i>Fenng</a><a href="#p-lijigang"><i style="background:hsl(331,58%,48%)">李</i>李继刚</a><a href="#p-AISuperDomain"><i style="background:hsl(346,58%,48%)">A</i>AI超元域</a></div>
-<article class="card person" id="p-dotey" style="--dot:hsl(234,58%,48%)"><div class="ph"><div class="av" style="background:hsl(234,58%,48%)">宝</div><div class="pn">宝玉<a class="handle" href="https://x.com/dotey" target="_blank" rel="noopener noreferrer">@dotey</a></div><span class="pc">4 条</span></div>
-<ul class="pts"><li><strong class="t">权重空间编程：Astra 直接改小模型权重</strong>：MIT CSAIL 四位研究者发博客，称前沿大模型可像读写代码一样读懂、修改甚至从零写出神经网络权重。用 GPT-6 Astra 只动 Qwen3.5-0.8B 的 0.016% 权重，MATH-500 从 7.9% 涨到 48.1%，约六倍；另有仿真小车改 3.5% 权重后 1,024 次全成功、从零写打砖块网络得分约是强化学习版的 20 倍。作者也写明条件：Qwen 开思考易陷入重复循环，删掉第 15／19 层某个方向才见效，且要允许练习题试跑约 50 次；换成很少循环的 Gemma 3 270M 则无提升。结论是改权重能去掉挡住能力的障碍，加不出本来没有的能力；目前多为作者自报，尚无独立复现 <a class="src" href="https://x.com/dotey/status/2117408133773705525" target="_blank" rel="noopener noreferrer">原帖</a></li><li><strong class="t">Pando vs Scion：Git 扛不住 Agent 写码</strong>：OpenAI 发文介绍自研 Git 后端 Pando，Anthropic 此前发 Scion。两边痛点一样，解法相反：OpenAI 保留 Git 协议只换服务器，推送中位等待约降八成、日分发近 1PB；Anthropic 自建客户端与服务器，CI 拉代码从几分钟变几秒、资源约降到原来的 1/200。提交量暴涨（OpenAI 合入约涨到十几倍、Anthropic 日合入数月内涨超 12 倍）让传统排队与现场打包失效。宝玉判断普通团队更近 OpenAI 路线，改进会回流上游 Git <a class="src" href="https://x.com/dotey/status/2117484277277286623" target="_blank" rel="noopener noreferrer">原帖</a></li><li><strong class="t">baoyu-design 加 Motion</strong>：在 Claude Motion 上补多人协作与编辑器，渲染过程可边看边改，文字可随时编辑并接 Design System；可跑在任意 Agent，含 DeepSeek Harness 插件。他提醒效果别期望太高，仍要配擅长 Motion 的模型与 skill，但方向是「简单编辑器＋标记评论就能改」 <a class="src" href="https://x.com/dotey/status/2117442507306901741" target="_blank" rel="noopener noreferrer">原帖</a></li><li><strong class="t">Cat Wu 离职</strong>：Claude Code 与 Cowork 产品负责人发文称周五是在 Anthropic 最后一天，未说原因与去向；早年做过 Scale AI／Dagster 工程师，经 Index Ventures，2024 年 8 月加入 <a class="src" href="https://x.com/dotey/status/2117739064455463086" target="_blank" rel="noopener noreferrer">原帖</a></li></ul>
-<div class="op"><b>我的看法</b><div>权重实验最值得盯的是「去掉障碍 ≠ 凭空灌进新能力」这条边界，比六倍数字本身更能防幻觉；Pando／Scion 则说明 Agent 已经把源控从工具问题抬成公司基建问题。</div></div>
-</article>
-<article class="card person" id="p-HiTw93" style="--dot:hsl(72,58%,48%)"><div class="ph"><div class="av" style="background:hsl(72,58%,48%)">T</div><div class="pn">Tw93<a class="handle" href="https://x.com/HiTw93" target="_blank" rel="noopener noreferrer">@HiTw93</a></div><span class="pc">1 条</span></div>
-<ul class="pts"><li><strong class="t">给计算机专业学生的十条建议</strong>：有人私信担心 AI 能代写作业论文、行业还有没有前景。他按「假如回到大四」写了一长串：仍选计算机并深耕感兴趣子方向、用 AI 放大产出；优先北上深杭尤其学院路一带 AI 公司；工作上愿为好 Token 买单、感兴趣做到 150%、不感兴趣 80 分快跑；工资一半定投 VOO／QQQ 等、不碰投机；更早找另一半、不借钱不炫耀；持续创造并养个人品牌；培养兴趣、睡好别熬夜；最终尽早找到可以工作但不必上班的自由之路 <a class="src" href="https://x.com/HiTw93/status/2117521154747625813" target="_blank" rel="noopener noreferrer">原帖</a></li></ul>
-<div class="op"><b>我的看法</b><div>真正有用的不是「行业还有没有前景」这种空安慰，而是把 AI 当杠杆、把城市／Token／健康当成可执行配置。</div></div>
-</article>
-<article class="card person" id="p-Saccc_c" style="--dot:hsl(66,58%,48%)"><div class="ph"><div class="av" style="background:hsl(66,58%,48%)">S</div><div class="pn">Sac<a class="handle" href="https://x.com/Saccc_c" target="_blank" rel="noopener noreferrer">@Saccc_c</a></div><span class="pc">1 条</span></div>
-<ul class="pts"><li><strong class="t">AnliBili：Karpathy HackerTube 的 B 站版</strong>：整理知乎、小红书约 16 年近千万条讨论，筛出 1,132 个至少被 3 人、在 3 个不同月份推荐过的 B 站视频。用 Teamily AI 的 team agents 搭 Loop，持续「整理评论 → 筛选 → 分类上线」，人与 Agent 同群共享上下文，反馈一句就能重新分工再跑一轮 <a class="src" href="https://x.com/Saccc_c/status/2117620059392942489" target="_blank" rel="noopener noreferrer">原帖</a></li></ul>
-<div class="op"><b>我的看法</b><div>推荐算法逼人自建信息源这件事，从 Hacker News 视频站一路传到 B 站安利合集，说明「时间沉淀」比热榜更稀缺。</div></div>
-</article>
-<article class="card person" id="p-op7418" style="--dot:hsl(6,58%,48%)"><div class="ph"><div class="av" style="background:hsl(6,58%,48%)">歸</div><div class="pn">歸藏(guizang.ai)<a class="handle" href="https://x.com/op7418" target="_blank" rel="noopener noreferrer">@op7418</a></div><span class="pc">3 条</span></div>
-<ul class="pts"><li><strong class="t">dsh-guizang-design 插件宣传片</strong>：把藏师傅那套设计 Skill 与日常内容生产工作流塞进 DeepSeek Harness，另有作品库可收 PPT／网页／文档，方便复用与一键同款；另发了较长 B 站讲解 <a class="src" href="https://x.com/op7418/status/2117436999250649439" target="_blank" rel="noopener noreferrer">原帖</a></li><li><strong class="t">解读权重空间编程</strong>：强调未做再训练／后训练／强化学习，只改参数就把数学约提六倍、指令跟随约三倍；想象力落在释放已有能力、硬性移植控制策略、用更有效计算路径替换低效策略，等于给训练与控制加了一套编程体系，小模型短期或更受益 <a class="src" href="https://x.com/op7418/status/2117459252721971606" target="_blank" rel="noopener noreferrer">原帖</a></li><li><strong class="t">GPT image 2.0 咖啡店插画</strong>：用长提示词把咖啡／奶茶照片变成杯子拼成的门店插画，还能按豆种补云南风味与店员小人 <a class="src" href="https://x.com/op7418/status/2117597892756312271" target="_blank" rel="noopener noreferrer">原帖</a></li></ul>
-<div class="op"><b>我的看法</b><div>把个人 Skill 产品化进 Harness，比再发一张好看图更能说明「创作者护城河」正在往可安装工作流挪。</div></div>
-</article>
-<article class="card person" id="p-oran_ge" style="--dot:hsl(174,58%,48%)"><div class="ph"><div class="av" style="background:hsl(174,58%,48%)">O</div><div class="pn">Orange AI<a class="handle" href="https://x.com/oran_ge" target="_blank" rel="noopener noreferrer">@oran_ge</a></div><span class="pc">3 条</span></div>
-<ul class="pts"><li><strong class="t">「关思考涨六倍」吐槽</strong>：有人发现关掉 Qwen 思考模式就能把数学能力抬约六倍，根本不用改权重，直接给昨晚刷屏的权重编程泼冷水 <a class="src" href="https://x.com/oran_ge/status/2117626509095837948" target="_blank" rel="noopener noreferrer">原帖</a></li><li><strong class="t">AI 渗入炒股与调研</strong>：串起 A 社「AI 暗中影响专家决策」、高盛禁交易员用 Claude Code（量化策略师除外）、Workbuddy 第一大场景是炒股，以及身边选股／尽调都交给 AI，追问「每一次交易是否都会受 AI 影响」「人是否真保得住判断」 <a class="src" href="https://x.com/oran_ge/status/2117406916737659016" target="_blank" rel="noopener noreferrer">原帖</a></li><li><strong class="t">点评 Cat Wu 离职</strong>：称 Claude Code 核心成员又走一个，吐槽 Anthropic 上市信仰绑定有点反人性 <a class="src" href="https://x.com/oran_ge/status/2117767285775696372" target="_blank" rel="noopener noreferrer">原帖</a></li></ul>
-<div class="op"><b>我的看法</b><div>关思考就能涨，说明基线实验设计一松，六倍数字会瞬间掉价；金融侧则是「别让渡思考」说起来容易、盘中很难。</div></div>
-</article>
-<article class="card person" id="p-yetone" style="--dot:hsl(20,58%,48%)"><div class="ph"><div class="av" style="background:hsl(20,58%,48%)">Y</div><div class="pn">yetone<a class="handle" href="https://x.com/yetone" target="_blank" rel="noopener noreferrer">@yetone</a></div><span class="pc">2 条</span></div>
-<ul class="pts"><li><strong class="t">Alma Personal Agent 上线</strong>：继安卓与找壁纸考核之后，Personal Agent 能力正式放出 <a class="src" href="https://x.com/yetone/status/2117707111790752185" target="_blank" rel="noopener noreferrer">原帖</a></li><li><strong class="t">手机端远程控制支持分窗口</strong>：远程桌面可按窗口单独控制，多任务并行更顺手 <a class="src" href="https://x.com/yetone/status/2117547490191004054" target="_blank" rel="noopener noreferrer">原帖</a></li></ul>
-<div class="op"><b>我的看法</b><div>分窗口比再吹一轮「全能助理」更实在，Personal Agent 要赢的是可控的远程手脚，不是又一个聊天壳。</div></div>
-</article>
-<article class="card person" id="p-turingou" style="--dot:hsl(211,58%,48%)"><div class="ph"><div class="av" style="background:hsl(211,58%,48%)">郭</div><div class="pn">郭宇 guoyu.eth<a class="handle" href="https://x.com/turingou" target="_blank" rel="noopener noreferrer">@turingou</a></div><span class="pc">3 条</span></div>
-<ul class="pts"><li><strong class="t">Tuwa 接云手机／微信／Zoom</strong>：内测可借一台云手机装常用 App；Tuwa Device 新增微信 Mac 版语音与 Zoom 会议支持，可让 Agent 用微信语音／视频给亲友打电话，或代参加 Zoom <a class="src" href="https://x.com/turingou/status/2117600442607919364" target="_blank" rel="noopener noreferrer">原帖</a></li><li><strong class="t">在 Muse／Grokbot 用本人手机号打电话更方便</strong>：提醒不必先绕 App <a class="src" href="https://x.com/turingou/status/2117519207558734049" target="_blank" rel="noopener noreferrer">原帖</a></li><li><strong class="t">Personal Agent 同步近况给 Tuwa</strong>：Grok bot／Muse 里同步近况后，外呼或别人打你的语音分身时能带上更多上下文 <a class="src" href="https://x.com/turingou/status/2117533087383060902" target="_blank" rel="noopener noreferrer">原帖</a></li></ul>
-<div class="op"><b>我的看法</b><div>电话助理从「改预约」走到微信／Zoom，门槛已不是能不能打通，而是身份与上下文能不能跟着走。</div></div>
-</article>
-<article class="card person" id="p-tualatrix" style="--dot:hsl(131,58%,48%)"><div class="ph"><div class="av" style="background:hsl(131,58%,48%)">圖</div><div class="pn">圖拉鼎<a class="handle" href="https://x.com/tualatrix" target="_blank" rel="noopener noreferrer">@tualatrix</a></div><span class="pc">3 条</span></div>
-<ul class="pts"><li><strong class="t">四个 Claude Pro 窗口打满</strong>：上午把四个账号的五小时窗口全部用到 100%，要歇 2 小时 15 分钟才能继续，顺势当午休 <a class="src" href="https://x.com/tualatrix/status/2117471377355850227" target="_blank" rel="noopener noreferrer">原帖</a></li><li><strong class="t">AI 回复模板太好认</strong>：典型路径是复述原文 → 抛观点 → 反问一句；建议下次直接提问，省 Token 也不那么一眼假 <a class="src" href="https://x.com/tualatrix/status/2117619449822101725" target="_blank" rel="noopener noreferrer">原帖</a></li><li><strong class="t">Mac mini swap 爆表</strong>：交换已用到 18GB，超过物理内存 16GB <a class="src" href="https://x.com/tualatrix/status/2117468742624088295" target="_blank" rel="noopener noreferrer">原帖</a></li></ul>
-<div class="op"><b>我的看法</b><div>额度打满与 swap 爆表说明重度用户已在硬顶上挤；模板化回复被点破后，再装「有深度」只会更尴尬。</div></div>
-</article>
-<article class="card person" id="p-xiaoxiaodong" style="--dot:hsl(256,58%,48%)"><div class="ph"><div class="av" style="background:hsl(256,58%,48%)">小</div><div class="pn">小小东<a class="handle" href="https://x.com/xiaoxiaodong" target="_blank" rel="noopener noreferrer">@xiaoxiaodong</a></div><span class="pc">3 条</span></div>
-<ul class="pts"><li><strong class="t">土耳其区 Gemini Ultra 亲测</strong>：花约 60 美金验证 X 上流行的土耳其苹果区方案，Gemini AI Ultra 约 30T 空间、20 倍额度月供，称纯手工可通，但买完也不知拿来干啥 <a class="src" href="https://x.com/xiaoxiaodong/status/2117629999176139048" target="_blank" rel="noopener noreferrer">原帖</a></li><li><strong class="t">12 个 Claude 全健在＋Duet</strong>：11 月 3 日播报 12 账号全在，开源方案约 1.2k star；申请 Duet 成功等于多一张重置卡，有人已开到约 40 个；亮点是能扛 Max、中国护照稳过 KYC，并称大厂也有人用 <a class="src" href="https://x.com/xiaoxiaodong/status/2117541178946286006" target="_blank" rel="noopener noreferrer">原帖</a></li><li><strong class="t">封号别只骂 Anthropic</strong>：点名批量中转、批量蒸馏、临付款故意封号退款等「商业伦理践踏」，认为普通人被封多是误伤；普通人的钱不退，其心可诛 <a class="src" href="https://x.com/xiaoxiaodong/status/2117552555681300501" target="_blank" rel="noopener noreferrer">原帖</a></li></ul>
-<div class="op"><b>我的看法</b><div>保号流水账仍是刚需，但把封号全甩给平台、却不问中转蒸馏产业链，讨论永远半边缺席。</div></div>
-</article>
-<article class="card person" id="p-lifesinger" style="--dot:hsl(6,58%,48%)"><div class="ph"><div class="av" style="background:hsl(6,58%,48%)">F</div><div class="pn">Frank Wang 玉伯<a class="handle" href="https://x.com/lifesinger" target="_blank" rel="noopener noreferrer">@lifesinger</a></div><span class="pc">3 条</span></div>
-<ul class="pts"><li><strong class="t">最牛技术往往是便宜老技术</strong>：不是堆最新黑科技，而是用被遗忘、特别便宜的老办法，做出大众真正需要的东西 <a class="src" href="https://x.com/lifesinger/status/2117628027790319642" target="_blank" rel="noopener noreferrer">原帖</a></li><li><strong class="t">YouMind 团队协作上线</strong>：任一 Board 可邀朋友共享资料与任务进展，还能互用对方 skills 精选 <a class="src" href="https://x.com/lifesinger/status/2117432709459116230" target="_blank" rel="noopener noreferrer">原帖</a></li><li><strong class="t">盼 RSI 早点到</strong>：吐槽这一届 AI 发展慢又贵，期待递归自我改进把模型变得好用且便宜，像电一样进寻常百姓家 <a class="src" href="https://x.com/lifesinger/status/2117647618381860964" target="_blank" rel="noopener noreferrer">原帖</a></li></ul>
-<div class="op"><b>我的看法</b><div>一边喊 RSI，一边提醒「便宜老技术」才出大众产品，这两种声音同时出现，说明贵且慢已经压到产品人神经上了。</div></div>
-</article>
-<article class="card person" id="p-evilcos" style="--dot:hsl(298,58%,48%)"><div class="ph"><div class="av" style="background:hsl(298,58%,48%)">C</div><div class="pn">Cos(余弦)<a class="handle" href="https://x.com/evilcos" target="_blank" rel="noopener noreferrer">@evilcos</a></div><span class="pc">1 条</span></div>
-<ul class="pts"><li><strong class="t">AI 人身攻击金句</strong>：嘲讽他都能当笑话，直到模型来了一句「你叫余弦真他妈没白叫：需求周期振荡，验收永不收敛」，直接无语 <a class="src" href="https://x.com/evilcos/status/2117459102372946204" target="_blank" rel="noopener noreferrer">原帖</a></li></ul>
-<div class="op"><b>我的看法</b><div>能把名字拆成项目寓言的嘲讽，比通用脏话更扎人，也侧面说明模型已经会打「人格化」牌。</div></div>
-</article>
-<article class="card person" id="p-Fenng" style="--dot:hsl(252,58%,48%)"><div class="ph"><div class="av" style="background:hsl(252,58%,48%)">F</div><div class="pn">Fenng<a class="handle" href="https://x.com/Fenng" target="_blank" rel="noopener noreferrer">@Fenng</a></div><span class="pc">2 条</span></div>
-<ul class="pts"><li><strong class="t">GEB 仍是技术人装逼第一书</strong>：承认当年看过然并卵，但地位还在 <a class="src" href="https://x.com/Fenng/status/2117521960947376609" target="_blank" rel="noopener noreferrer">原帖</a></li><li><strong class="t">用 AI 把停更小程序复活</strong>：团队以前有些探索型小程序因缺人维护停更或下线，用户仍隔三差五来问；最近他把开发环境跑通（以前觉得 CI／CD 繁琐），产品一个个又活了 <a class="src" href="https://x.com/Fenng/status/2117639118167666765" target="_blank" rel="noopener noreferrer">原帖</a></li></ul>
-<div class="op"><b>我的看法</b><div>AI 最落地的场景未必是新造轮子，而是把「没人力维护」的旧产品重新点亮。</div></div>
-</article>
-<article class="card person" id="p-lijigang" style="--dot:hsl(331,58%,48%)"><div class="ph"><div class="av" style="background:hsl(331,58%,48%)">李</div><div class="pn">李继刚<a class="handle" href="https://x.com/lijigang" target="_blank" rel="noopener noreferrer">@lijigang</a></div><span class="pc">1 条</span></div>
-<ul class="pts"><li><strong class="t">「面向权重编程」隐喻</strong>：借 MIT 权重实验，问「我们离直接向大脑写入降龙十八掌还有多远」 <a class="src" href="https://x.com/lijigang/status/2117441423851286659" target="_blank" rel="noopener noreferrer">原帖</a></li></ul>
-<div class="op"><b>我的看法</b><div>这句话把技术叙事压成一句人话，传播力强，但也容易让人忽略作者自己划的能力边界。</div></div>
-</article>
-<article class="card person" id="p-AISuperDomain" style="--dot:hsl(346,58%,48%)"><div class="ph"><div class="av" style="background:hsl(346,58%,48%)">A</div><div class="pn">AI超元域<a class="handle" href="https://x.com/AISuperDomain" target="_blank" rel="noopener noreferrer">@AISuperDomain</a></div><span class="pc">1 条</span></div>
-<ul class="pts"><li><strong class="t">Grok Bot 高级玩法视频</strong>：不只当多设备助手，还建群聊把任务分派给 AI 团队讨论；让 Grok Bot 自建记忆管理 Bot，每天整理全队对话，第一轮新增 5 条长期记忆；其他 Bot 还可组队写游戏规格，再把开发任务从 Grok CLI 交给 Cursor Cloud Agents <a class="src" href="https://x.com/AISuperDomain/status/2117639357402431558" target="_blank" rel="noopener noreferrer">原帖</a></li></ul>
-<div class="op"><b>我的看法</b><div>群聊分派＋自建记忆 Bot，比单聊「帮我做事」更接近真实团队形态，也更容易暴露协作与记忆谁说了算的问题。</div></div>
-</article>
-</section>
-<section id="tools"><h2 class="sec">小工具<span class="n">7 个</span></h2>
-<div class="tools">
-<div class="tool"><h3>Alma Personal Agent／分窗口远程控制</h3><div>Personal Agent 上线，手机端可按窗口单独遥控 <a class="src" href="https://x.com/yetone/status/2117707111790752185" target="_blank" rel="noopener noreferrer">原帖</a> <a class="src" href="https://x.com/yetone/status/2117547490191004054" target="_blank" rel="noopener noreferrer">原帖</a></div></div>
-<div class="tool"><h3>AnliBili</h3><div>16 年社媒反复安利的 B 站精品合集 <a class="src" href="https://x.com/Saccc_c/status/2117620059392942489" target="_blank" rel="noopener noreferrer">原帖</a></div></div>
-<div class="tool"><h3>dsh-guizang-design</h3><div>DeepSeek Harness 里的归藏设计 Skill／作品库插件 <a class="src" href="https://x.com/op7418/status/2117436999250649439" target="_blank" rel="noopener noreferrer">原帖</a></div></div>
-<div class="tool"><h3>YouMind 团队协作</h3><div>Board 内共享资料、进度与 skills <a class="src" href="https://x.com/lifesinger/status/2117432709459116230" target="_blank" rel="noopener noreferrer">原帖</a></div></div>
-<div class="tool"><h3>Tuwa 云手机／微信／Zoom</h3><div>内测云手机＋Agent 代打电话与开会 <a class="src" href="https://x.com/turingou/status/2117600442607919364" target="_blank" rel="noopener noreferrer">原帖</a></div></div>
-<div class="tool"><h3>Flatkey</h3><div>一个 key 接 100+ 官方模型与 1,000+ 工具 API，一份账单；日常价称至少比官方低约 20%，失败请求 $0 <a class="src" href="https://x.com/sujingshen/status/2117630949018263930" target="_blank" rel="noopener noreferrer">原帖</a></div></div>
-<div class="tool"><h3>baoyu-design Motion</h3><div>可边渲染边改的多人协作 Motion 编辑 <a class="src" href="https://x.com/dotey/status/2117442507306901741" target="_blank" rel="noopener noreferrer">原帖</a></div></div>
-</div></section>
-<section id="news"><h2 class="sec">AI 资讯<span class="n">8 条</span></h2>
-<div class="legend"><span class="chip c-policy">政策安全 · 1</span><span class="chip c-biz">融资商业 · 4</span><span class="chip c-model">模型 · 2</span><span class="chip c-product">产品 · 1</span></div>
-<ol class="news">
-<li class="c-model"><h3><span class="chip">模型</span>Anthropic 开源 FlashProve：面向大模型的可验证推理原型</h3><div>Frontier Red Team 用 zkSNARK 证明某次回复确由承诺权重的模型生成；在 Llama 4 Maverick（约 400B MoE、4-bit）上单卡 H100 约 110 tok/s、证明约 19MB／1024 token，并附 Lean 形式化与 Apache-2.0 代码，定位为服务诚信、防篡改与 pacing 合规的中间进展 <a class="src" href="https://www.anthropic.com/research/provable-inference" target="_blank" rel="noopener noreferrer">来源</a></div></li>
-<li class="c-biz"><h3><span class="chip">融资商业</span>Fal 完成约 13 亿美元 F 轮，估值翻倍至约 160 亿美元</h3><div>Bessemer 领投，Nvidia、Sound Ventures、T. Rowe Price 等参投；报道称推理需求导致限流，此前年化收入已超约 8 亿美元，资金将用于算力与招聘 <a class="src" href="https://techcrunch.com/2026/11/03/ai-inference-startup-fal-doubles-its-valuation-to-16b-as-demand-surges/" target="_blank" rel="noopener noreferrer">来源</a></div></li>
-<li class="c-biz"><h3><span class="chip">融资商业</span>Traversal 以约 10 亿美元估值完成 1.2 亿美元 B 轮</h3><div>AI SRE／生产根因分析公司，Kleiner Perkins、Redpoint、Khosla 联合领投；定位编码智能体之后的「外环」，用生产世界模型与因果搜索做事故诊断 <a class="src" href="https://www.traversal.com/blog/traversal-series-b-120-million-ai-sre" target="_blank" rel="noopener noreferrer">来源</a></div></li>
-<li class="c-biz"><h3><span class="chip">融资商业</span>Marvell 约 1150 亿美元全股票收购 Lumentum</h3><div>押注 AI 数据中心光互联；Lumentum 股东每股换 4.5 股 Marvell，预计合并后原 Marvell 股东持股约 67%，目标 2028 上半年交割 <a class="src" href="https://www.cnbc.com/2026/11/02/marvell-to-buy-lumentum-in-115-billion-deal-in-ai-data-center-bet-.html" target="_blank" rel="noopener noreferrer">来源</a></div></li>
-<li class="c-model"><h3><span class="chip">模型</span>Anthropic 修订 S-1：称可能即将触及 RSI／AI 加速研发相关 RSP 阈值</h3><div>内部估计未来模型可能达到 Responsible Scaling Policy 中「由 AI 显著加速进展」的阈值，同时称尚无当前模型跨过、仍在评估，并警告 AI 驱动研发可能快于安全／对齐／安保控制 <a class="src" href="https://techcrunch.com/2026/11/02/anthropic-warns-that-its-very-close-to-rsi-capability-aka-self-building-ai/" target="_blank" rel="noopener noreferrer">来源</a></div></li>
-<li class="c-policy"><h3><span class="chip">政策安全</span>OpenAI 任命前陆军部长 Dan Driscoll 为国家安全现代化高级顾问</h3><div>新建角色，聚焦与盟友推进「民主 AI」、网络安全与 Daybreak 等能力落地 <a class="src" href="https://openai.com/index/dan-driscoll-joins-openai/" target="_blank" rel="noopener noreferrer">来源</a></div></li>
-<li class="c-product"><h3><span class="chip">产品</span>美团发布 LongCat-2.5</h3><div>约 1.6T 总参、约 48B 激活的原生多模态智能体模型，面向长程编码、视觉编程、创意设计与 3D 等，可接 Claude Code／Codex 等 harness，API 经 longcat.ai <a class="src" href="https://tech.meituan.com/2026/11/02/Meituan-LongCat-2.5.html" target="_blank" rel="noopener noreferrer">来源</a></div></li>
-<li class="c-biz"><h3><span class="chip">融资商业</span>OpenAI 公开 Pando：为 Codex 级并行推送重建的 Git 后端</h3><div>官方工程博文称在保持 Git 协议兼容下做水平可扩展写与高吞吐读；中位推送延迟约降 5×、日传输近 PB 级，并用 Codex／GPT-6 Astra 等在约 10 周内建成投产（对比细节见上文宝玉节） <a class="src" href="https://openai.com/index/scaling-git-at-openai/" target="_blank" rel="noopener noreferrer">来源</a></div></li>
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>今日中文推特圈精选</title>
+<style>@font-face{font-family:"Publication Title";src:url(data:font/woff2;base64,d09GMgABAAAAACvwABEAAAAASewAACuSAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAGYFeG2YcQAZgP1NUQVQqAINcEQgKgYEY5GMLcAABNgIkA3QEIAWELAcgFyQYcBsiOlGU014PIor5kGmkLJy/P0KGuX/g59ZbAYsitjH2WTBYEIMxIv+AbdAjRo9KiRZl0iKlgomZGHlnnfadXhunngeeYICFURcq8//N+d1LLqRcmcDbZAKTUjlNU5onIjxzZjJA8LRN1bOS7DrZ9UsTxIcSKhrYYnWq1O/MXTH73am11N7ef5JLERywq5DA0jW7+//Z3dvAPjV3Ib7w5YN4X/yPylQFVAEdYMJFVGQEoatQdVW2Qtga2QqheoytWuyLCtdEQYZhKL3PNx0q6LNgsSNiRIcMkZAYNDo+EwFTZJYDBbKXeR7wYKbRxRjAt2BeXQU4ldQVzQGn0ryqMvCdk1eVB74VeQ1V4ARmdQEuUAoiMIH9G4DVWcDozIyBZsDhrtQhDun+zu84yQWcylYsiQvWDLK6AJjZXsDhYuvd4+woAODLCorzywqKG8oKi6rrqiurahSTIBCiBt24k80pwknGO21hhaaavAqweEBXHH8MLMwkIEH717eS49gB5gdD8JbIYeYcBD2tgZvApgGhAbYfmwYA0XdrYLJBiVFlY7FYOI8VsIIu+d+BjJSyXk4QrteHgxoEa3pwNbO9u3r4Nox9rhnGXFA6Fvvn95kZhzYLZn1ThwfYuSWlDZgnzLkOGMtB4UsodViL42on4TFX0//XVIEaCOAGgjiIo8W5xp2K+zHemFCaMDeRlLjbEGUoTbmfapFOTV9gpGc9zl6ak5iTnIvJ31Gwu2hR0ePi9yUuJUWlBZUBlW+qCFVDdUF1ZXXzGqVNM/PJ8x+0tJvOtp7orBv4f+mtIeLQ9CrCSNPIvDU9s7MAIBjqvZqdOII9/OHwncPRhwMPjh7YfODc/tn9+aMXRrfvUewx24XduXw7dqvrlu7NFzef32yzoW59zdpla73WSEZej5xYfXrZo2WKZbzhZYufLD69eF//1z6/HmRhZPfersqOhgWnGzxrMmsk1ZHlriXflZwuPijz3+XcjAHM7CzQH5hPKlUpmEuK9dc4O05sFoxQQycA3twmpwABCGAB5kAEM6AAicXiGHpBiEUSEcjpbDyYE3O2kxkUIAP12CCBGRBe6nSglYxWm5AYvItlsNcWj8PhcBQ2GU8W4fcQxojnPrrgPkQYYSqmDCHFQwhFFeWEkHllxYtKESWEMUTchJWgAMZuxBhCjDHGGAoQvBhRgjEligcxxhDylBOk3FeCmKIRgmgJoariQaiU7J4LQsUIEcoUlVDFQxZ7KA2QcowVBSGqFCOCMSkyKSGezomSrYuoR8GEEKJhhX5aQN2EouL2EFUoDTM3ozRMKcWEIuLZ3QV2I0RpOMAIY1SlCJXs9FIPbUFQmonFqK0rEULc5ZRQQkpyEXAPdA1EMEEI43mUMUZeM3IOayoUkUBVwIoxxqXmJnS0+QE8jwVYmbIyUowVRufL7ymLPZQyhSA3wQqmiNClDJV4GF5EiJssleYkhPoowqiSULqYMpaOAqWUVcSEqKWM3mkIk/nDadZBigdhxY1G90eYsqJiw11atDaurFzp3u1ZtaoonkiNzsws5xYuWeBJcCsU6BZCzCcvRDJT/ge6pJQysCE1OjHh41iBzAAKbEmNTkz4OFY0ZlYb3AoKIURlTuBUr7pv/FLIP2zPkvSIPyOlNBNAgduqDW55C5JWHmPX5qSVx9gFoeEBSozzYFEyl8fYnbBt2za8+bn5juP8JLJMCCGE0FUppZTQ4HydbZ/ryeXDnc75sHlWCKGrt6SUconBreA527YNr3XqUJnjOLXVBreCOSHEA9al8AUpHyZA0RKzVw935/KhzhNhnVshIcTH6gUpzVoeRNzKY1xY1ZK08hhDCA0GaEPy2Nzrnb3qvvGnYGpsbIykMxASMzU6s5RjqrGm1OjEhI9zrGhMf9nglhckrTzG0AAUtgAFsmqDW15rLqhm+vr8rcdFJbf2q51Hl2UO9mlRZqaGRyd8HCs6M1PDExM+jhXdY6ZGJyZ8nOOSOCnAibNCCF29JaV83OBWcMa27Xe81qlDZY7jJLgVLEoeu/J6Z6+6b/IpmBobGyPpDHTrnAdR0spjXKinRkcnfBwrGoumRkcnfHzcbPccf0k3iXMrtOyQEKJSJd3HgpHUiP+glHJhzQ+lNH1XhL5LtbYrZDKjY3KAtbxm5AuXim7aAqim37Dt/kPj4T7HeWiCOVRjrnEYVCNRKF2sDXlxXGVAI6DVA5Q6jwBisiYG58ECHGFvFCVycwsfE+IF9aiUTRAauCA5tAlGPUDZ1FZpECWPXVGcfTh7LatK9U/1BzqjwqtGDc69ANcwQCMQGiRSwBy1XM6CBFBg7CAk+jKXHlfNLd6DxeCNdYi7RYsT1YA2fsY2fUct+spoAAqMd/ZK+vuDPI9Tneq+/SpsHyNpf2ZoSZRbau52pXpQPkxnb/Ro7ePW+g0Mku2EpNP+dMaf6QsQY7gdJHMC47bxzl1VArAWzQbFMbJZO3rHftKbX3TNecyceLaiMfgg0cwEt9TvgTMtMS5WnDMlDVjTSPRGYhqg/qq9kxBA749XScbvWiGFoRigtZyHDgnxdkIfFhi8Yok5/6CcEM/gg1IGdG4FCxYntNCAahGg2grb3OuEjjiO8xzsg1eFhQa3Qn6COpl4JFpt8CD0IFfp2i7bZkuO5cO9TuFLrQbnmoIm55VRUEQLfer+a2w2V5vgJi11K/WPdEbzGqwjCCdse0bumefDzTCngjSgpvngJk6vBT3Ntn3jcLcV6rzrhGpnFdapmqPmIoTP0XJzc5Vq18mTgUg1PZV/Qj0o7wWMqnQToFrClGQt1IE4PmQLoFocYgkNgNF1e9Aq/U2uwdEOdEWrx640l5L1RoVXp/P8+fAGzkPil1UaEZH3Ha9y42rtXOvxxsUwmKp54iI45PzdsHl8v74mt7zi5y3yqFSieVZkgzCdfdmfiT65EHTQi7ly6ci96ceFCFqXtM6jy0YuyIUbbPvcwCGlBYRbr9rHk0TvTrysYL3SuogPYzwEh2fzHGluHiEpPRtsUivv16eoEHC7Z8opJ8U0MO48tbavoNOZN2JCyAVtAeP6OtnVO8e7c+PhrsETWgXnwYR+TDg3lQv3JE9hXGi+gwnChQ3WjULr2vPM8gfXZ2z3SDcxvZGnbD6ekAScvadFIC/ttz81gdlX86y3vaVwIsQXUOAByjoMEJBT9yKSIQIKjhm0WkdH2JIFbSNgsDEoQsIxuTtGbCzOUyTcBR3bXEpQ/EhuwuTOHEPTZetDWNOILVFiD4q27TN4FJBaR8AytAaZedVV+3h/rg0aQ8YMbqnT4hn1qGzyC2hxVXMvdgHlzjGM2nT1xuHuXFuo88QJzZOMGjWy+Jh4Qe2SsrU7KVWo1TJA5dRfZ4D6o2oxBmgj41NR4ih0wGLwbZw1il6nw/qTCNVSs6nrqJTmUqK6B2+2G3T09PSUdU/jtgPakBy09P1S6fSmns6w1yxItWEc8Y4Vd3FLvS10k1UeNwrvDBzKhySwm83tg2OgfIeB+XLIqJu1DyctWOXTIXPWPtz95A5vEa5+Ub+5gJKIvOcgnJvX2faxU+MHUvePyCUtgMKVAYvQGPFe1fLy6Wmv2jU0FFjHqlMTgGdKLINreE0WK3kUU+5cF7B1rZRcEtv0CaU8ubkD6iGiXW98d6sER70u9HS75MKapGX5KPkZsbAFaWpOogPqyf45AhEu4vZ5MOO1Hi2uzhdE6mjKMXkaZNsnEeHbnH6oFjR1doS5xBCaKDC1YpfBeY2p26etrdjxGoYP73VLxh7Xa7ZvAm/zrW6q8IDjPGccSVmps4dw/KO4O4wmoi08ijSDCIC4bGUQjv/lp0qvPeUfns2KWxmgrWiULLpXYc2EeEXtk7LGSaUGowTDNK4vGDpYi+RROYoeBTWH0guwoU2tIgiHI49rXSVIJyyNVqDDveJWd5cIJYF5fl0eoNR4gLItpBSkyBmoTTqFCUxNSAR7abp2K+24Co+zmB8Zy/qUNqFjMFKAd1KazzQr6JUgE+e1eOYbhfJCvK5el9KIqR3RK59d+Xxn58N7+CmMXcSM3ngLtOHGoG5OPIOPyoXNsxYUjOdqO1LDAYGl6dFiuvz4hLfzktYAOxmSlr2NcJcTNrWw5H31gjTbZKkPEMCgscAoJyUye8Na9ToSMmzRHjYh3onPsWsAhlGAoQEwNIN0aOo0sqBwvmydPOOXx/7cJ3ZsnVoLjppbgWwGaBNlWVZByBoVfHyktRYLpNXN2C47s89xNByeJT4kHlD75EpL1cKuPH1sRMr3fDkhXthrYJBqw9BYivSHe455Iwe7YGFMYP6qL7Zn/F0nAz79cI/XujQZNv4KMMbbQhf7lC77nq/V4FTIWtd0Uc/IU9T8aPe5td7UQL10KicbrBt5HKouLeVbPkuIt3fBuDCYu327Mm7nEd38qc0EJK8Slr4cyBw9GSDG2DBITgtM25zzMJDgW0EPpYg9JjjDdA+X7Lrf2BRkZaenKz0IayZCu1WUtg/3ZJ/WXGnbd45355vdvXs3HOUc20V/xHBHJk8UKFp8sSyuD+6FbR+R8nlf7rZ4oWlpgf5yR3dOqsIVAEi1oB9gWOeJhjgfrgVYi+kuHCr25VawLiB9QQ3pdt+MbRMpTWBNl7W1teE2x3ltH/dmz54ta/dGRm7dmoovldq/XhEvxbTY6SHs78e12EpMncLk6hPiqdxvbnsvO5ZMgsiZjYS5rsOYLG+8F7piSl1jEdxUel89Kc3YxNdbyTfzu/H0TH4oqHGCaN5ylSWBTamlUM2eFZXEaQ3I1TEGlKesMIjKIdIc5oaxMt54ODV4QlsDKFwXf2cygOGKSOCsNla8YdvAFrrrKNwfgun0hAu7YMr59OcnGoh+HDRk0xEppGm13T8BhS4kwoJrDWUo4G1vP9L3d0J74A6CLAzqUQC0dZZGp6uGbTziD27HGJsQQ0br3BzZZvsVbuN8rZYiYS1EDzniOM9F7GlQ7JcGnxPJClGJu6QMxBQY3/oYRup/6eRcF7vJtiVu0VO4WdO6pSo2CapBSkZT9uzZdObQkKSE7P7hlqkPwoXmhgMHhkOEe52wbotKPr4yy8qc1PakvHAYvJFnt/EaCmt+JPG6DL+x2+iPYXAzVRzhPHTM++pyifE55qyZlAECcKCeBlsYqTKSuaGZDQIM4ToGKGSAgiu/XroRIhsK5Fy0007k5yEldIrq7rBKIzQwwtuhf0aCY7v+tOhP35n/YvazDedezD62/EL0sy9mG8499mIWPFFQAkZ+8OdFZUV0Z3IOlC15bPmLLT94hMZKNpWu2TlvfeMLOSjG1imfKg2scd4ngee3gI+XN/7/5bIvV/zvrasVn1ZUfwl8rH3w95f9az/7x9/cNJo+MZ4BRREvn78j+HHrcJX3YXXwWraR/kA591ahYCW+fX8NvOPbVJou/BA8/u8PKo5UfCVUuOrDN977z0euqbUlpZn6L6Hv1Ps8+x8Aa+/fWLHzy78v/8djnxZurf+MdwAsWlLi/uYjf14xPfrd5OOBN2hmy4vfNb+Oxt0V4vErmZgo83W263xXFSzZ2FHre642ZvHuuKOCk4QzWQNU4lcYlmgs9Uodv7U7t8oh7JfURTP6iq6F85aVRopNovKcwipDfXD1xEonaWSIeXZevaFVq7bjh1nEh+jdh9tq1o10JWenJa9m6P1SQnNCjFdCiBdPZ/cYWn+VIymDILpp0G7QJK6KD6aOKw87S51BlJ25q7zv1g8b9NtCT9lky/lxXXpcJdeKWZHosQq3IMqKdksKBRIp4nZaJrIeWsFatvf0piIaMN8NEykjxF9yTGHw6RAfZb82dZaywN2C95J9h5xlmnDN/jsnXOV/oR2/z4/BuGLfy0vlnapABMgLZqrBgHvg0hV13LmhyG5KkUPLqFv9brSyQSk7UXVLAL+fOuUVAsFT3LFgtjv/zGdfDegtnF+g7Pltd37zj4Z4u6wv7CmyofFZ4XghoV4WWdnQXTGcGcGvmOqsres0tLPWSzkR+W45iXWaFp/jNIOdQRkjXVxd3QsBniFcKhMcLJccd1p26vRQMh0s326xoI2QBVH1tl9EQoJRxrQsqv4P3P9HxlE217SFtwzcn7mOo5xxUxHeSoBH/LmMoFyIP+Q3uuMq0zM+IDE48kc7P5e9vqo22GlgSWLE6byUvIEYURNlOTOWyPM6pKtyuOHilRmX4oPFDhJ/YQzaGqxKvhGz49es3XKMztyWQKI+bgKbbvIMbl/JQy7VEpoIt7lntTu7Fpf5nU1SF6303Gt5Af5sdnyNHBts/twTFM+OzDhUq7JlZCKpuLJHgP5LGUPZV01JDuA+zRtD2SWmN3DRSQ6Fsl+RP9T4Vn9r2ux80rvCGG3mOxfcvkgG416RJWJ5/tLbgFhI4Oa8RNlzl+3tIRO/Khvyx6YfBcZCAjf7K8qph+97xFI7hldgdWzeo6un3Ood2mH1fyR+hZQu1ZCGxcPxPRrvq16x7oep32W7SYuR4mAeeWpOQrEJu12ErdzO6lg7qhfT4eJwgjmtn/xQ5H0Mji14ibKW285L+B+m2unBrBO7HepJFj9NvE1NRugIXXrdCTIc7yH3Z/BGWysK2dFifVqYyvbCT/gBEp0OKoYS2Ye8fogIkGnH34w6r8hJLW4xkUHrv9iCjyVZ0tZIIN3pJfKmdZyQH6fNmHyH2xRgSVc7HnU007uwGBEuUOQ8H+mEY25mCS42jCxXKHJZhWys4RHy43TpkyT8phhLeprrW+QGsk5niApQsW6Q/wya9mFTVSVFzRPMBx0kuqYoFLcuyEc2seHasWmKJJlrVJDm8az5zr/hNREj8ULKVdIVTq69YshiuWPp7AIKJs3pF5LlwwSLuHL56Azv9izy0+D5suTXloaYPV3LizzXJAaVbPU7RkpeL7R/E+fQR1x7fKkhP64Dha3GLyjLxzS+EbYGvFSwJ02DwHHg+Pq99S5csSLRdW9JXFVYt41O6ALxtjFfUHY9MrXheW+nfqf7d5xCHHUqu6CbeU+3bb4yN4v/MD0lReUennlrPiNsKwldyvmUdKrdM1WKrDwTWXghJ1Ilv3AfNxrJYAizKfgFUdY0uRwKZUuRlS1sp3+Y11LSKmLvDTxOKEDLaAu5yCHkYB1yCAGPt68as5KTHV5/GxkYF6BlDHjqXWPuqi4RqZgZB2zFStbQ3n3VGjq8uVhrQekl0v83gvtT3jjKoZvW0IzIisHkC8Wifl1CSDo5LUyepIkxRKSqm+GusFbYgbSzqpLbOLLg8zMNnCKk2cEkbmQcz8RlxPffJOe7nDbsXjxQpVyX7Fu7QntAfNGsWIlkDsKINtdzblVACSW56Omdakmxb3GI0WwrfVDl84/VvsS+2vYI9/6KkAplo7j2mbCXSqKKHjt6qYVhZrKbzynCJ3S4fhFba8E4RYHiI5VoPOQHtNFQ2/+jW16hCZAXU/MF5bQOHSvdWQp2SXq1eYyjK3nJwtayT/lC5UpBlYzxMciiVzgQ0f74hHOUdC/pSMqnqUhQ/+s6rmB/RppXHNOCkZsq7Rxv+vcPnevLP68KhBu34TedvNbeQAPmuy1Eap+FT95Vz8yUPecdcvYNffP9yw1Flc9XZKUXWsGjdEWWrHLVDrX/+o8LniPGQdJz5NdB4NYHkBAsrMC8YZ8LXd5eUy7bbHArmOu+hn4R3q0Ka7Z9qcQQYiyYDM2jIKRhMCycU5CQHDh5H3cwy4qukO9Gvhm8sBtZNAiy5dZDedHaJ9eplgX0QOcRhDTIGUFcByu/rRzwOxybJYtZd9Bk0os/yfeGkRLkua7ZRa1zjB8Lxv1073EdGlmMRD160jdEGTL9wZGbnN5al94aeNP2+JLaBJfeeYVH7DvIW4VW7TvMhkdPtjfQgHljiwW1j3gq1zsKcrmVL1G2yfQO+t+rzRPEgy1uspb+EVXt/v29KZkVEfM8X3OvlA3rxd2lBYt5GY7buc6vqalBG+oWHS9bJJpT77pmXsaQy2azpC1F4D7tPIayiwZfLlrvcPQ8eYrfKt586NAKXUv0VQqmofgBjeHlbCREdqkWqIQfM5gKcr4kpK1VubIrVF6xBQkjhGJ0rOSgKkl3d52XWK+M3CsNvhGufO9WkaR2RdQmLShu0l+k6Pov4bJsS4/y/MXMkj17Pm+nC6y2Elk9p6h5uIQXJ3+oEg0qImwD6cty8v00rIlUIlU46zDpZmDVr12veMSALYlMc0ov0X7FNjiV9DvKjjS9WvhHmQs1HI/YcZhFqzKtk2J7Sue06XVc+ZHvD6Z6dC1OO8dqfU1SpetbJliFad+sXtXkMWj0a96sO0srVvAaeHlpSCkCkrDEromClms1nuT/Vz9aJ/lHkKbtzeo8sntcWSmpRapMmKPthCIRfZsk6gfqRGdq54QToHepYyjrIVJCtYWnKwFlH0LU7jR4ugJQ9iGeOpIJijuUn1H2bSTbI8TrRLlTj0prF3CotygzyNP8r0xbGvM/h3f6hZzl6/bpbehwvTPBgtJL4ozshBNJr1CW3vQOOA+jdJQk10b3jp72KnHI5+61Y7yu2vGjh3AdB5yyvg8lXl1N4K7bmQb5gfEvUXbN4BNzM1FX1w8nhidz2+ycPaNuzXP6oX79jor7vCF4tZSMkHVkHvmvmyRpUYLOf3IMd6jCiiG45OIKZS73kInXZnmxLCZwX57tTzzi8QurCkO+G5s4THsVcniBd0lWlxwKZWYINQHf6m9N8xwgTRZEe2VOovT39wsJiUFIEOYEiqDbQn8NjIZceeUX8ylyeo9dTn64TWtARXXGEU0nJ7tDus2YUiMcSAVJuX1ERndVTXPqz7LL5CPRXm1r8q/wG6/573nB3p+1NzVsydHSa0h+fcwtu68FyWaV/tZWW35PAo/n9uMoe8xUOMGAPF7uDMoOGzwF0vbpoBjIlVd9DWY3OIasCoyCeHnsF/Ydsn3uhYUU2xmlgVAbaGnldqOarul4/8um0A2J7ou7q5cfj3yclVMT1+J/gXR5XWec46Ka0lWiTC32qjZgr8cZeSiTpeWHkj6ZtXn5RL6JSzecPlGimguOGVQ3LfxYNKFgVy7iZTG47Y3jGak/twQOyzdYBXVQuDPKdEIWl2lt5Cb9vdQpVeTm1/zkobGznUz8KirMupXQKU8SPIwq0U7tZyXaZI7wFweHLggZdfJ0sI7mhX9mqn5Frlh8c4S3R3nhGTKx41fSw/wYTebkZdx6fyYddiCrkdXVxA++0RBCdHvJvkOu/99QkN34e2oo5Sj3omUWTqEmD/AXOTVINpHexwoyA4JKK3q9zsWH3LgZxfeTBulMpbA+LnAxaWVr2fF0qUG3zLsOd1SQLsxGUmzUccVLrTBbby+l45oFjBG/Lkzy7l2rF762Bkv25VzSw4JobfRbN/x+fwaDWq/KpdwFuRPzOk0GBdIKpC4E3xpgTYOSOp3uvdFUrBbtvR+api7etpEeZZXlS15lXbb4smdcUNSPnn8SV7Sld5oLY316XMpxQ6xE21QbPdlVZ8Jitt0dYmDn8em9vvXYtHXfrEoBa2CyXBd/qxM+k8xJyk7dHOhmePY8XPLCoj8/J+24QuB6jh9SWN+ctod72lqXaqwNH2IbLDxbzl5t166/UdahH+KEVwav4IwLXQmVcqZl7RGRjRqfEib2nCvhLEHU1tN+yN/I9WBAn7mMo+wa0ye7RcqMlGTcg/GSoi87RKtWMSFp/CIK5pcYKNvT4YfXXiEQPMUdU3CKXZavU6rh36N0BZt4+W0HmfjVwSe76ecKpAKTXY6Up515FM2P9A9KMzU7HEDRO5cj+BbSOdrK1N/nBIX1kFa0ZmwPcDSoVygbrLYhGUgON9VKjaYsxVodud1Ox84T0Ef8OjEpe3atanxtA0zWtvPko4UxKuObSHvawHarTddObiqkgfDNESKtj1xfLoVcSTQvYSchh2tDg0+XpXav/Zk1T9KJ0eKwX3DG/6yoZU6Q4chHxF6LvT9iEoKjYnWn1uF8Mp2NOyzoIbZxwUal3jOnwCnGPaLF9qDgrUBFqJ3X7/aeBkOhYE4ptbDL0Ar2Z2rXfc/DtXDotBxPHpKKGPp4ybyLSvtSCX1GY7FBtDlyRK2+657mcpXya/4rrg7Qf13G2HfISuTwrxLiiuqoFTxRWuA69/nvVtpm2xWwM5gaNDUXa7n9Tgcdl85nNPvVY9LW7lzd+MAGGCxl/wotMmVWbsjSfiezD5+5HSkiWcwpyi6dNCpAeEkUCfny/XOWnp+zSqifL9tQldYr2pxZ10UmzrD8zLM9VuU2bk5uRMiOy5PniPsqY5c4HDQrvvNwPDAa4uVVX9hT5OLPpHxf74h3PrFDVTH2639cMPQ6rUTlHfFWEdFRqLFbn1rWffJ4kcrb953KsKQpRrhvbO4IM6/M3dt30jm8IffzGXZGe5lNBCVHWh1YM5aKhKijA3C4/3VUo1xB3fQ84kugWhf48C/LGEqxfFNl7XhJUHhIfLCK/yGaUijv0He9bOZrNLHBjsB3iO10lMmZkibTwQTfa77h6ddz43JY2akHW1cm+K57mTOC7lqRWGzdm/fvzt9bo9cWGLpvRs0sMVF8suJ1aRh8D+MWZ4OgKHk0lPM7u+7kX0cd6R1XEikMm5Ev3DzrdbRfs1o6eUOkiQUU4owyk2D8z9LSPCynicWhvLFMD9p26tMsq47WqtpkZhKud03gBOZuz6r2S2Q57Lqk0MFfxa9Rlhvkz173iQH35/bjKDsS23vfXQf8Uz+d4XM0snkNqghw//PLzyjrydFDnWQiTeSWvYDbRrH9jBkWMfdfdtz8473fFtIhMXGSSFtDEn1S06NdragLuuOzvjR7PVCaKLYzyhQzPZnJNHuX1sDhUF4zU/22fPtxhlVHbfHvYbULtjgncQJzdxkbfAsI9r2XldHAuPfyV5TtC8RLGBK/Ukr31JKGJIsTOsO9rvpEee6nncpRRaYj6eY5SA7+TDaS7feRPFWaoGvB7RTBgh2s4bWncjR0eLO1zpy2lhz8fbaU0OPIgBP/u0K5ywzygWKWH8NmCrv0ZP9yQ0oF7j3u4AJr2nSaEBHeFiLCe0JECCNzl3qGAXqX9DPKBsxGkzIUiEeZweznkcf/9tYB+tRlDGWnLg0zIIb6rtxVuToNVaGGq/WvFeyafttChn2T6cf0uNNNgQudh6xmjWIlLojLZqRy8x9slpY6uDnPM3vv01+d2XNBO1jDNdkcD/Ko8sz12eglgWwnV0RJxmfJrWjpGuL53AhV9I0Z3D45gwFcXHroydr4ntA4fwnT4tJy3JCTZXDB8PPruZEq+fUp3IYMJsN1HYJvy7CmBsmhSHYSOX/pKvIBeV+PfED+9/O1hVSNN8sS+KnL9OCf7127PV5BP/vBywL0FkGfUU7BwKMIG0CJruMKTtPg/7hXoP7HdQxlm5kGwDsJAfSO3RjKzkEmWwLhbicdZbkjF3lE53pJ3Xa1gG4bInbL9pG/dojMr194FRu4kql366aEsWq7hHQ+N8TavciXy5QXNG4O9bp6xrvBrYceVuuNbBzcH1z6do8kwzPQp+MLPbCa+FVJwGeYMy21FfJLBTHajMk7fGp0N27JyBqFFQ0O53lYUPtIn9dvRKaQaRYyjTztRaaQ73r7DWoHzmERvup/Oq34P3Ga2DyPoOHTWuDgmMkjBJ5uA5Q1DTGVL+DO8CzKuiFN2e+hhn+20VGWrUovgUwnKeI2SoglWdIkH3KQHFiVh+TVaVtJxK8iWeZRQwuZeF+YhY/lMi0TZ5o+HJWniRUuG+0+juvJ7mq4uxwUnLpWXh4DaWz60RD7Y7jvQvlQVt6/Mr2iJEwsMIug6VoEtDonKZdZ7ZN36+N3tu1/BJCGC6JVmRMxfKpzoXVr3xrFOzoMJwosKL0k2GOdoucWOqmi4zXeySFvMJfCi1X0QHB2DQzlxKzW2b+ZKrwanJZ7hDHfxxMXid3AXCcc9KrT9h02tg8MHmGstiz9i8/+ivdVa0cdrlHu1dibNdr7cBeyhplhBPTvPtcW9y5ZIjCuvjiDsi4g+p6dEbfLv6+PSs3MyE48a+fhP8RyrYUdhaSotPBiv4IP7Aa/q3Nvu/hq1Jqw4I9kpd8ygls1NCUlummc40Uxg2de4eusl9hHMFw+D+sL3RMdeZGTZaRuptYCubg5LE/kmGmbii3H1VPLIu2NIiF43qUUZSf1TiZ3TzxgsEVhiOYtKxjRrx02EoyC7dmeCFZZ50683hLkW0aBZRYb6Cx1PjOrKSyVM+qtvUd6VxSjm/OWjNvnz2RwDLFI7N1YJDbHr18k+ejupK0b7m+Nlq/ZkZgfWevfyH11EmRi5tmAFAF43pCJMpKTrR7cqDjlvrP4r9MOd8/Eh3LehpGmogqeNTr7LPIKsXmd+N+UX92nAjk1xsCs8LrmdSVw4B5p5OLRHAN7yoZY73WkZOGOrHmIsddtw0joA1jz6i6g/zqPo+x5JgjXI56DbWziZ0t6hteHaECn7cZQNtW0umFRRLgg3flJBrTowrtlYcZ7CcLliyuDdoSU/j5BP2V/JlHrVe7R7JoRLzcbi3J2s6vUZLVwm1RlgOwdBOhOY5V0Z5oU6tLk5PLQTTVh7IQAo2VefW6dY7RreOaiFbTHfevK3JcyCxNgGSYJR7lNCZIY89wLFvHzI/ZteNMyJKl4FnQivKh1oG+fUlHruio3JUMQVVv1a3qUMT3bmFzr2IhkDwo38cuk9A2epEaHeTF1X/e4h7qspI5EbExdWWRM0Nlg+Pk1o4e7OmQLSjyGh4xHrAuW7X02YFtHryeW4nPtozvEfS5qNgRewmepllQUGR1iNC66cm4H6CkYC0uzJxbFNBeamkCOymCGr6Fg282GqJaL9vmgYrdDCG8LHdA/XX5B2RdMMX82S3lMu6Sk/uDp5+47ySlcOvGLKMvYzVQA+hR5gbLDTb+FqKl/LNpRLhumFSStxBhwlCtkF1lWoTJ/ES9PfXz0dcvGWa+pmJOavMpCTXPzwVC2PiAQm9eVlyeKdg7PPHA6mT/XZKz/WpSkLQ8F6rvo9GNphbtyUSFfp1U9ZPHe3D7rGbJu+3abNGaSf/kaQKd5LxQcqmmlIAYU09wx9h3yE1ONvDhfcvRIapg3e9Iet1zECLjobZYgos+hpkpLVGWr3YXI/YrvtZE8Lu/Ev6VKmgJPteMwYtnIY2RnYp5xnfiuY4hc46z2/RCT4pDhDFE6fTrGek5zyb1QurUvlb79zn2en2fDifW2cZwUm/gqODcokb0xacID2U6SsmufzFxX9Vl5Y6netfd/X5KvsMxUGNKjopFfO0Ki7OOJicRfzJlmO4lFFEeqgKBOFEc8bqNgcx8vJtNDIzx8+GPrOTezL84zoAMFJ3H9T+nUT/89xRn/taTgHSFN7IQ4O25C4pAVmBGtiGwe7WUsvakX+PeQ6KF3CNkkS4bwmQI5P7hqa16UNnPioJC+YIf1lpM/bi6kgxJ7mEhfS/kdnn61fYnFpJgvF7bEFy7XN9nX5InmGtBSzgLs6nR0voFepdwjnqocFWljY8Nl66mEKmdr+j0Z5EnViJbJO5uhU9leb8UPcBn0i8kHZyQRMrWTjbdZGCGCTNYB+o/LGMqeNS28IwP0LmUMZdWbZglHhLj4Bnxn72iOmAa/d4aYU/vIB7Pg6Wcpj4nNoqyVmAz5q6Kbue15opYETaF9u9kWKCoqJVTJrWnXZZAr9UOCbXnnsyLWrejGrfdjMH7ou5BBb/L6GvVn688v3H5+fyuy+EXrGrG1OAAlkrUQ/A9vTMERmHZ7YEMdGi2X8HR0O/ulsYVuBeKTQ9YF1pvVcHfZLMrKafkHxAWGeWrxWu81CWqlJLKkoYAXSszP//x4YaFSNh5TYXbTjhBnZ01vkEG2FIdY8I4rM1OScQ+w1u7HgAEM5d39mVqV//UJ3GIOje7o9AsSj8T/gsQjs+i+jDCV35GTuAE2nf6v9CjiicyPQb5Bvm2QPnG391qq6Su88i9vDqfJsjHswL77ydEGqwfHrAtE9F5qGFlj44k8O2PeVaZ3LFT6l3uGqBNjp13No0dj2DUL1mWs9Cnb8Bu9s5Ev3C5LC2QCq/Es7+zes8jZ2bPI2cazyNl38wn+BkjiecwEc3rYjhXUAXms2y+FjzoF7I7sfKenkvlo6sLExQ2Bi5RapnFvfWxuQtSQrERKiTce0ZPEebHajElxHgAAAACcm52dnZ39ChgAwMIVzprmAzn0wA8WONw0AMDkD5vPwN0Q03V/f7b6/ym52vx/UZjZQ+IIZazS8W1fJ+GsySc+W32JIlfnY6DHrkL4Ai8ZNw0ykEIeiMEKWMADLvBBAg5QDKngDmxAQAy24AZSsAfuhZxnhgxd2R6EwAN7kIAA7OBeTwIbZCACK3ACDvDBHsQgg+JDF4BDgBIfbDmgAduuGglas1KJeCKmpGFS+koMuGDkK7FAw/BW4kADd614fSUBsmH+SjOQQmIODbzBFoDBAAUYSCz52QCSoAgqoQxCoRoqoBBSoQjKoARKoaHVboAaqAd/UDCppoIiqIJirl8FDVABZVBwm7weisANqqEOSiAOqqFhg66gjhSXg4eB6yMsRSP1Ap3uTQBKcAN3cAdPcIUI8IAAKHVhBUSaBHjgRgLIyIM5UISkGEgzYTvz9mjH6eIJBz3oIRwCwoHE5iXQCBWQB3UGq0CYQDYuMKRQALIoZnfwAB9wPYdXggoEEAKFUA35UeOl88XM5u5pbpCnM7e3F1SCAmSk4r7NEWePgxJqAoYB2vuvlPVfPCv+ktjmshEMXBtwNZhcEIEYvIENPOD3tR0gCILAA075ShUgBCk4gwgc0HCCRHAbMDuCKyhAnqus7wAO4AN+IP4txBHXtgcHcAG32SJw1njgAw==) format("woff2");font-weight:600;font-display:swap;}
+:root {
+  --bg: #f4f1e8; --surface: #eeece1; --ink: #242620; --muted: #65675e; --accent: #93412f; --line: #d2d1c5;
+  --sans: -apple-system, BlinkMacSystemFont, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+  --serif: "Publication Title", Georgia, "Songti SC", "STSong", "Noto Serif SC", SimSun, serif;
+  --mono: "SFMono-Regular", Consolas, monospace; --body-size: 17px; --reading-progress: 0;
+}
+[data-tone="red"] { --chapter-ink: #93412f; --chapter-paper: #f2dfd6; }
+[data-tone="blue"] { --chapter-ink: #365b78; --chapter-paper: #e3eaf0; }
+[data-tone="green"] { --chapter-ink: #3c6248; --chapter-paper: #e1eadf; }
+[data-tone="gold"] { --chapter-ink: #80601d; --chapter-paper: #f0e5cc; }
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; scroll-padding-top: 96px; scrollbar-color: var(--line) var(--bg); -webkit-text-size-adjust: 100%; }
+body { margin: 0; color: var(--ink); background: var(--bg); font: var(--body-size)/1.95 var(--sans); -webkit-font-smoothing: antialiased; }
+[hidden] { display: none !important; }
+.enhanced, .reader-dock { display: none; }
+body[data-reader-ready] .enhanced { display: flex; }
+a { color: var(--accent); text-underline-offset: 4px; text-decoration-thickness: 1px; overflow-wrap: anywhere; }
+a:hover { text-decoration-thickness: 2px; }
+button, input { font: inherit; color: inherit; }
+button { cursor: pointer; }
+button:disabled { cursor: default; opacity: .4; }
+button, a, input, summary { outline-offset: 4px; }
+:focus-visible { outline: 2px solid var(--accent); }
+input { caret-color: var(--accent); }
+::selection { background: var(--accent); color: var(--bg); }
+h1, h2, h3, p { margin: 0; }
+h1, h2, h3 { text-wrap: pretty; }
+.icon { flex: none; display: inline-block; vertical-align: middle; }
+.skip-link { position: fixed; top: -100px; left: 16px; z-index: 50; padding: 10px 18px; background: var(--bg); }
+.skip-link:focus { top: 12px; }
+.head-inner { max-width: 1180px; margin: 10px auto 0; padding: 0 40px; min-height: 74px; display: flex; align-items: center; justify-content: space-between; gap: 26px; }
+.brand { display: flex; align-items: center; gap: 12px; color: var(--ink); text-decoration: none; }
+.brand-mark { flex: none; display: grid; place-items: center; width: 32px; height: 36px; background: var(--accent); color: var(--bg); font: 23px/1 var(--serif); }
+.brand-name { font-family: var(--serif); font-size: 21px; letter-spacing: .08em; }
+.primary-nav { display: flex; gap: 26px; align-items: center; }
+.primary-nav a { min-height: 44px; display: flex; align-items: center; color: var(--muted); text-decoration: none; font-size: 14px; padding: 8px 2px; }
+.primary-nav [aria-current] { color: var(--ink); font-weight: 600; box-shadow: inset 0 -2px var(--accent); }
+.primary-nav a:hover { color: var(--accent); }
+.site-caption { font-size: 12px; color: var(--muted); letter-spacing: .06em; }
+.page { max-width: 1180px; margin: auto; padding: 0 40px; }
+.issue-head { position: relative; border-top: 3px solid var(--ink); border-bottom: 1px solid var(--ink); padding: 44px 0 20px; margin-bottom: 36px; }
+.issue-head::before { content: ""; position: absolute; top: 5px; right: 0; left: 0; height: 1px; background: var(--ink); }
+.title-line { display: flex; justify-content: space-between; align-items: center; gap: 36px; }
+.title-copy { min-width: 0; }
+h1 { font-family: var(--serif); font-size: 68px; line-height: 1.3; font-weight: 600; letter-spacing: -.025em; overflow-wrap: anywhere; }
+.period { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 20px; color: var(--muted); font-size: 13px; margin-top: 20px; }
+.period > span:first-child { color: var(--accent); }
+.period time { font-family: var(--mono); font-variant-numeric: tabular-nums; }
+.issue-stamp { flex: none; min-width: 174px; padding-left: 48px; border-left: 1px solid var(--line); color: var(--accent); }
+.stamp-main { display: block; font: 88px/1 var(--mono); letter-spacing: -.04em; }
+.stamp-caption { display: block; margin-top: 12px; font-size: 12px; line-height: 1.7; }
+.archive-stamp { font-size: 52px; }
+.issue-map { display: flex; flex-wrap: wrap; gap: 8px 32px; border-top: 1px solid var(--line); margin-top: 38px; padding-top: 16px; }
+.issue-map a { display: flex; align-items: center; gap: 10px; min-height: 44px; color: var(--chapter-ink); text-decoration: none; font-family: var(--serif); font-size: 16px; }
+.toc-number { font: 12px/1.8 var(--mono); color: var(--chapter-ink); }
+.reading-grid, .archive-layout { display: grid; grid-template-columns: 184px minmax(0, 720px); gap: 64px; justify-content: space-between; align-items: start; }
+.desktop-toc, .archive-side { position: sticky; top: 32px; max-height: calc(100dvh - 100px); overflow: auto; }
+.toc-label { font-size: 12px; color: var(--muted); margin-bottom: 20px; letter-spacing: .04em; }
+.toc-list { display: flex; flex-direction: column; }
+.toc-list a { position: relative; display: flex; gap: 14px; align-items: baseline; min-height: 48px; padding: 11px 8px; color: var(--muted); text-decoration: none; font-size: 13px; border-top: 1px solid var(--line); }
+.toc-list a::after { content: ""; position: absolute; bottom: 0; left: 0; width: calc(var(--section-progress, 0) * 100%); height: 1px; background: var(--chapter-ink); }
+.toc-list a[aria-current="location"] { color: var(--chapter-ink); background: var(--chapter-paper); font-weight: 600; }
+.toc-list a:hover, .toc-list a:focus-visible { color: var(--chapter-ink); }
+.toc-list a:focus-visible, .issue-map a:focus-visible { outline-color: var(--chapter-ink); }
+.toc-bottom { border-top: 1px solid var(--line); margin-top: 28px; padding-top: 18px; }
+.text-button { display: flex; gap: 10px; align-items: center; min-height: 44px; border: 0; background: none; padding: 0; color: var(--muted); font-size: 12px; text-decoration: none; }
+.text-button:hover { color: var(--accent); }
+.type-controls { gap: 8px; padding-top: 14px; }
+.type-controls button { min-width: 44px; height: 44px; padding: 0; border: 1px solid var(--line); background: none; font: 17px/1 var(--serif); }
+.type-controls button[aria-pressed="true"], .type-controls button:hover { border-color: var(--accent); color: var(--accent); }
+.focus-inline { margin-top: 16px; }
+.mobile-toc { display: none; }
+.reader-body, .prose { min-width: 0; }
+.prose { overflow-wrap: anywhere; font-size: var(--body-size); line-height: 1.95; }
+.reading-section { margin: 0 0 88px; scroll-margin-top: 40px; }
+.section-head { display: flex; align-items: center; gap: 22px; padding: 22px 24px; margin: 0 0 32px; border-top: 3px solid var(--chapter-ink); border-bottom: 1px solid color-mix(in srgb, var(--chapter-ink) 25%, var(--bg)); background: var(--chapter-paper); }
+.section-no { display: grid; place-items: center; flex: none; min-width: 52px; height: 52px; padding: 0 8px; color: var(--bg); background: var(--chapter-ink); font: 30px/1 var(--serif); font-variant-numeric: tabular-nums; }
+.section-head h2 { min-width: 0; color: var(--chapter-ink); font: 600 32px/1.4 var(--serif); letter-spacing: .02em; }
+.section-head h2 a { color: inherit; }
+.prose h3 { font-size: 20px; font-weight: 600; line-height: 1.6; margin: 36px 0 14px; }
+.section-head + h3 { margin-top: 0; }
+.prose h4 { font-size: 17px; line-height: 1.65; margin: 28px 0 12px; }
+.prose p { margin: 0 0 20px; text-wrap: pretty; }
+.prose ul, .prose ol { margin: 16px 0 24px; padding-left: 1.5em; }
+.prose li + li { margin-top: 10px; }
+.prose li > p { margin-bottom: 8px; }
+.prose li::marker { color: var(--muted); }
+.prose blockquote { margin: 26px 0; padding: 18px 0; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); color: var(--muted); }
+.prose blockquote > :last-child { margin-bottom: 0; }
+.prose pre { display: block; max-width: 100%; overflow: auto; background: var(--surface); border: 1px solid var(--line); margin: 24px 0; padding: 20px; font: 14px/1.8 var(--mono); }
+.prose :not(pre) > code { font: .9em/1.8 var(--mono); background: var(--surface); padding: 2px 4px; }
+.prose table { display: block; max-width: 100%; overflow: auto; border-collapse: collapse; margin: 24px 0; font-size: 15px; }
+.prose td, .prose th { text-align: left; border: 1px solid var(--line); padding: 10px 14px; }
+.prose hr { border: 0; border-top: 1px solid var(--line); margin: 32px 0; }
+.article-image { display: block; max-width: 100%; height: auto; margin: 28px auto 0; }
+.image-caption { display: block; margin: 10px 0 28px; font-size: 13px; line-height: 1.7; text-align: center; color: var(--muted); }
+.issue-footer { display: flex; justify-content: space-between; align-items: center; gap: 20px; border-top: 1px solid var(--line); padding: 24px 0 80px; }
+.issue-footer a { display: flex; gap: 8px; align-items: center; min-height: 44px; font-size: 13px; text-decoration: none; }
+.reading-progress { position: fixed; top: 0; left: 0; height: 2px; width: 100%; z-index: 25; pointer-events: none; }
+.reading-progress span { display: block; width: calc(var(--reading-progress) * 100%); height: 100%; background: var(--accent); }
+.reader-dock { position: fixed; z-index: 24; align-items: center; gap: 3px; background: var(--bg); }
+.reader-dock button { display: flex; justify-content: center; align-items: center; gap: 9px; min-height: 44px; min-width: 44px; padding: 0 12px; border: 0; background: none; font-size: 12px; color: var(--muted); }
+.reader-dock button:hover { color: var(--accent); background: var(--surface); }
+.quick-toc { position: fixed; right: 28px; bottom: 80px; width: 300px; max-width: calc(100vw - 40px); max-height: 60vh; overflow: auto; z-index: 26; padding: 16px 22px 20px; border: 1px solid var(--line); background: var(--bg); }
+.quick-toc-head { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 8px; font-size: 14px; }
+.quick-toc-head button { display: grid; place-items: center; width: 44px; height: 44px; border: 0; background: none; color: var(--muted); }
+body[data-focus="true"] .site-head, body[data-focus="true"] .issue-head, body[data-focus="true"] .desktop-toc, body[data-focus="true"] .mobile-toc { display: none; }
+body[data-focus="true"] .page { max-width: 760px; padding-top: 100px; }
+body[data-focus="true"] .reading-grid { display: block; }
+body[data-focus="true"] .reader-dock { display: flex; top: 0; right: 0; left: 0; min-height: 64px; justify-content: center; border-bottom: 1px solid var(--line); }
+body[data-focus="true"] .quick-toc { top: 74px; bottom: auto; right: max(24px, calc((100vw - 680px) / 2)); }
+.archive-head { padding-bottom: 36px; }
+.archive-side nav { display: flex; flex-direction: column; }
+.archive-side a { display: flex; align-items: center; min-height: 44px; font-size: 13px; color: var(--muted); text-decoration: none; }
+.archive-side a:hover { color: var(--accent); }
+.archive-main { min-width: 0; }
+.archive-layout.is-empty { display: block; max-width: 720px; margin-left: auto; }
+.latest { display: flex; align-items: center; justify-content: space-between; gap: 24px; color: var(--ink); text-decoration: none; border-bottom: 1px solid var(--line); padding-bottom: 30px; margin-bottom: 30px; }
+.latest h2 { font: 600 38px/1.5 var(--serif); }
+.latest:hover h2 { color: var(--accent); }
+.latest > .icon { color: var(--accent); width: 32px; height: 32px; }
+.latest-meta { display: flex; gap: 8px 16px; flex-wrap: wrap; margin-top: 16px; color: var(--muted); font-size: 12px; }
+.latest-meta > span:first-child { color: var(--accent); }
+.archive-controls { flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 30px; }
+.search { display: flex; align-items: center; gap: 12px; width: min(100%, 300px); border-bottom: 1px solid var(--line); color: var(--muted); }
+.search input { min-width: 0; width: 100%; min-height: 44px; border: 0; padding: 10px 0; background: none; font-size: 14px; }
+.search input::placeholder { color: var(--muted); opacity: 1; }
+.search-status { color: var(--muted); font-size: 13px; }
+.archive-group { margin-bottom: 42px; scroll-margin-top: 28px; }
+.archive-group > h2 { display: flex; align-items: baseline; gap: 14px; font-size: 18px; line-height: 1.5; padding: 16px 0; border-bottom: 1px solid var(--ink); }
+.archive-group > h2 span { font-size: 12px; color: var(--muted); font-weight: 400; }
+.archive-group ul { list-style: none; margin: 0; padding: 0; }
+.archive-row a { display: grid; grid-template-columns: 64px minmax(0, 1fr) 20px; gap: 20px; align-items: baseline; padding: 24px 0; border-bottom: 1px solid var(--line); color: var(--ink); text-decoration: none; }
+.archive-row a:hover { color: var(--accent); }
+.archive-row time { font: 12px/1.8 var(--mono); color: var(--muted); }
+.archive-row h3 { font-size: 17px; font-weight: 500; line-height: 1.7; }
+.card-kicker { display: block; font-size: 12px; color: var(--muted); margin-top: 5px; }
+.archive-row .icon { color: var(--muted); align-self: center; }
+.empty { padding: 32px 0 60px; }
+.empty h2 { font-size: 21px; font-weight: 500; margin-bottom: 12px; }
+.empty p { font-size: 14px; color: var(--muted); }
+.archive-footer { margin: 48px 0; color: var(--muted); font-size: 12px; }
+@media (max-width: 1000px) {
+  h1 { font-size: 52px; }
+  .site-caption { display: none; }
+  .reading-grid, .archive-layout { grid-template-columns: 150px minmax(0, 1fr); gap: 36px; }
+  .issue-map { gap: 8px 24px; }
+  .issue-stamp { min-width: 140px; padding-left: 28px; }
+}
+@media (max-width: 700px) {
+  html { scroll-padding-top: 28px; }
+  .page { padding: 0 20px; }
+  .head-inner { padding: 0 20px; min-height: 68px; margin-top: 0; gap: 14px; }
+  .brand { gap: 8px; }
+  .brand-mark { width: 26px; height: 30px; font-size: 20px; }
+  .brand-name { font-size: 18px; letter-spacing: .02em; }
+  .primary-nav { gap: 16px; }
+  .primary-nav a { font-size: 13px; }
+  .issue-head { padding: 28px 0 25px; margin-bottom: 24px; }
+  .title-line { align-items: flex-start; gap: 14px; }
+  h1 { font-size: 36px; line-height: 1.4; }
+  .period { font-size: 12px; gap: 6px 12px; margin-top: 16px; }
+  .issue-stamp { min-width: 78px; padding-left: 12px; border: 0; }
+  .stamp-main { font-size: 48px; }
+  .stamp-caption { font-size: 12px; }
+  .archive-stamp { font-size: 30px; }
+  .issue-map, .desktop-toc, .archive-side { display: none; }
+  .reading-grid, .archive-layout { display: block; }
+  .mobile-toc { display: block; margin-bottom: 34px; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+  .mobile-toc summary { min-height: 48px; padding: 14px 0; cursor: pointer; font-size: 13px; color: var(--muted); }
+  .mobile-toc nav { padding-bottom: 14px; }
+  .mobile-toc .toc-list a { border-top: 0; }
+  .reading-section { margin-bottom: 64px; }
+  .section-head { padding: 18px 16px; gap: 16px; margin-bottom: 28px; }
+  .section-no { min-width: 40px; height: 40px; font-size: 25px; }
+  .section-head h2 { font-size: 26px; }
+  .prose h3 { font-size: 19px; }
+  .issue-footer { padding-bottom: 100px; }
+  body[data-reader-ready] .reader-dock { display: flex; left: 0; right: 0; bottom: 0; justify-content: space-between; border-top: 1px solid var(--line); padding: 8px 12px max(8px, env(safe-area-inset-bottom)); }
+  .reader-dock button { padding: 0 10px; gap: 7px; }
+  .reader-dock [data-toggle-toc] { flex: 1; justify-content: flex-start; }
+  .quick-toc { right: 12px; left: 12px; width: auto; max-width: none; }
+  body[data-focus="true"] .page { padding: 28px 22px 0; }
+  body[data-focus="true"] .reader-dock { top: auto; bottom: 0; min-height: 0; border-bottom: 0; }
+  body[data-focus="true"] .quick-toc { top: auto; bottom: 80px; right: 12px; }
+  .latest h2 { font-size: 27px; }
+  .archive-row a { grid-template-columns: 46px minmax(0, 1fr) 18px; gap: 12px; }
+  .archive-row h3 { font-size: 16px; }
+}
+@media (max-width: 360px) {
+  h1 { font-size: 31px; }
+  .issue-stamp { min-width: 66px; padding-left: 6px; }
+  .stamp-main { font-size: 40px; }
+  .archive-stamp { font-size: 26px; }
+  .brand-name { font-size: 16px; }
+  .primary-nav { gap: 12px; }
+  .reader-dock button { padding: 0 8px; gap: 6px; }
+}
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+@media print {
+  :root { --bg: #fff; --ink: #000; --muted: #444; --accent: #000; --line: #bbb; }
+  .site-head, .skip-link, .desktop-toc, .mobile-toc, .issue-map, .reader-dock, .quick-toc, .reading-progress, .issue-footer { display: none !important; }
+  .page, body[data-focus="true"] .page { max-width: none; padding: 0; }
+  .reading-grid { display: block; }
+  .issue-head { display: block !important; margin-top: 0; padding-top: 24px; }
+  h1 { font-size: 32px; }
+  .prose { font-size: 12pt; }
+  .section-head { background: none; border-color: black; break-after: avoid; break-inside: avoid; }
+  .section-head h2 { color: black; font-size: 24px; }
+  .section-no { background: none; color: black; border: 1px solid black; }
+  h2, h3, h4 { break-after: avoid; }
+}
+</style></head><body id="top" data-publication="editorial-a-v4" data-kind="daily" data-view="read">
+<a class="skip-link" href="#content">跳到正文</a><header class="site-head"><div class="head-inner"><a class="brand" href="../"><span class="brand-mark" aria-hidden="true">刊</span><span class="brand-name">报告馆</span></a><nav class="primary-nav" aria-label="站点分区"><a href="../">报告</a><a href="../digests/" aria-current="page">日报</a><a href="../weeklies/">周报</a></nav><span class="site-caption">个人阅读档案</span></div></header><div class="reading-progress" aria-hidden="true"><span></span></div>
+<main class="page"><header class="issue-head"><div class="title-line"><div class="title-copy"><h1>今日中文推特圈精选</h1><p class="period"><span>日报</span><time datetime="2026-11-04">2026-11-04</time><span>北京时间</span></p></div><div class="issue-stamp" aria-hidden="true"><span class="stamp-main">04</span><span class="stamp-caption">2026 / 11 月</span></div></div><nav class="issue-map" aria-label="浏览本期栏目"><a href="#section-1" data-tone="red"><span class="toc-number">01</span><span>今日主线</span></a><a href="#section-2" data-tone="blue"><span class="toc-number">02</span><span>人物</span></a><a href="#section-3" data-tone="green"><span class="toc-number">03</span><span>小工具</span></a><a href="#section-4" data-tone="gold"><span class="toc-number">04</span><span>AI 资讯</span></a></nav></header>
+<div class="reading-grid"><aside class="desktop-toc"><p class="toc-label">本期目录</p><nav class="toc-list" aria-label="栏目目录"><a href="#section-1" data-tone="red"><span class="toc-number">01</span><span>今日主线</span></a><a href="#section-2" data-tone="blue"><span class="toc-number">02</span><span>人物</span></a><a href="#section-3" data-tone="green"><span class="toc-number">03</span><span>小工具</span></a><a href="#section-4" data-tone="gold"><span class="toc-number">04</span><span>AI 资讯</span></a></nav><div class="toc-bottom"><a class="text-button" href="./"><svg class="icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 12H4M10 6l-6 6 6 6"></path></svg>全部日报</a><div class="type-controls enhanced" role="group" aria-label="正文字号"><button type="button" data-font="normal" aria-label="标准字号" aria-pressed="true">A</button><button type="button" data-font="large" aria-label="大字号" aria-pressed="false">A+</button></div><button type="button" class="text-button focus-inline enhanced" data-focus aria-pressed="false"><svg class="icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 4H4v5m11-5h5v5M4 15v5h5m11-5v5h-5"></path></svg><span>专注阅读</span></button></div></aside>
+<div class="reader-body"><details class="mobile-toc"><summary>本期目录 · 4 个栏目</summary><nav class="toc-list" aria-label="栏目目录"><a href="#section-1" data-tone="red"><span class="toc-number">01</span><span>今日主线</span></a><a href="#section-2" data-tone="blue"><span class="toc-number">02</span><span>人物</span></a><a href="#section-3" data-tone="green"><span class="toc-number">03</span><span>小工具</span></a><a href="#section-4" data-tone="gold"><span class="toc-number">04</span><span>AI 资讯</span></a></nav></details>
+<article class="prose" id="content" tabindex="-1"><section class="reading-section" id="section-1" data-tone="red"><header class="section-head"><span class="section-no">01</span><h2>今日主线</h2></header><ol>
+<li>Personal Agent 和运维自动化成主线：Alma 上线，Tuwa 一天连发三十多个公测版，郭宇用 Agent 按负载自动开机器</li>
+<li>「关思考」也能把数学抬约六倍，给权重编程泼冷水；Cat Wu 离职把 Claude Code 人事推到台前</li>
+<li>AnliBili、妙言、App Intents、「上翻」一起说明：入口在变，内容筛选也在变</li>
 </ol>
 </section>
-<footer>今日中文推特圈精选（11 月 4 日） · 由 20261104.md 生成 · 生成于 2026-11-04 08:04</footer></div></body></html>
+<section class="reading-section" id="section-2" data-tone="blue"><header class="section-head"><span class="section-no">02</span><h2>人物</h2></header><h3>Sac @Saccc_c</h3>
+<p><strong>主题：AnliBili，把十六年社媒安利压成 B 站精品库</strong> <a href="https://x.com/Saccc_c/status/2117620059392942489">https://x.com/Saccc_c/status/2117620059392942489</a></p>
+<p>受 Karpathy HackerTube 启发，他做了 AnliBili，专门收「被反复安利」的 B 站视频。材料来自知乎、小红书约十六年近一千万条讨论，筛出 1132 个片子，每个至少被三个人、在三个不同月份推荐过。</p>
+<p>筛选不是手工扫完，而是用 Teamily AI 的 team agents 搭 Loop：整理评论 → 筛选视频 → 分类上线，循环扩充。人和 Agent 待在同一个群里共享上下文，他说一句「加小红书数据源」，团队就会重新分工再跑一轮。</p>
+<p>站点在 <a href="https://anlibili-site-bxlxh4ai.teamily.run">https://anlibili-site-bxlxh4ai.teamily.run</a> ，后面还要继续加片。</p>
+<p>我的看法：推荐热榜越吵，越有人愿意用「多人跨月」这种硬门槛自建信息源，这比又一个聚合 App 更值得盯。</p>
+<hr>
+<h3>Orange AI @oran_ge</h3>
+<p><strong>主题：关思考涨六倍，给权重编程降温</strong> <a href="https://x.com/oran_ge/status/2117626509095837948">https://x.com/oran_ge/status/2117626509095837948</a></p>
+<p>有人发现只要关掉 Qwen 的思考模式，数学表现就能抬大约六倍，根本不用动权重。他把这条甩出来，直接冲着前夜刷屏的「权重空间编程」叙事。</p>
+<p>同一时段他也跟了 Cat Wu 离职：Claude Code 核心又走一个，并吐槽 Anthropic 的上市信仰绑定有点反人性 <a href="https://x.com/oran_ge/status/2117767285775696372">https://x.com/oran_ge/status/2117767285775696372</a></p>
+<p>我的看法：基线实验一松，六倍数字会瞬间掉价；人事吐槽可以当情绪样本，别当成离职原因已经查清。</p>
+<hr>
+<h3>宝玉 @dotey</h3>
+<p><strong>主题：Cat Wu 离职、/retro 实证、简历课与 Design Harness</strong> <a href="https://x.com/dotey/status/2117739064455463086">https://x.com/dotey/status/2117739064455463086</a></p>
+<p>Claude Code 与 Cowork 产品负责人 Cat Wu 发文说周五是在 Anthropic 最后一天，没写原因也没写下一步。她早年做过 Scale AI、Dagster 工程师，经 Index Ventures，2024 年 8 月进 A 社。</p>
+<p>另一条长文盯 /retro 一类「干完活让 AI 改自己的 Skill」做法，并拉出论文《How Do Coding-Agent Harnesses Self-Evolve?》。作者在 SWE-bench 上跑 Claude Code，有效测试里只有两项改动真正消掉目标问题，有的改动还会在无关任务上加多余检查 <a href="https://x.com/dotey/status/2117706197797114009">https://x.com/dotey/status/2117706197797114009</a></p>
+<p>他还翻译了 OpenAI 应用 AI 工程负责人 Wulfie Bain 的简历四条：写短、删无关、写成果、方便扫读 <a href="https://x.com/dotey/status/2117639131929129316">https://x.com/dotey/status/2117639131929129316</a> ；并更新 Baoyu Design Skill 的 DeepSeek Harness 插件，统一入口看 Slides／Design／Dashboard／Motion <a href="https://x.com/dotey/status/2117838908721660026">https://x.com/dotey/status/2117838908721660026</a></p>
+<p>我的看法：/retro 这篇比「自我进化」口号值钱，它把「改手册就能变强」压回可测结果；Cat Wu 则提醒你，产品走红不等于团队稳态。</p>
+<hr>
+<h3>歸藏(guizang.ai) @op7418</h3>
+<p><strong>主题：Siri 的 App Intents，超级应用要重新表态</strong> <a href="https://x.com/op7418/status/2117804545829171299">https://x.com/op7418/status/2117804545829171299</a></p>
+<p>苹果更新 App Intents，开发者可以把自家 App 功能开放给 Siri AI，改上车点、挑收藏商品、跨 App 把商品丢给聊天软件里的朋友。还内置一套偏 Agent Skill 的子集：先读 Skill，再判断请求是否匹配。</p>
+<p>他提醒：以前豆包想自动操作国内超级应用，多半被拒；现在 Siri 也有类似能力，后续各家怎么开权限会很好看。开发者可从 27.3 测试版开始接。</p>
+<p>同一波他也跟了 Cat Wu：有人问是不是 IPO 前离职股票无锁定期，她说这不是她考虑的因素 <a href="https://x.com/op7418/status/2117793035597795755">https://x.com/op7418/status/2117793035597795755</a></p>
+<p>我的看法：系统级入口一旦能调第三方，超级应用的「拒绝代操作」策略就得重写，这比又一个提示词库更像规则变化。</p>
+<hr>
+<h3>yetone @yetone</h3>
+<p><strong>主题：Alma Personal Agent 上线</strong> <a href="https://x.com/yetone/status/2117707111790752185">https://x.com/yetone/status/2117707111790752185</a></p>
+<p>继前面的安卓与远程控制能力后，他宣布 Alma Personal Agent 正式上线，并配了演示视频。</p>
+<p>我的看法：Personal Agent 赛道拼的是真能替你动手，不是聊天壳再换皮；上线只是起点，后面要看失败率和权限边界。</p>
+<hr>
+<h3>郭宇 guoyu.eth @turingou</h3>
+<p><strong>主题：Personal Agent 管买房，Agent 管扩容</strong> <a href="https://x.com/turingou/status/2117789717848834157">https://x.com/turingou/status/2117789717848834157</a></p>
+<p>他继续感叹用 Grok bot 管土地规划和买卖房子，认为长久信息偏好加自我改善循环，会推高人对 AI 的信任，Personal Agent 会挤掉不少传统中介式岗位。</p>
+<p>另一条更硬：如果 Agent 能盯服务器负载、自动开裸金属并调度资源，为什么还要绑死大型云和它们的糊涂账单 <a href="https://x.com/turingou/status/2117792028734136678">https://x.com/turingou/status/2117792028734136678</a> 。傍晚他写完全自动运维，VPS 开机到可用中位数约 94 秒，裸金属约 6 分钟；存算分离下，高峰每天用不满 8 小时，ROI 就可以是正的 <a href="https://x.com/turingou/status/2117960780566184373">https://x.com/turingou/status/2117960780566184373</a></p>
+<p>Tuwa 侧，他说昨天一口气发了三十多个公开测试版，年初还做不到这种自动化密度 <a href="https://x.com/turingou/status/2117783400916664779">https://x.com/turingou/status/2117783400916664779</a></p>
+<p>我的看法：从代打电话走到按负载开机器，叙事已经离开「助理」进入「替代云控制面」；真要落地，账单透明和误操作熔断比演示速度更重要。</p>
+<hr>
+<h3>Tw93 @HiTw93</h3>
+<p><strong>主题：妙言加 CLI，给 AI 时代留一个能手写的本地笔记</strong> <a href="https://x.com/HiTw93/status/2117903730494591205">https://x.com/HiTw93/status/2117903730494591205</a></p>
+<p>他说以后不靠 AI 写东西的人会越来越少，但自己在妙言里仍坚持手写。妙言是他多年打磨的原生 Swift Markdown 应用，强调规范语法、本地、高性能，不做破坏格式的所见即所得，还带类 git 的本地版本回滚。</p>
+<p>今年补了 iPhone／iPad，并把重心放在移动端预览和阅读。为了对齐 AI 工作流，他加了 CLI：miao open、new、search、list、cat。站点 <a href="https://miaoyan.app">https://miaoyan.app</a></p>
+<p>我的看法：在人人用 AI 生成 md 的时候，坚持「给人读的成品编辑器」反而是差异化；CLI 比硬塞聊天框更对工程师胃口。</p>
+<hr>
+<h3>Cos(余弦) @evilcos</h3>
+<p><strong>主题：币安被盗别只看戏，对照自己的投毒面</strong> <a href="https://x.com/evilcos/status/2117768409144594727">https://x.com/evilcos/status/2117768409144594727</a></p>
+<p>很多人看完币安披露，觉得工程师 A／B／C 弱、权限离谱。他提醒这是 APT 过程：人性利用、情报踩点、免杀、信任链、横向投毒、云渗透、风控绕过、0day 穿插，看戏最轻松，自己中招才知道层次。</p>
+<p>他要人去查：自己会不会被投毒，同事会不会，公司员工会不会，别停在吃瓜。</p>
+<p>我的看法：事后诸葛便宜，把披露当检查清单才值钱；「低级错误」四个字常常只是你没站在攻击链上。</p>
+<hr>
+<h3>Barret李靖 @Barret_China</h3>
+<p><strong>主题：企业内部的「上翻」</strong> <a href="https://x.com/Barret_China/status/2117798934718665118">https://x.com/Barret_China/status/2117798934718665118</a></p>
+<p>他把基建和应用能力改造成 MCP、CLI、Skills 这件事概括成「上翻」，类似控制反转，把编排权交给上层 Agent。Claude Code 爆火大半年后，很多公司内部已经变得更 AI Friendly。</p>
+<p>C 端 Personal Agent 也是同一逻辑：应用把自己拆成插件或原子能力，喂给 ChatGPT、Grok 或 MCP。他判断 2026 年底关注点会从「AI 能做事」转到「能交付结果并为此付费」。</p>
+<p>我的看法：上翻说清楚了企业 Agent 的瓶颈不在模型口号，而在内部能力有没有被暴露成可编排接口。</p>
+<hr>
+<h3>Jiayuan (JY) Zhang @jiayuan_jy</h3>
+<p><strong>主题：用 Multica 开发 Multica，再加对抗式 review</strong> <a href="https://x.com/jiayuan_jy/status/2117868868844880270">https://x.com/jiayuan_jy/status/2117868868844880270</a></p>
+<p>他晒了团队如何用 Multica 开发 Multica 本身，把自举流程摊开。</p>
+<p>另一条给出对抗式 code review prompt：每次当独立审查者、安全要审但别航天级、要改就 mention Lambda 改完再审、吵不完再拉人决策，并绑成 Quick Action 小循环 <a href="https://x.com/jiayuan_jy/status/2117861662963511307">https://x.com/jiayuan_jy/status/2117861662963511307</a></p>
+<p>我的看法：自举故事好懂，真正可抄的是那套「可收敛的 review 环」，比再发一张架构图有用。</p>
+<hr>
+<h3>圖拉鼎 @tualatrix</h3>
+<p><strong>主题：App Store 还在变密，AI 回复一眼假</strong> <a href="https://x.com/tualatrix/status/2117858782827163739">https://x.com/tualatrix/status/2117858782827163739</a></p>
+<p>他回看一年前的判断：越来越多人开通 Apple 开发者账号，越来越多 App 上架，趋势没减弱，App Store 短期内还会繁荣。</p>
+<p>另一条点破 AI 回复模板：先复述你的原文，再给观点，最后甩问题；建议下次直接提问，省 Token 也不那么好认 <a href="https://x.com/tualatrix/status/2117619449822101725">https://x.com/tualatrix/status/2117619449822101725</a></p>
+<p>他还准备打开千问，体验国行 Apple 智能 <a href="https://x.com/tualatrix/status/2117837623742058945">https://x.com/tualatrix/status/2117837623742058945</a></p>
+<p>我的看法：商店侧仍在扩表，模型侧却越来越像填空题；模板被拆穿后，再装深度只会更尴尬。</p>
+<hr>
+<h3>李继刚 @lijigang</h3>
+<p><strong>主题：重读 March 的探索／利用</strong> <a href="https://x.com/lijigang/status/2117823012468646029">https://x.com/lijigang/status/2117823012468646029</a></p>
+<p>他读 1991 年 March 的《Exploration and Exploitation in Organizational Learning》，把组织资源分配拆成 Exploitation（改进已有）和 Exploration（尝试新东西），并提到文中的互相学习模型。</p>
+<p>我的看法：Agent 团队天天加 Skill、加模型，本质上还是 EE 分配问题；这篇旧文刚好给「只卷工具不留探索预算」敲一下。</p>
+</section>
+<section class="reading-section" id="section-3" data-tone="green"><header class="section-head"><span class="section-no">03</span><h2>小工具</h2></header><ul>
+<li><strong>Alma Personal Agent</strong>：yetone 宣布上线 <a href="https://x.com/yetone/status/2117707111790752185">https://x.com/yetone/status/2117707111790752185</a></li>
+<li><strong>AnliBili</strong>：社媒沉淀 B 站精品合集 <a href="https://anlibili-site-bxlxh4ai.teamily.run">https://anlibili-site-bxlxh4ai.teamily.run</a> <a href="https://x.com/Saccc_c/status/2117620059392942489">https://x.com/Saccc_c/status/2117620059392942489</a></li>
+<li><strong>妙言 CLI</strong>：miao open／new／search／list／cat <a href="https://miaoyan.app">https://miaoyan.app</a> <a href="https://x.com/HiTw93/status/2117903730494591205">https://x.com/HiTw93/status/2117903730494591205</a></li>
+<li><strong>Baoyu Design × DeepSeek Harness</strong>：统一入口看生成结果 <a href="https://github.com/JimLiu/baoyu-design">https://github.com/JimLiu/baoyu-design</a> <a href="https://x.com/dotey/status/2117838908721660026">https://x.com/dotey/status/2117838908721660026</a></li>
+<li><strong>Flatkey</strong>：一个 key 接 100+ 官方模型与 1000+ 工具 API，一份账单；称日常至少比官方低约 20%，失败请求 $0 <a href="https://x.com/sujingshen/status/2117630949018263930">https://x.com/sujingshen/status/2117630949018263930</a></li>
+<li><strong>Multica 对抗式 review Quick Action</strong>：可启动 mini loop <a href="https://x.com/jiayuan_jy/status/2117861662963511307">https://x.com/jiayuan_jy/status/2117861662963511307</a></li>
+</ul>
+</section>
+<section class="reading-section" id="section-4" data-tone="gold"><header class="section-head"><span class="section-no">04</span><h2>AI 资讯</h2></header><h3>Anthropic 开源 FlashProve：大模型推理可密码学验证</h3>
+<p>Frontier Red Team 用 zkSNARK 思路做可验证推理原型，证明某次回复确由承诺权重的模型生成。在 Llama 4 Maverick（约 400B MoE、4-bit）上单卡 H100 约 110 tok/s、证明约 19MB／1024 token，并附 Lean 形式化与 Apache-2.0 代码，定位服务诚信、防篡改与 pacing 相关工具箱的中间进展。<a href="https://www.anthropic.com/research/provable-inference">https://www.anthropic.com/research/provable-inference</a></p>
+<h3>Fal 完成约 13 亿美元 F 轮，估值翻倍至约 160 亿美元</h3>
+<p>Bessemer 领投，Nvidia、Sound Ventures、T. Rowe Price 等参投；E+F 合计约 16.5 亿。报道称生成媒体推理需求高涨，此前年化收入已超约 8 亿美元，资金指向算力与扩张。<a href="https://techcrunch.com/2026/11/03/ai-inference-startup-fal-doubles-its-valuation-to-16b-as-demand-surges/">https://techcrunch.com/2026/11/03/ai-inference-startup-fal-doubles-its-valuation-to-16b-as-demand-surges/</a></p>
+<h3>腾讯发布 Hy4：开源阵营新主力，首次带视觉</h3>
+<p>官方称 Hy4 在预训练与后训练上相对 preview 大幅加码，首次加入视觉与 computer use，并强调金融、前端、游戏、办公与科研等生产力场景；计划开源权重，已上云与 OpenRouter，同价相对 preview 提升。<a href="https://hy.tencent.ai/research/hy4?langVersion=en">https://hy.tencent.ai/research/hy4?langVersion=en</a> <a href="https://x.com/TencentHunyuan/status/2117870250838630539">https://x.com/TencentHunyuan/status/2117870250838630539</a></p>
+</section></article>
+<footer class="issue-footer"><a href="./"><svg class="icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 12H4M10 6l-6 6 6 6"></path></svg>返回日报归档</a><a href="#top">回到顶部<svg class="icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20V4M6 10l6-6 6 6"></path></svg></a></footer></div></div></main>
+<div class="quick-toc" id="quick-toc" hidden><div class="quick-toc-head"><strong>本期目录</strong><button type="button" data-close-toc aria-label="关闭目录"><svg class="icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18"></path></svg></button></div><nav class="toc-list" aria-label="快捷目录"><a href="#section-1" data-tone="red"><span class="toc-number">01</span><span>今日主线</span></a><a href="#section-2" data-tone="blue"><span class="toc-number">02</span><span>人物</span></a><a href="#section-3" data-tone="green"><span class="toc-number">03</span><span>小工具</span></a><a href="#section-4" data-tone="gold"><span class="toc-number">04</span><span>AI 资讯</span></a></nav></div>
+<aside class="reader-dock" aria-label="阅读工具"><button type="button" data-toggle-toc aria-expanded="false" aria-controls="quick-toc"><svg class="icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 6h12M8 12h12M8 18h12M4 6h.01M4 12h.01M4 18h.01"></path></svg><span class="current-section-label">目录</span></button><button type="button" data-focus aria-pressed="false"><svg class="icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 4H4v5m11-5h5v5M4 15v5h5m11-5v5h-5"></path></svg><span>专注阅读</span></button><button type="button" data-next-section aria-label="下一栏目"><svg class="icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h16M14 6l6 6-6 6"></path></svg></button></aside>
+<script data-publication-ui>(() => {
+  "use strict";
+  document.body.dataset.readerReady = "true";
+  const search = document.querySelector("[data-search]");
+  if (search) {
+    search.addEventListener("input", () => {
+      const query = search.value.trim().toLocaleLowerCase();
+      let matches = 0;
+      document.querySelectorAll(".archive-row").forEach((row) => {
+        const searchable = `${row.querySelector("time").dateTime} ${row.textContent}`.toLocaleLowerCase();
+        row.hidden = !searchable.includes(query);
+        if (!row.hidden) matches++;
+      });
+      document.querySelectorAll(".archive-group").forEach((group) => {
+        group.hidden = !group.querySelector(".archive-row:not([hidden])");
+      });
+      document.querySelector(".latest").hidden = Boolean(query);
+      document.querySelector(".search-empty").hidden = matches > 0;
+      document.querySelector(".search-status").textContent = query ? `找到 ${matches} 期` : "";
+    });
+  }
+  const sections = [...document.querySelectorAll(".reading-section")];
+  if (!sections.length) return;
+  const quickToc = document.getElementById("quick-toc");
+  const dock = document.querySelector(".reader-dock");
+  const reduce = matchMedia("(prefers-reduced-motion: reduce)");
+  let active = "", scheduled = false;
+
+  function setToc(open) {
+    quickToc.hidden = !open;
+    dock.querySelector("[data-toggle-toc]").setAttribute("aria-expanded", String(open));
+  }
+  function update() {
+    scheduled = false;
+    const threshold = Math.min(160, innerHeight * .22);
+    const current = [...sections].reverse().find((section) => section.getBoundingClientRect().top <= threshold) || sections[0];
+    sections.forEach((section) => {
+      const rect = section.getBoundingClientRect();
+      const progress = Math.min(1, Math.max(0, (threshold - rect.top) / rect.height));
+      document.querySelectorAll(`.toc-list a[href="#${section.id}"]`).forEach((link) => link.style.setProperty("--section-progress", progress));
+    });
+    document.documentElement.style.setProperty("--reading-progress", Math.min(1, Math.max(0, scrollY / Math.max(1, document.documentElement.scrollHeight - innerHeight))));
+    if (current.id === active) return;
+    active = current.id;
+    document.querySelectorAll(".toc-list a").forEach((link) => {
+      if (link.hash === `#${active}`) link.setAttribute("aria-current", "location");
+      else link.removeAttribute("aria-current");
+    });
+    dock.querySelector(".current-section-label").textContent = current.querySelector("h2").textContent;
+    const next = sections[sections.indexOf(current) + 1];
+    dock.querySelector("[data-next-section]").disabled = !next;
+    dock.querySelector("[data-next-section]").setAttribute("aria-label", next ? `下一栏目：${next.querySelector("h2").textContent}` : "已是最后一个栏目");
+  }
+  function schedule() { if (!scheduled) { scheduled = true; requestAnimationFrame(update); } }
+  function focusReading(focused) {
+    const pin = [...document.querySelectorAll(".prose p, .prose h2")].find((node) => {
+      const rect = node.getBoundingClientRect(); return rect.bottom > 0 && rect.top < innerHeight;
+    }) || document.querySelector(".prose");
+    const oldTop = pin.getBoundingClientRect().top;
+    document.body.dataset.focus = String(focused);
+    document.querySelectorAll("[data-focus]").forEach((button) => {
+      button.setAttribute("aria-pressed", String(focused));
+      button.querySelector("span").textContent = focused ? "退出专注" : "专注阅读";
+    });
+    window.scrollBy({ top: pin.getBoundingClientRect().top - oldTop, behavior: "instant" });
+    const focusControl = focused ? dock.querySelector("[data-focus]") : document.querySelector(".desktop-toc [data-focus]");
+    if (focusControl.getClientRects().length) focusControl.focus({ preventScroll: true });
+    else dock.querySelector("[data-focus]").focus({ preventScroll: true });
+    setToc(false); schedule();
+  }
+  function jump(id) {
+    const section = sections.find((item) => item.id === id);
+    if (!section) return;
+    setToc(false);
+    section.scrollIntoView({ block: "start", behavior: reduce.matches ? "instant" : "smooth" });
+    history.replaceState(null, "", `#${id}`);
+  }
+  document.addEventListener("click", (event) => {
+    const target = event.target;
+    if (target.closest("[data-toggle-toc]")) { setToc(quickToc.hidden); return; }
+    if (target.closest("[data-close-toc]")) { setToc(false); dock.querySelector("[data-toggle-toc]").focus(); return; }
+    if (target.closest("[data-focus]")) { focusReading(document.body.dataset.focus !== "true"); return; }
+    const font = target.closest("[data-font]");
+    if (font) {
+      document.documentElement.style.setProperty("--body-size", font.dataset.font === "large" ? "19px" : "17px");
+      document.querySelectorAll("[data-font]").forEach((button) => button.setAttribute("aria-pressed", String(button === font)));
+      schedule(); return;
+    }
+    if (target.closest("[data-next-section]")) {
+      const next = sections[sections.findIndex((section) => section.id === active) + 1];
+      if (next) jump(next.id);
+      return;
+    }
+    const link = target.closest('a[href^="#section-"]');
+    if (link && sections.some((section) => `#${section.id}` === link.hash)) {
+      event.preventDefault();
+      const details = link.closest("details"); if (details) details.open = false;
+      jump(link.hash.slice(1)); return;
+    }
+    if (!target.closest(".quick-toc")) setToc(false);
+  });
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape") {
+      if (!quickToc.hidden) { setToc(false); dock.querySelector("[data-toggle-toc]").focus(); }
+      else if (document.body.dataset.focus === "true") focusReading(false);
+    }
+    if (event.key.toLowerCase() === "f" && !event.metaKey && !event.ctrlKey && !event.altKey && !event.target.isContentEditable && !/INPUT|TEXTAREA|SELECT/.test(event.target.tagName)) {
+      event.preventDefault(); focusReading(document.body.dataset.focus !== "true");
+    }
+  });
+  window.addEventListener("scroll", schedule, { passive: true });
+  window.addEventListener("resize", schedule, { passive: true });
+  update();
+})();
+</script></body></html>
