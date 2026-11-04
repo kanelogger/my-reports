@@ -140,9 +140,13 @@ vite.config.ts.timestamp-*
 .DS_Store
 .sisyphus
 
-# Ignore agent-local files. A directory rule cannot be re-included, so ignore contents and track skills.
-.agents/*
-!.agents/skills/
-!.agents/skills/**
+# Ignore agent-local files; track only the four report workflow skills.
+/.agents/*
+!/.agents/skills/
+/.agents/skills/*
+!/.agents/skills/report-import/
+!/.agents/skills/report-organize/
+!/.agents/skills/report-preview/
+!/.agents/skills/report-publish/
 # Private editorial workspace
 .local/
