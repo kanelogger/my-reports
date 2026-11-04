@@ -30,12 +30,69 @@ test("日报支持任意真实日期，与周报共用 A 模板和栏目颜色",
       assert.match(html, new RegExp(`href="#section-${id}" data-tone="${color}"`));
     }
     assert.match(html, /原文 0\.016%，保留条件。/);
-    assert.match(html, /href="https:\/\/example.com\/a\?q=1&amp;b=2"/);
+    assert.match(html, /<a class="source-link" href="https:\/\/example.com\/a\?q=1&amp;b=2" target="_blank" rel="noopener noreferrer"><svg class="icon"[^>]*>[\s\S]*?<\/svg><span>原链接<\/span><\/a>/);
+    assert.equal((html.match(/原链接/g) || []).length, 1);
+    assert.equal((html.match(/target="_blank"/g) || []).length, 1);
+    const article = html.slice(html.indexOf("<article"), html.indexOf("</article>"));
+    const outside = html.replace(article, "");
+    assert.ok(!outside.includes("原链接"));
+    assert.ok(!outside.includes('class="source-link"'));
+    assert.ok(!outside.includes('target="_blank"'));
     assert.ok(!/<(?:script|link)[^>]+(?:src|href)="https?:/.test(html));
     assert.match(html, /data:font\/woff2;base64/);
   }
   assert.equal(day.match(/<style>([\s\S]*?)<\/style>/)[1], week.match(/<style>([\s\S]*?)<\/style>/)[1]);
   assert.match(weekly.render(source, "2027-01-03"), /2026 \/ 第 53 周/);
+});
+
+test("正文外链统一为原链接并新开标签，页内锚点与代码中的网址保持原文", () => {
+  const html = daily.render(`# 日报
+
+## 人物
+
+裸地址 https://example.com/bare?x=1&y=2
+
+[自定义标题](https://example.com/custom)
+
+[**强调文案**](https://example.com/em)
+
+[甲](https://example.com/a) 随后 https://example.com/b
+
+参见：https://example.com/zh。
+
+[章节](#section-1)
+
+\`https://example.com/code\`
+
+\`\`\`
+https://example.com/fence
+\`\`\`
+`, "2026-11-04");
+  const article = html.slice(html.indexOf("<article"), html.indexOf("</article>"));
+  const outside = html.replace(article, "");
+  for (const href of [
+    "https://example.com/bare?x=1&amp;y=2",
+    "https://example.com/custom",
+    "https://example.com/em",
+    "https://example.com/a",
+    "https://example.com/b",
+    "https://example.com/zh",
+  ]) {
+    const escaped = href.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    assert.match(article, new RegExp(`<a class="source-link" href="${escaped}" target="_blank" rel="noopener noreferrer"><svg class="icon"[^>]*>[\\s\\S]*?<\\/svg><span>原链接<\\/span><\\/a>`));
+  }
+  assert.equal((article.match(/<span>原链接<\/span>/g) || []).length, 6);
+  assert.ok(!article.includes("自定义标题"));
+  assert.ok(!article.includes("强调文案"));
+  assert.ok(!article.includes('href="https://example.com/code"'));
+  assert.ok(!article.includes('href="https://example.com/fence"'));
+  assert.match(article, /<a href="#section-1">章节<\/a>/);
+  assert.ok(!article.includes('href="#section-1" target'));
+  assert.match(article, /<code>https:\/\/example.com\/code<\/code>/);
+  assert.match(article, /https:\/\/example.com\/fence/);
+  assert.ok(!outside.includes("原链接"));
+  assert.ok(!outside.includes('class="source-link"'));
+  assert.ok(!outside.includes('target="_blank"'));
 });
 
 test("自定义栏目按顺序配色，引用与代码中的标题不会成为独立章节", () => {

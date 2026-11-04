@@ -177,13 +177,14 @@ test("脚本整理不修改素材，不覆盖人工编辑，显式重做备份�
   );
 });
 
-test("阅读排版保留原文换行和网址文字，仅增强链接与导航", () => {
+test("阅读排版保留原文换行，外链显示为原链接并新开标签", () => {
   const source =
     "# 原标题\n\n## 原栏目\n\n原句第一行\n原句第二行\n\n地址：github.com/vercel-labs/agent-desktop\n";
   const html = weekly.render(source, id);
   assert.match(html, /原句第一行<br>\n原句第二行/);
-  assert.match(html, />github.com\/vercel-labs\/agent-desktop<\/a>/);
-  assert.match(html, /href="http:\/\/github.com\/vercel-labs\/agent-desktop"/);
+  assert.match(html, /<a class="source-link" href="http:\/\/github.com\/vercel-labs\/agent-desktop" target="_blank" rel="noopener noreferrer">/);
+  assert.match(html, /<span>原链接<\/span>/);
+  assert.ok(!/>github.com\/vercel-labs\/agent-desktop<\/a>/.test(html));
   assert.match(html, /<article class="prose" id="content"/);
   assert.match(html, /<details class="mobile-toc">/);
   assert.equal((html.match(/<script\b/g) || []).length, 1);
@@ -197,7 +198,9 @@ test("文件名不会被误认成网站，也不会在原有链接内嵌套链�
   );
   assert.ok(!html.includes('href="http://CLAUDE.md'));
   assert.ok(!html.includes('href="http://claude.md'));
-  assert.match(html, /<a href="https:\/\/example.com">github.com\/repo<\/a>/);
+  assert.match(html, /<a class="source-link" href="https:\/\/example.com" target="_blank" rel="noopener noreferrer">/);
+  assert.match(html, /<span>原链接<\/span>/);
+  assert.ok(!html.includes("github.com/repo"));
 });
 
 test("本地图片内嵌，图片变动阻止旧预览定稿，拒绝越界和远程图片", (t) => {
