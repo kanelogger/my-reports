@@ -1,230 +1,81 @@
-# my-reports 项目指南
+# 项目
 
-Before answering or editing files, read and follow:
+my-reports 是面向个人使用的报告、日报和周报静态归档站点，通过 GitHub Pages 发布；优先保证内容完整、预览与发布一致，以及私人素材不进入公开产物。
 
-/Users/kanehua/.config/.agents/AGENTS.md
+## 沟通原则
 
-The global file controls interaction style.
-This project file controls repository-specific behavior.
+1. 直接给结论，不复述问题，必要时再展开。
+2. 以格赖斯合作原则及四项会话准则指导沟通，确保信息适量、真实有据、切题、清晰有序。
+3. 表达参照 ASD-STE100 Simplified Technical English，采用简单句式、明确指代和一致用词；中文回答迁移其清晰表达原则。
 
-## 项目概述
+## 决策原则
 
-这是一个**个人报告聚合站点**，通过 GitHub Pages 部署。核心功能是将 `reports/` 下的 HTML 报告、`digests/` 下的日报和 `weeklies/` 下的周报，自动聚合并生成索引页。
+- 优先保护原始内容和已有用户改动，按本次授权确定编辑与发布范围。
+- 信息不足时先检查仓库和权威文档；仍有影响结果的关键不确定性时，说明假设或向用户确认。
+- 发现错误前提、内容损失或意外发布风险时，主动说明并提出可执行的处理方式。
 
-- **站点入口**：`index.html`（报告，由脚本自动生成）
-- **日报入口**：`digests/index.html`（由同一次构建生成）
-- **周报入口**：`weeklies/index.html`（由同一次构建生成）
-- **部署地址**：GitHub Pages（push 到 `main`/`master` 分支自动触发）
-- **构建命令**：`npm run build` 或 `node generate-index.js`
+## 工作方式
 
----
+- 开始前检查相关文档、实现和工作区状态；修改时遵循现有模块布局与相邻代码风格。
+- 修复问题时先复现或确认触发条件，并检查相关调用方和生成产物；完成后同步受影响的文档。
+- 报告、日报和周报的采集由用户负责。仅要求导入、整理或预览时，在相应步骤结束，不自动定稿、提交或推送。
+- 整理默认只分类、重排和拟标题，保留正文；删减、去重、合并正文或改写须获明确授权。来源核对由用户处理，不作为发布前置条件。
+- 明确要求生成、撰写、编纂或重编周报时，可对指定周报选题、摘要、合并、改写并作编辑判断；保留原始资料并备份旧稿。明确授权完善信息、核对原文或配图时，围绕已有素材补充，不扩展为无边界采集。
 
-## 目录结构
+## 验证标准
 
-```
-my-reports/
-├── index.html              # 自动生成的报告索引页（不要手动编辑）
-├── generate-index.js       # 索引生成脚本（核心逻辑）
-├── package.json            # 构建、日报与周报命令
-├── digests/                # 日报（今日中文推特圈精选 + AI 资讯）
-│   ├── index.html          # 自动生成的日报列表（不要手动编辑）
-│   └── YYYY-MM-DD.html     # 某一天的自包含 HTML
-├── reports/                # 报告存放目录
-│   ├── *.html              # 独立 HTML 报告文件
-│   ├── case/               # 子目录形式的多页报告
-│   │   └── index.html      # 每个子目录必须包含 index.html
-│   ├── april-report/
-│   ├── bigthing/
-│   ├── mac/
-│   └── InvestmentThesisPortfolioPlaybook/
-├── .github/workflows/      # GitHub Actions 部署配置
-└── .sisyphus/              # Sisyphus 任务计划追踪（勿动）
-    ├── boulder.json
-    ├── drafts/
-    ├── evidence/
-    └── plans/
-```
+- 行为变更后运行 `npm test` 和 `npm run build`，检查生成的三个索引；构建和发布相关变更还须检查历史资源与私人素材隔离。
+- 修改索引界面后，在浏览器打开生成的根目录索引、日报索引及一份日报，检查布局、导航和日报自身样式。
+- Bug 修复须验证原触发场景及相关回归；报告实际验证范围、结果和未运行的检查。
+- 发布时核对定稿与最后审阅的预览一致，并区分本地定稿、PR、推送和线上部署的实际状态。
 
----
+## 工具偏好
 
-## 核心逻辑：`generate-index.js`
+- 使用 npm 和 Node.js 原生 `fs`、`path` API，新增依赖前先检查现有能力。
+- 日报和周报使用 `daily:*`、`weekly:*` 脚本及相应 Skill；已有完整 `draft.md` 时直接预览。`weekly:draft` 会去重，仅在明确要求或授权去重时调用。
+- 使用 `generate-index.js` 生成索引和发布目录，不手工编辑生成的索引。
 
-### 扫描规则
+## 项目命令
 
-1. **独立文件**：`reports/` 下直接的 `.html` 文件
-2. **子目录**：`reports/` 下的文件夹，如果包含 `index.html` 则收录
-3. **日报**：`digests/` 下名为 `YYYY-MM-DD.html`（或 `YYYYMMDD.html`）的文件，不进入报告列表
-4. **排序**：报告与日报都按日期倒序（由近及远）；同一天按标题升序
-5. **报告日期**：文件名或标题里的日期优先。两者都没有时，沿用已生成 `index.html` 里的日期，避免 CI 检出刷新 birthtime 后把旧报告改到构建当天。索引里还没有的新文件才用文件时间
+- 包管理器：npm；运行时：Node.js 24。
+- 安装：`npm ci`。
+- 构建：`npm run build`。
+- 最小验证：`npm test`；行为变更还须构建并检查产物。
+- 日报和周报命令及参数见 [README.md](README.md#日报与周报)。
 
-### 配置项
+## 安全边界
 
-```js
-const titleAliases = {
-  case: "2026-3投资战略备忘录",  // 目录别名，覆盖从 index.html 读取的标题
-};
+- 保留与任务无关的已有改动，尤其是 `reports/` 中的用户内容。
+- 未明确要求时不修改 `.sisyphus/`；任务不涉及部署配置时不修改 `.github/workflows/`。
+- 私人素材、草稿和预览放在 `.local/digests/` 或 `.local/weeklies/`；发布构建只上传 `dist/`，检查私人素材没有进入公开产物。
+- 推送到 `main` 或 `master` 会触发 GitHub Pages 发布；按用户授权和当前分支执行，不强制依赖 CloudAgent。
+- 周报发布前，用户必须查看并确认最新预览；草稿、图片或模板变化后重新预览并取得确认。日报明确授权直接发布时可连续执行。
 
-const excludedDirs = new Set(["assets", "shared", "lib"]);  // 忽略的目录
-```
+## 仓库级约束
 
-### 标题优先级
+- `index.html`、`digests/index.html` 和 `weeklies/index.html` 是生成产物，不得手工编辑。
+- 多页报告目录须包含有 `<title>` 的 `index.html`；中文 HTML 报告使用 `zh-CN` 和 UTF-8。
+- 正式日报和周报的样式与章节颜色以 [DESIGN.md](DESIGN.md) 第 10 节和 `lib/publication*` 为准，不从历史 HTML 或设计 Demo 重新拼装模板；旧日报和周报不会自动迁移。
 
-子目录的显示标题按以下优先级：
-1. `titleAliases[name]` —— 手动配置的别名
-2. `index.html` 中的 `<title>` 标签内容
-3. 目录名本身
+## 稳定领域概念
 
----
+- 报告：`reports/` 下的独立 HTML 或多页报告目录。
+- 日报与周报：分别归档于 `digests/` 和 `weeklies/`；私人素材与预览保存在 `.local/`。
+- 定稿、推送和部署是不同状态；只有部署验证成功才能报告线上已发布。
 
-## 如何添加新报告
+## 按需指南
 
-### 方式一：单页报告（推荐简单报告）
+- 处理报告、日报或周报前，先读 [README.md 的四个功能 Skill](README.md#四个功能-skill)；涉及日报或周报时再读[日报与周报](README.md#日报与周报)，确定授权范围及流程。
+- 导入使用 [report-import](.agents/skills/report-import/SKILL.md)；分类、重排和拟标题使用 [report-organize](.agents/skills/report-organize/SKILL.md)；预览使用 [report-preview](.agents/skills/report-preview/SKILL.md)；定稿和发布使用 [report-publish](.agents/skills/report-publish/SKILL.md)。
+- 生成、编纂或重编周报及其连续发布流程，使用 [weekly-publish](.agents/skills/weekly-publish/SKILL.md)：先审视全周大事，选择标志性变化展开，次要进展合并或留档，侧重产品与技术并有依据地表达编辑判断。已有确认稿的纯发布使用 `report-publish`。
+- 修改索引或打包时，阅读 `generate-index.js` 和相关测试，沿源码核对扫描、排序及发布契约。
 
-通过 `report-import` 将 `.html` 文件导入 `reports/` 目录，保留原有内容与设计：
+## 局部规则
 
-```bash
-reports/2026XX-报告标题.html
-```
+- 进入子目录后，遵循该目录及其上级适用的 `AGENTS.md`。
 
-文件名会成为索引页的链接标题（去掉 `.html` 后缀）。
+## 文件维护
 
-### 方式二：多页报告站点（推荐复杂报告）
-
-通过 `report-import` 将报告目录及资源导入 `reports/`，目录内必须包含 `index.html`：
-
-```bash
-reports/my-report/
-├── index.html      # 入口页（必须有 <title> 标签）
-├── page2.html
-└── assets/
-    └── style.css
-```
-
-如需自定义索引页显示名称，在 `generate-index.js` 的 `titleAliases` 中添加映射。
-
-### 方式三：日报（今日中文推特圈精选）
-
-新增日报优先按 README.md「日报与周报」流程由脚本生成，每天只提交一个自包含 HTML。保持旧 HTML 的兼容，不手改索引，不另写正文元数据：
-
-```bash
-digests/2026-10-20.html
-```
-
-- 规范文件名：`YYYY-MM-DD.html`。`YYYYMMDD.html` 也能识别；同一天两份都在时，保留带连字符的那份。
-- 列表标题取该文件 `<title>`。没有 `<title>` 时用「今日中文推特圈精选」，日期仍来自文件名。
-- `digests/index.html` 是构建产物。以 `.` 或 `_` 开头的文件会被忽略。
-- 点击列表项会打开这份 HTML 原文件，样式和链接保持原样。
-
-构建后站点导航有三个分区：「报告」（`/`）、「日报」（`/digests/`）和「周报」（`/weeklies/`）。
-
-### 方式四：排除某些目录
-
-如果目录不需要出现在索引中（如共享资源目录），添加到 `excludedDirs` 中。
-
----
-
-## 构建与部署
-
-### 本地构建
-
-```bash
-npm run build
-# 或
-node generate-index.js
-```
-
-执行后会重新生成根目录的 `index.html`、`digests/index.html` 和 `weeklies/index.html`。
-
-### 自动部署
-
-项目配置了 GitHub Actions（`.github/workflows/deploy.yml`）：
-
-- 触发条件：push 到 `main` 或 `master` 分支
-- 部署前执行 `npm run build`（生成根目录 `index.html`、`digests/index.html` 和 `weeklies/index.html`）
-- 然后仅把 dist 上传到 GitHub Pages
-
-**推到 `main` 或 `master` 就会发布。** 新的一天只提交 `digests/YYYY-MM-DD.html` 即可，线上列表会在这次构建里更新，不必手改索引。本地预览请先跑 `npm run build`。若希望仓库里的索引文件和线上一致，可以把构建结果一并提交，但这不是发布的前提。
-
----
-
-## 编码规范
-
-- 索引和打包使用 Node.js 原生 API，周报 Markdown 使用 markdown-it
-- HTML 报告使用中文（`zh-CN`），确保包含 `<meta charset="utf-8">`
-- 子目录报告的 `index.html` 应包含 `<title>` 标签以便正确显示标题
-- 不要手动编辑三个索引文件，它们会被脚本覆盖
-
----
-
-## 注意事项
-
-1. **目录名约定**：以 `.` 或 `_` 开头的文件/目录会被自动忽略。
-2. **大小写敏感**：GitHub Pages 和本地文件系统对大小写敏感度不同，目录名和文件名建议统一使用小写或驼峰。
-3. **防呆设计**：`generate-index.js` 会在 `reports/` 或 `digests/` 目录不存在时自动创建，避免在 Vercel 等环境报错。
-
----
-
-## 依赖
-
-- Node.js 24
-- markdown-it 为周报构建依赖，浏览器无新增依赖
-
----
-
-## Project Coding Rules
-
-### Tech Stack
-
-- Runtime: Node.js
-- Framework: 无（原生脚本）
-- Package manager: npm
-
-### Commands
-
-- Install: `npm ci`
-- Dev: not available
-- Test: `npm test`
-- Typecheck: not available
-- Lint: not available
-- Build: `npm run build`
-
-### Verification
-
-- After changing runtime behavior, run `npm run build` and verify the generated `index.html`, `digests/index.html`, and `weeklies/index.html`.
-- After changing frontend UI (index template), open the generated `index.html` and `digests/index.html` in a browser and open one digest file to verify layout, navigation, and that the digest keeps its own styling.
-- If a check is skipped, report it explicitly.
-
-### Boundaries
-
-- Do not edit `.sisyphus/` and its contents unless explicitly asked.
-- Do not modify `index.html`, `digests/index.html`, or `weeklies/index.html` by hand; all are generated by `generate-index.js`.
-- Do not change `.github/workflows/` unless the task specifically requires it.
-- Preserve existing user changes in `reports/`.
-
-### Local Conventions
-
-- Follow existing module layout: `generate-index.js` at project root, reports under `reports/`, daily digests under `digests/`.
-- Use Node.js native `fs`/`path` APIs before adding new npm dependencies.
-- Match nearby code style in `generate-index.js`.
-- Keep changes scoped to the request.
-
-## 报告处理与发布
-
-处理报告、日报或周报前，读取 README.md「四个功能 Skill」；涉及日报／周报时再读「日报与周报」。按请求加载 `.agents/skills/` 下对应功能：
-
-- 导入文件或素材：[report-import](.agents/skills/report-import/SKILL.md)。
-- 分类、重排、拟标题：[report-organize](.agents/skills/report-organize/SKILL.md)。
-- 生成或检查预览：[report-preview](.agents/skills/report-preview/SKILL.md)。
-- 定稿、提交与发布：[report-publish](.agents/skills/report-publish/SKILL.md)。
-
-周报生成、编纂、重编及编纂到发布的连续流程，使用 [weekly-publish](.agents/skills/weekly-publish/SKILL.md) 作为编排入口，复用上述四个功能。先审视全周大事，再选标志性变化展开，次要进展合并或留档；偏产品与技术，有依据地表达编辑判断。已有确认稿的纯发布仍使用 `report-publish`。
-
-采集由用户负责。三类流程与内容编辑权限以 README.md 为共同规则；仅要求导入、整理或预览时，在该功能结束，不自动定稿、提交或推送。日报明确授权直接发布时可连续执行；周报必须由用户查看并确认最新预览后才能发布，草稿、图片或模板变化后重新预览和确认。
-
-整理默认保留正文，仅分类、重排、拟标题；删减、去重、合并正文或改写需明确授权。来源核对由用户处理，不属于发布前置条件。已有完整 `draft.md` 时直接预览；`weekly:draft` 会去重，仅按明确要求或去重授权调用。
-
-用户明确要求生成、撰写、编纂或重编周报时，允许对指定周报进行选题、摘要、合并、改写和编辑判断，保留原始资料并备份旧稿；仅整理、保留原文、只排版或只预览不扩大到该范围。明确授权完善信息、核对原文或配图时，围绕已有素材补充相应来源与资源，不扩成无边界采集。
-
-日报／周报调用 `daily:*`／`weekly:*` 脚本；私人素材、草稿与预览保存在 `.local/digests`／`.local/weeklies`。正式样式与章节颜色以 DESIGN.md 第 10 节和 `lib/publication*` 为准；不从历史 HTML 或设计 Demo 重新拼装模板。发布时验证定稿与最后审阅预览一致。旧日报／周报不会自动迁移。
-
-索引和发布目录由 `generate-index.js` 构建，只上传 `dist/`；构建后验证三个索引、历史资源和私人素材隔离。发布按本次授权及当前分支执行，不强制依赖 CloudAgent；明确区分本地定稿、PR、推送和线上部署的实际状态。
+- 只有用户明确要求时，才提出或执行对个人协作偏好的修改。
+- 稳定约束在本文件或其引用的权威规则文件中维护；当前实现事实由所属文档和源码维护，本文件保留读取入口。
+- 规则、路径或工作方式变化时，同步更新入口与所属文档，并核对引用可访问。
