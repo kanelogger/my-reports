@@ -1,0 +1,4 @@
+interface:
+  display_name: "周报编纂与发布"
+  short_description: "从本周日报和草稿编纂有主次的周报，预览确认后按授权发布"
+  default_prompt: "请使用 $weekly-publish，根据本周日报与草稿编纂有判断、有主次的周报，并按我的请求完成预览或确认后的发布。"
