@@ -20,7 +20,7 @@ my-reports 是面向个人使用的报告、日报和周报静态归档站点，
 - 修复问题时先复现或确认触发条件，并检查相关调用方和生成产物；完成后同步受影响的文档。
 - 报告、日报和周报的采集由用户负责。仅要求导入、整理或预览时，在相应步骤结束，不自动定稿、提交或推送。
 - 整理默认只分类、重排和拟标题，保留正文；删减、去重、合并正文或改写须获明确授权。来源核对由用户处理，不作为发布前置条件。
-- 明确要求生成、撰写、编纂或重编周报时，可对指定周报选题、摘要、合并、改写并作编辑判断；保留原始资料并备份旧稿。明确授权完善信息、核对原文或配图时，围绕已有素材补充，不扩展为无边界采集。
+- 明确要求生成、撰写、编纂或重编周报时，可对指定周报选题、摘要、合并、改写并作编辑判断；保留原始资料并备份旧稿。常规周报编纂包含与入选内容直接相关的取图或绘图。补充资料与核对原文依本次授权。
 
 ## 验证标准
 
@@ -67,7 +67,7 @@ my-reports 是面向个人使用的报告、日报和周报静态归档站点，
 
 - 处理报告、日报或周报前，先读 [README.md 的四个功能 Skill](README.md#四个功能-skill)；涉及日报或周报时再读[日报与周报](README.md#日报与周报)，确定授权范围及流程。
 - 导入使用 [report-import](.agents/skills/report-import/SKILL.md)；分类、重排和拟标题使用 [report-organize](.agents/skills/report-organize/SKILL.md)；预览使用 [report-preview](.agents/skills/report-preview/SKILL.md)；定稿和发布使用 [report-publish](.agents/skills/report-publish/SKILL.md)。
-- 生成、编纂或重编周报及其连续发布流程，使用 [weekly-publish](.agents/skills/weekly-publish/SKILL.md)：先审视全周大事，选择标志性变化展开，次要进展合并或留档，侧重产品与技术并有依据地表达编辑判断。已有确认稿的纯发布使用 `report-publish`。
+- 生成、编纂或重编周报及其连续发布流程，使用 [weekly-publish](.agents/skills/weekly-publish/SKILL.md)：先对照上期正式周报，在常规六栏内审视全周大事和选题主次。按技能要求配齐封面、全期图解与每条内容的图片，首次预览前逐条核对。已有确认稿的纯发布使用 `report-publish`。
 - 修改索引或打包时，阅读 `generate-index.js` 和相关测试，沿源码核对扫描、排序及发布契约。
 
 ## 局部规则

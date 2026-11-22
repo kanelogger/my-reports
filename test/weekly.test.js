@@ -18,6 +18,14 @@ test("真实周日及跨年周期", () => {
   for (const bad of ["2026-02-30", "2026-11-04", "../../x"])
     assert.throws(() => weekly.period(bad));
 });
+test("周报初始化按刊物顺序创建六个空栏目", (t) => {
+  const dir = weekly.init(fixture(t), id);
+  const source = fs.readFileSync(path.join(dir, "draft.md"), "utf8");
+  assert.deepEqual(source.trimEnd().split("\n\n"), [
+    "# 本周简报", "## 本周焦点", "## 模型与产品", "## 行业大事记",
+    "## 科技与开源", "## 好文章", "## 工具与项目",
+  ]);
+});
 test("素材保护、预览一致及定稿覆盖保护", (t) => {
   const root = fixture(t),
     dir = weekly.init(root, id);
@@ -175,6 +183,24 @@ test("脚本整理不修改素材，不覆盖人工编辑，显式重做备份�
   assert.ok(
     fs.readFileSync(path.join(dir, backups[0]), "utf8").endsWith("人工补充"),
   );
+});
+
+test("整理旧三栏空稿时仅接受原始模板，保留编辑过的空栏", (t) => {
+  const { draft: prepare } = require("../lib/draft");
+  const root = fixture(t);
+  const dir = weekly.init(root, id);
+  const target = path.join(dir, "draft.md");
+  const legacy = "# 本周简报\n\n## 好文章\n\n## 工具与项目\n\n## 一周动态\n\n";
+  fs.writeFileSync(path.join(dir, "materials.md"), "## 文章\n\n原始素材。\n");
+  const edited = legacy.replace("一周动态", "本周来信");
+  fs.writeFileSync(target, edited);
+  weekly.init(root, id);
+  assert.throws(() => prepare(root, id), /人工编辑/);
+  assert.equal(fs.readFileSync(target, "utf8"), edited);
+
+  fs.writeFileSync(target, legacy);
+  assert.deepEqual(prepare(root, id).columns, ["文章"]);
+  assert.match(fs.readFileSync(target, "utf8"), /原始素材。/);
 });
 
 test("阅读排版保留原文换行，外链显示为原链接并新开标签", () => {
